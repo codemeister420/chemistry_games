@@ -1,0 +1,340 @@
+:root {
+  color-scheme: light;
+  --ink: #18363a;
+  --muted: #627578;
+  --line: #d8e2dd;
+  --paper: #f2f4ed;
+  --white: #fcfcf7;
+  --deep: #102b31;
+  --deep-soft: #1c4145;
+  --mint: #b6e3d2;
+  --mint-strong: #60c6a2;
+  --coral: #e88c6d;
+  --gold: #efc66d;
+  --blue: #89cbd0;
+  --radius: 5px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 14% 8%, rgba(205, 225, 207, .45), transparent 36rem),
+    linear-gradient(135deg, #f4f4ed 0%, #eaf0e9 48%, #f2f3ec 100%);
+  font-family: "Aptos", "Segoe UI", sans-serif;
+}
+
+button { font: inherit; }
+
+.app-shell { max-width: 1510px; margin: 0 auto; padding: 0 38px; }
+
+.masthead {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 1px solid rgba(24, 54, 58, .17);
+  color: var(--ink);
+}
+
+.back-link { color: var(--muted); text-decoration: none; font-size: 13px; width: fit-content; }
+.back-link:hover { color: var(--ink); }
+.back-link:first-letter { color: var(--coral); }
+.brand-lockup { display: flex; align-items: center; gap: 10px; font-family: Georgia, "Times New Roman", serif; font-size: 17px; }
+.brand-mark { display: grid; width: 26px; aspect-ratio: 1; place-items: center; border-radius: 50%; color: var(--deep); background: var(--mint-strong); font: 700 14px Georgia, serif; }
+.mode-label { justify-self: end; color: var(--muted); font-size: 10px; letter-spacing: .08em; }
+.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #53a884; box-shadow: 0 0 0 3px rgba(83, 168, 132, .14); }
+
+.page-heading { display: flex; justify-content: space-between; align-items: end; gap: 32px; padding: 38px 0 24px; }
+.eyebrow { margin: 0 0 9px; color: #618176; font-size: 10px; font-weight: 700; letter-spacing: .13em; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(34px, 4vw, 52px); line-height: 1.05; }
+.heading-note { max-width: 390px; margin: 0 0 3px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+.level-nav { display: flex; align-items: center; gap: 16px; min-height: 52px; border-top: 1px solid rgba(24, 54, 58, .12); }
+.level-step { border: 0; padding: 10px 0; color: #82908e; background: transparent; cursor: pointer; font-size: 12px; transition: color .16s ease; }
+.level-step .step-number { margin-right: 7px; color: #87a599; font-size: 10px; font-variant-numeric: tabular-nums; }
+.level-step .step-name { font-size: 12px; }
+.level-step:hover, .level-step.is-current { color: var(--ink); }
+.level-step.is-current { box-shadow: inset 0 -2px var(--coral); }
+.level-arrow { color: #a4afaa; font-size: 12px; }
+
+.explorer-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(310px, .75fr); min-height: 660px; border: 1px solid #d3ddd7; background: var(--white); box-shadow: 0 18px 45px rgba(21, 53, 52, .08); }
+.visual-stage { display: flex; min-width: 0; min-height: 660px; flex-direction: column; overflow: hidden; color: #e5f0e7; background: var(--deep); }
+.stage-topline { display: flex; justify-content: space-between; padding: 20px 22px 0; color: #9cb6ae; font-size: 9px; font-weight: 700; letter-spacing: .13em; }
+.scene { position: relative; display: grid; flex: 1; min-height: 0; place-items: center; overflow: hidden; }
+.scene[hidden] { display: none; }
+.cell-art, .mito-art, .membrane-art { display: block; width: 100%; max-height: 568px; height: auto; }
+.cell-art { padding: 2px 7px 0; }
+.cell-outline { fill: #23474b; stroke: #78cdb1; stroke-width: 5; }
+.membrane-ring { fill: none; stroke: #b6e3d2; stroke-width: 12; opacity: .55; }
+.cytoplasm-fill { fill: url(#cytoplasm-fill); }
+.fiber { fill: none; stroke: #88b9a8; stroke-width: 3; stroke-linecap: round; opacity: .53; }
+.nucleus-body { fill: #668d8d; stroke: #c0d8c4; stroke-width: 3; }
+.nucleus-core { fill: #e88c6d; stroke: #f4c2a7; stroke-width: 2; }
+.nucleus-strand { fill: none; stroke: #e7d398; stroke-width: 3; stroke-linecap: round; }
+.er-membrane { fill: none; stroke-linecap: round; stroke-width: 8; }
+.rough-line { stroke: #df9b72; }
+.smooth-line { stroke: #91c4b0; }
+.ribosome-dots circle, .free-ribosome { fill: #f2cb79; stroke: #724d40; stroke-width: 1; }
+.mitochondrion-body { fill: #e7a16c; stroke: #ffe0a4; stroke-width: 3; }
+.mitochondrion-fold { fill: none; stroke: #7a5144; stroke-width: 5; stroke-linecap: round; }
+.golgi-stack { fill: none; stroke: #90c4b2; stroke-width: 8; stroke-linecap: round; }
+.golgi-vesicle { fill: #e88c6d; }
+.lysosome-body { fill: #e8bd67; stroke: #fff0b7; stroke-width: 2; }
+.lysosome-dot { fill: #9c624c; }
+.peroxisome-body { fill: #93cad0; stroke: #e0faf1; stroke-width: 2; }
+.peroxisome-mark, .centrosome-ray { fill: none; stroke: #386267; stroke-width: 2; stroke-linecap: round; }
+.vesicle-body { fill: #e9d68f; stroke: #f9f1cc; stroke-width: 2; }
+.centriole { fill: #e88c6d; stroke: #ffd5b7; stroke-width: 1; }
+.svg-label { fill: #d9e9dc; font: 700 11px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; paint-order: stroke; stroke: #23474b; stroke-width: 4px; stroke-linejoin: round; }
+.svg-label-strong { font-size: 13px; }
+.svg-label-dark { fill: #324a43; stroke: #f3d9a5; }
+.svg-hint { fill: #c9dfd3; font: 700 8px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.svg-hint-dark { fill: #775b43; }
+.membrane-label { fill: #b9e1d1; stroke: var(--deep); }
+.hit-target { cursor: pointer; transition: filter .18s ease; }
+.hit-target:hover { filter: brightness(1.13) drop-shadow(0 0 5px rgba(240, 206, 127, .56)); }
+.hit-target:focus { outline: none; filter: brightness(1.16) drop-shadow(0 0 6px #f0ce7f); }
+.hit-target.is-selected { filter: brightness(1.15) drop-shadow(0 0 7px rgba(240, 206, 127, .65)); }
+.scene-callout { position: absolute; right: 5%; bottom: 5%; display: flex; gap: 24px; align-items: center; border: 1px solid rgba(230, 240, 228, .32); border-radius: 3px; padding: 11px 14px; color: #eaf4e9; background: rgba(9, 31, 35, .72); cursor: pointer; font-size: 11px; }
+.scene-callout span { color: var(--gold); }
+.scene-callout:hover { background: #1c4145; }
+
+.mito-outer { fill: #bb765e; stroke: #f5c382; stroke-width: 4; }
+.mito-space { fill: #efd096; stroke: #fbe3ac; stroke-width: 3; }
+.mito-matrix { fill: url(#mito-fill); stroke: #ba7958; stroke-width: 3; }
+.inner-membrane-line { fill: #89b9a1; stroke: #467971; stroke-width: 9; stroke-linejoin: round; }
+.cristae-detail { fill: none; stroke: #315f5c; stroke-width: 5; stroke-linecap: round; }
+.mito-dna { fill: none; stroke: #bd6652; stroke-width: 4; stroke-linecap: round; }
+.dna-rung { stroke: #bd6652; stroke-width: 2; }
+.mito-ribosome { fill: #557a6b; stroke: #fff0c8; stroke-width: 2; }
+.mito-annotation path { stroke: #604e40; stroke-width: 1.5; }
+.mito-annotation text { fill: #604e40; font: 700 11px "Segoe UI", sans-serif; letter-spacing: 1px; }
+.inner-membrane-hit:hover .inner-membrane-line { fill: #a5d0ae; }
+
+.membrane-art { max-height: 570px; padding: 10px; }
+.space-band { fill: #1c4145; stroke: #406267; stroke-width: 1; }
+.lower-band { fill: #294c47; }
+.band-label { fill: #d8ebdc; font: 700 12px "Segoe UI", sans-serif; letter-spacing: 1.5px; }
+.band-subtitle { fill: #91b1a6; font: 9px "Segoe UI", sans-serif; letter-spacing: 1px; }
+.protons circle { fill: #e88c6d; stroke: #ffd4b5; stroke-width: 1.5; }
+.protons text { fill: #432e29; font: 700 9px "Segoe UI", sans-serif; text-anchor: middle; }
+.bilayer-core { fill: #789d87; stroke: #b5d7a8; stroke-width: 2; }
+.lipid-heads circle { fill: #f1c66d; stroke: #6e6751; stroke-width: 1.5; }
+.lipid-tails path { fill: none; stroke: #e2b28a; stroke-width: 2; stroke-linecap: round; }
+.complex path { fill: #da8064; stroke: #ffd3a4; stroke-width: 2; }
+.complex .complex-cap { fill: #f1bd6b; }
+.complex text, .cytochrome text, .oxygen-target text, .atp-reaction text { fill: #20383a; font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
+.complex text { fill: #fff7df; }
+.complex-one path:first-child { fill: #d97961; }
+.complex-three path:first-child { fill: #c66c59; }
+.complex-four path:first-child { fill: #de9460; }
+.complex-two circle { fill: #e8c86e; stroke: #fff0bd; stroke-width: 2; }
+.complex-two text { fill: #384d3c; }
+.cytochrome circle { fill: #a8d4be; stroke: #e4f3d7; stroke-width: 2; }
+.cytochrome text { fill: #244947; }
+.oxygen-target circle { fill: #8acbd0; stroke: #d9f8eb; stroke-width: 2; }
+.oxygen-target text { fill: #24434a; }
+.atp-machine .synthase-stalk, .atp-machine .synthase-base { fill: #84c6ac; stroke: #d2f2d8; stroke-width: 2; }
+.atp-machine .synthase-head { fill: #f1c66d; stroke: #fff0bd; stroke-width: 2; }
+.atp-machine text { fill: #30443a; font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
+.atp-machine .machine-label { fill: #e4eee1; font-size: 8px; letter-spacing: .7px; }
+.electron-flow path { stroke: #f4db91; stroke-width: 2; marker-end: url(#arrow); }
+.electron-flow text, .proton-flow text { fill: #f6e5b0; font: 700 10px "Segoe UI", sans-serif; }
+.proton-flow path { stroke: #92d7bc; stroke-width: 2; stroke-dasharray: 4 3; marker-end: url(#arrow-mint); }
+.atp-reaction { cursor: pointer; }
+.atp-reaction text { fill: #e9f0dc; font-family: Georgia, serif; font-size: 18px; }
+.atp-reaction path { stroke: var(--gold); stroke-width: 2; marker-end: url(#arrow-gold); }
+.atp-reaction .reaction-note { fill: #a8c2b3; font: 8px "Segoe UI", sans-serif; letter-spacing: .7px; }
+.scene-detail { align-items: center; justify-items: stretch; }
+.dynamic-scene { width: 100%; }
+.detail-svg { display: block; width: 100%; max-height: 568px; height: auto; }
+.detail-title { fill: #e7f0e5; font: 400 25px Georgia, "Times New Roman", serif; }
+.detail-subtitle { fill: #a4c2b4; font: 700 9px "Segoe UI", sans-serif; letter-spacing: 1.4px; }
+.diagram-note { fill: #abc5b7; font: 700 9px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.diagram-small-label { fill: #9cb6aa; font: 700 8px "Segoe UI", sans-serif; letter-spacing: 1px; }
+.bilayer-water { fill: #28484a; stroke: #749d8a; stroke-width: 2; }
+.bilayer-center { stroke: #1b363b; stroke-width: 4; }
+.bilayer-head { fill: #f0c96f; stroke: #fff0bc; stroke-width: 1.5; }
+.bilayer-head.lower { fill: #d8a665; }
+.bilayer-tail { fill: none; stroke: #e9c497; stroke-width: 2; stroke-linecap: round; }
+.lipid-hit-area { fill: transparent; pointer-events: all; }
+.lipid-type { fill: #18383c; font: 700 8px "Segoe UI", sans-serif; text-anchor: middle; pointer-events: none; }
+.sterol-hydroxyl { fill: #f0c96f; stroke: #fff0bc; stroke-width: 1.5; }
+.glycocalyx-feature, .membrane-protein-feature { cursor: pointer; transition: filter .16s ease; }
+.glycocalyx-feature:hover, .membrane-protein-feature:hover, .glycocalyx-feature:focus, .membrane-protein-feature:focus { outline: none; filter: brightness(1.2) drop-shadow(0 0 6px rgba(239, 198, 109, .58)); }
+.glycocalyx-branch { fill: none; stroke: #90c7a8; stroke-width: 4; stroke-linecap: round; }
+.glycocalyx-branch.secondary { stroke: #d9aa74; stroke-width: 3; }
+.glycocalyx-hit-area { fill: transparent; pointer-events: all; }
+.glycocalyx-sugar { stroke: #f4e6c3; stroke-width: 1.5; }
+.glycocalyx-sugar.sugar-one { fill: #e88c6d; }
+.glycocalyx-sugar.sugar-two { fill: #efc66d; }
+.membrane-feature-label { fill: #d9e9dc; stroke: #102b31; stroke-width: 3px; paint-order: stroke; font: 700 9px "Segoe UI", sans-serif; letter-spacing: .8px; text-anchor: middle; }
+.glycocalyx-label { fill: #e8ca88; }
+.protein-body { stroke: #f1d99a; stroke-width: 2; }
+.aquaporin-body { fill: #59a994; }
+.nachr-body { fill: #cb7966; }
+.protein-subunit { fill: #e4a36f; stroke: #fff0c5; stroke-width: 1.5; }
+.glut1-body { fill: #789dc0; }
+.protein-pore { fill: #173b42; stroke: #f5d88f; stroke-width: 1.5; }
+.protein-gate { fill: none; stroke: #f2d27d; stroke-width: 3; }
+.nachr-pore { fill: #173b42; stroke: #f2dfaa; stroke-width: 2; }
+.glut1-cleft { fill: none; stroke: #173b42; stroke-width: 9; stroke-linecap: round; }
+.protein-label { fill: #e8eddb; font-size: 8px; }
+.protein-view-label { fill: #d9e9dc; font: 700 10px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.subunit-label { fill: #f5efdc; font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
+.aqp-protomer rect { fill: #4b8074; stroke: #b1d6b5; stroke-width: 3; }
+.aqp-pore { fill: #163940; stroke: #f1ca76; stroke-width: 4; }
+.aqp-water { fill: #77c7d0; stroke: #e1f5e8; stroke-width: 2; }
+.nachr-subunit circle { stroke: #f0d99d; stroke-width: 2.5; }
+.nachr-subunit.alpha circle { fill: #dd8a68; }
+.nachr-subunit.beta circle { fill: #73a9a1; }
+.nachr-subunit.delta circle { fill: #c6a16f; }
+.nachr-subunit.epsilon circle { fill: #7d9fc1; }
+.nachr-channel { fill: #d7bb76; stroke: #f9ebc5; stroke-width: 2; }
+.nachr-channel-core { fill: #173b42; }
+.channel-label { fill: #f5efdc; font: 700 8px "Segoe UI", sans-serif; text-anchor: middle; }
+.nachr-ligand { cursor: pointer; }
+.nachr-ligand rect { fill: #f0c66d; stroke: #fff0c4; stroke-width: 2; }
+.nachr-ligand .ligand-label { fill: #243e41; font: 700 12px "Segoe UI", sans-serif; text-anchor: middle; }
+.binding-site-label { fill: #edce8e; font: 700 7px "Segoe UI", sans-serif; letter-spacing: .4px; text-anchor: middle; }
+.nachr-ligand:hover, .nachr-ligand:focus { outline: none; filter: brightness(1.18) drop-shadow(0 0 6px rgba(239, 198, 109, .58)); }
+.glut1-cavity { fill: #173b42; stroke: #edca7c; stroke-width: 2; }
+.glut1-helix circle { stroke: #f1ddaa; stroke-width: 2; }
+.glut1-helix.n-domain circle { fill: #4e9a88; }
+.glut1-helix.c-domain circle { fill: #718fb0; }
+.helix-label { fill: #e5eee0; font: 700 9px "Segoe UI", sans-serif; text-anchor: middle; }
+.cavity-label { fill: #f0da9f; font: 700 8px "Segoe UI", sans-serif; letter-spacing: .5px; text-anchor: middle; }
+.domain-label { font: 700 8px "Segoe UI", sans-serif; letter-spacing: .6px; text-anchor: middle; }
+.n-domain-label { fill: #8fd2b6; }
+.c-domain-label { fill: #a9c1df; }
+.cardiolipin-accent { fill: none; stroke: #de9272; stroke-width: 2; stroke-linecap: round; }
+.molecule-thumb { fill: #f7f4e8; stroke: #95bda7; stroke-width: 2; }
+.molecule-preview { pointer-events: none; }
+.node-glyph { fill: none; stroke: #f2d180; stroke-width: 2.5; stroke-linecap: round; }
+.node-label { fill: #d1e2d6; font: 700 8px "Segoe UI", sans-serif; text-anchor: middle; }
+.diagram-action, .bilayer-lipid { cursor: pointer; transition: filter .16s ease; }
+.diagram-action:hover, .bilayer-lipid:hover, .diagram-action:focus, .bilayer-lipid:focus { outline: none; filter: brightness(1.2) drop-shadow(0 0 6px rgba(239, 198, 109, .58)); }
+.child-node { fill: #325a55; stroke: #83c3a6; stroke-width: 2; }
+.component-caption, .secondary-label text { fill: #92b3a5; font: 700 8px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.membrane-outer { fill: #294b4c; stroke: #dea975; stroke-width: 10; }
+.membrane-inner { fill: #527e6e; stroke: #f0c66e; stroke-width: 8; }
+.double-membrane-dna { fill: none; stroke: #f0c66e; stroke-width: 4; stroke-linecap: round; }
+.nucleus-shell { fill: #365e62; stroke: #d59a78; stroke-width: 5; }
+.helix-line { fill: none; stroke: #c5ddbc; stroke-width: 4; stroke-linecap: round; }
+.helix-rungs { fill: none; stroke: #eaa174; stroke-width: 2; }
+.ribosome-large { fill: #548c79; stroke: #d3e8c5; stroke-width: 3; }
+.ribosome-small { fill: #a2c99d; stroke: #e8d39a; stroke-width: 3; }
+.rna-thread { fill: none; stroke: #e88c6d; stroke-width: 3; stroke-linecap: round; }
+.network-visual path, .filament-visual path { fill: none; stroke: #8dc5a9; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+.network-visual circle, .filament-visual circle { fill: #e8be72; stroke: #ffe7af; stroke-width: 2; }
+.stack-visual path { fill: #558d7b; stroke: #edc16d; stroke-width: 3; }
+.vesicle-shell { fill: #426f64; stroke: #efc56d; stroke-width: 10; }
+.vesicle-core { fill: #274b4b; stroke: #b6d1a7; stroke-width: 2; }
+.cargo-dot { fill: #e88c6d; stroke: #ffe0b8; stroke-width: 2; }
+.centrosome-spokes { fill: none; stroke: #9ec7ad; stroke-width: 6; stroke-linecap: round; }
+.centrosome-visual rect { fill: #e58d6b; stroke: #ffe0b8; stroke-width: 2; }
+.protein-visual path { fill: #568a7d; stroke: #b9d6af; stroke-width: 3; }
+.protein-visual circle { fill: #e9bd72; stroke: #fff0be; stroke-width: 2; }
+.pathway-step circle { fill: #386b61; stroke: #edc36c; stroke-width: 3; }
+.pathway-step text { fill: #f5e9c5; font: 700 13px "Segoe UI", sans-serif; text-anchor: middle; }
+.pathway-step .pathway-label { fill: #c4d9ca; font-size: 9px; }
+.pathway-arrow { fill: none; stroke: #edc36c; stroke-width: 2; marker-end: url(#arrow-gold); }
+.carbohydrate-visual path { fill: none; stroke: #8cc3a6; stroke-width: 6; stroke-linecap: round; }
+.molecule-viewer { fill: #f7f4e8; stroke: #a6c7af; stroke-width: 2; }
+.molecule-svg .diagram-note { fill: #b4c9bb; }
+.context-strip rect { fill: #345d56; stroke: #90c8a8; stroke-width: 2; }
+.context-strip > path { stroke: #1f4143; stroke-width: 3; }
+.context-lipid circle { fill: #e9c46d; stroke: #ffedbd; stroke-width: 1.5; }
+.context-lipid path { fill: none; stroke: #edc69c; stroke-width: 2; }
+.context-lipid.is-selected circle { fill: #e88c6d; stroke: #fff0bd; stroke-width: 3; }
+.context-caption { fill: #d4e5d5; font: 700 8px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.stage-footer { display: flex; justify-content: space-between; padding: 15px 22px 18px; color: #9cb6ae; border-top: 1px solid rgba(228, 240, 230, .14); font-size: 10px; }
+.stage-key { display: flex; gap: 7px; align-items: center; font-size: 9px; letter-spacing: .08em; }
+.stage-key i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+
+.inspector { display: flex; min-width: 0; flex-direction: column; padding: 28px 26px 22px; }
+.inspector-heading { padding-bottom: 19px; border-bottom: 1px solid var(--line); }
+.inspector-heading .eyebrow { margin-bottom: 12px; }
+.inspector h2 { margin-bottom: 10px; font-family: Georgia, "Times New Roman", serif; font-size: 29px; font-weight: 400; line-height: 1.1; }
+.target-summary { margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.detail-block { padding: 17px 0 14px; border-bottom: 1px solid var(--line); }
+.detail-label { color: #688378; font-size: 9px; font-weight: 700; letter-spacing: .13em; }
+.detail-block p { margin: 7px 0 0; color: #3b5554; font-size: 12px; line-height: 1.55; }
+.composition-block p { color: #6a7770; }
+.molecule-section { padding-top: 18px; }
+.molecule-heading-row { display: flex; justify-content: space-between; align-items: end; gap: 10px; }
+.molecule-heading-row h3 { margin: 5px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: 19px; font-weight: 400; }
+.molecule-count { display: grid; min-width: 24px; height: 24px; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-size: 10px; }
+.molecule-intro { margin: 8px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.molecule-list { display: grid; grid-template-columns: 1fr; gap: 8px; max-height: 250px; overflow: auto; scrollbar-color: #b7c7bd transparent; scrollbar-width: thin; }
+.molecule-card { display: grid; grid-template-columns: 105px 1fr; min-width: 0; overflow: hidden; border: 1px solid #dbe4dc; border-radius: var(--radius); padding: 0; color: var(--ink); background: #f7f8f1; text-align: left; cursor: pointer; transition: border-color .16s ease, background .16s ease; }
+.molecule-card[hidden] { display: none; }
+.molecule-card:hover, .molecule-card.is-selected { border-color: #68a78d; background: #eef5ed; }
+.molecule-image-wrap { display: grid; min-height: 79px; place-items: center; background: #fff; }
+.molecule-image-wrap img { display: block; width: 100%; height: 78px; object-fit: contain; }
+.molecule-meta { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: 8px 10px; }
+.molecule-name { color: #294746; font-size: 11px; font-weight: 700; line-height: 1.3; }
+.molecule-formula { margin-top: 3px; color: #648176; font: 10px ui-monospace, Consolas, monospace; }
+.molecule-role { display: none; margin-top: 5px; color: #687977; font-size: 10px; line-height: 1.4; }
+.molecule-card.is-selected .molecule-role { display: block; }
+.zoom-action { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; border: 0; border-radius: 2px; padding: 13px 14px; color: #f1f5e9; background: #25554e; cursor: pointer; text-align: left; font-size: 12px; }
+.zoom-action[hidden] { display: none; }
+.zoom-action:hover { background: #327064; }
+.zoom-action span:last-child { color: #f0c66d; font-size: 16px; }
+.page-footer { display: flex; justify-content: space-between; padding: 17px 0 25px; color: #72837c; font-size: 9px; letter-spacing: .1em; }
+.page-footer b { color: var(--coral); }
+
+@media (max-width: 980px) {
+  .app-shell { padding: 0 22px; }
+  .explorer-layout { grid-template-columns: minmax(0, 1.3fr) minmax(275px, .8fr); }
+  .inspector { padding: 22px 19px; }
+  .visual-stage { min-height: 610px; }
+}
+
+@media (max-width: 720px) {
+  .app-shell { padding: 0 14px; }
+  .masthead { min-height: 62px; grid-template-columns: 1fr auto; }
+  .brand-lockup { grid-column: 1; grid-row: 1; justify-self: center; transform: translateX(12px); font-size: 15px; }
+  .back-link { grid-column: 1; grid-row: 1; z-index: 1; font-size: 0; }
+  .back-link span { display: none; }
+  .back-link::first-letter { font-size: 20px; }
+  .mode-label { grid-column: 2; grid-row: 1; font-size: 8px; }
+  .page-heading { align-items: start; flex-direction: column; gap: 12px; padding: 28px 0 21px; }
+  h1 { font-size: 40px; }
+  .heading-note { max-width: 530px; font-size: 13px; }
+  .level-nav { gap: 8px; min-height: 47px; overflow-x: auto; white-space: nowrap; }
+  .level-step { font-size: 10px; }
+  .level-step .step-number { margin-right: 4px; }
+  .level-step .step-name { font-size: 10px; }
+  .explorer-layout { display: flex; flex-direction: column; }
+  .visual-stage { min-height: 0; }
+  .scene { min-height: 355px; }
+  .scene-detail { justify-items: start; overflow-x: auto; }
+  .dynamic-scene { min-width: 650px; }
+  .detail-svg { max-height: 480px; }
+  .scene-detail.molecule-detail { justify-items: stretch; overflow-x: hidden; }
+  .scene-detail.molecule-detail .dynamic-scene { width: 100%; min-width: 0; }
+  .scene-detail.molecule-detail .detail-svg { width: 100%; max-height: none; }
+  .cell-art, .mito-art { width: 100%; }
+  .membrane-art { width: 790px; max-width: none; height: 385px; }
+  .scene-membrane { justify-content: start; overflow-x: auto; }
+  .scene-callout { right: 3%; bottom: 3%; padding: 9px 10px; font-size: 9px; }
+  .stage-topline { padding: 15px 15px 0; font-size: 8px; }
+  .stage-footer { padding: 12px 15px 14px; }
+  .inspector { padding: 23px 19px 19px; }
+  .inspector h2 { font-size: 25px; }
+  .molecule-list { max-height: none; }
+  .page-footer { gap: 12px; flex-direction: column; font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .visual-stage { animation: stage-arrive .42s ease-out both; }
+  .inspector { animation: panel-arrive .48s .06s ease-out both; }
+  @keyframes stage-arrive { from { opacity: .35; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes panel-arrive { from { opacity: .4; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+}

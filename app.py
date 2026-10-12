@@ -10,6 +10,7 @@ def create_app():
     from games.carb_snake.routes import carb_snake_bp
     from games.ph_dodger.routes import ph_dodger_bp
     from games.reaction_lab.routes import reaction_lab_bp   
+    from games.cell_simulator.routes import cell_simulator_bp
 
     # register blueprints
     app.register_blueprint(functional_group_bp, url_prefix="/functional-group")
@@ -17,6 +18,7 @@ def create_app():
     app.register_blueprint(carb_snake_bp, url_prefix="/carb-snake")
     app.register_blueprint(ph_dodger_bp, url_prefix="/ph-dodger")
     app.register_blueprint(reaction_lab_bp, url_prefix="/reaction-lab")
+    app.register_blueprint(cell_simulator_bp, url_prefix="/cell-simulator")
 
 
     # main site route

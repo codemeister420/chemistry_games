@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b31">
+  <title>Cell Simulator</title>
+  <link rel="stylesheet" href="{{ url_for('cell_simulator.static', filename='cell_simulator/css/explorer.css') }}">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="masthead">
+      <a class="back-link" href="{{ url_for('home') }}" aria-label="Back to Chemistry Games">← <span>Games</span></a>
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">C</span>
+        <span>Cell Simulator</span>
+      </div>
+      <span class="mode-label"><span class="live-dot"></span> FREE EXPLORATION</span>
+    </header>
+
+    <section class="page-heading" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">A LIVING SYSTEM, DOWN TO ITS MOLECULES</p>
+        <h1 id="page-title">Explore the cell.</h1>
+      </div>
+      <p class="heading-note">Select a structure to inspect it. Follow the mitochondrion inward to see how membranes turn molecular energy into ATP.</p>
+    </section>
+
+    <nav class="level-nav" id="level-nav" aria-label="Exploration path">
+      <button class="level-step is-current" type="button" data-scene="cell"><span>01</span> Whole cell</button>
+      <span class="level-arrow" aria-hidden="true">/</span>
+      <button class="level-step" type="button" data-scene="mitochondrion"><span>02</span> Mitochondrion</button>
+      <span class="level-arrow" aria-hidden="true">/</span>
+      <button class="level-step" type="button" data-scene="membrane"><span>03</span> Inner membrane</button>
+    </nav>
+
+    <div class="explorer-layout">
+      <section class="visual-stage" aria-label="Interactive cell illustration">
+        <div class="stage-topline">
+          <span id="scene-kicker">CELL ORGANIZATION</span>
+          <span id="scene-index">VIEW 01 / 03</span>
+        </div>
+
+        <div class="scene scene-cell is-visible" id="scene-cell">
+          <svg class="cell-art" viewBox="0 0 920 620" role="group" aria-labelledby="cell-svg-title cell-svg-description">
+            <title id="cell-svg-title">Selectable eukaryotic cell</title>
+            <desc id="cell-svg-description">An illustrated animal cell with selectable nucleus, mitochondrion, ribosomes, endoplasmic reticulum, Golgi apparatus, lysosome, peroxisome, vesicles, cytoskeleton, centrosome, plasma membrane, and cytoplasm.</desc>
+            <defs>
+              <linearGradient id="cytoplasm-fill" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#d6eee2"/>
+                <stop offset="1" stop-color="#b9ddd4"/>
+              </linearGradient>
+              <filter id="cell-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#061d22" flood-opacity=".2"/>
+              </filter>
+            </defs>
+
+            <path class="cell-outline" filter="url(#cell-shadow)" d="M169 126 C224 65 350 71 433 91 C534 53 651 103 727 123 C814 145 858 218 837 306 C861 389 794 484 714 511 C633 558 534 526 454 550 C358 582 247 538 210 486 C124 458 91 374 119 302 C94 232 112 167 169 126Z"/>
+            <g class="hit-target membrane-hit" data-target="plasma_membrane" role="button" tabindex="0" aria-label="Inspect plasma membrane">
+              <path class="membrane-ring" d="M169 126 C224 65 350 71 433 91 C534 53 651 103 727 123 C814 145 858 218 837 306 C861 389 794 484 714 511 C633 558 534 526 454 550 C358 582 247 538 210 486 C124 458 91 374 119 302 C94 232 112 167 169 126Z"/>
+              <text class="svg-label membrane-label" x="430" y="73">PLASMA MEMBRANE</text>
+            </g>
+
+            <g class="hit-target cytoplasm-hit" data-target="cytoplasm" role="button" tabindex="0" aria-label="Inspect cytoplasm">
+              <path class="cytoplasm-fill" d="M176 136 C230 83 350 85 432 104 C528 68 642 111 718 135 C792 157 840 220 821 302 C845 383 781 468 705 496 C624 535 531 509 456 532 C365 561 262 522 223 472 C144 442 111 367 136 301 C112 237 126 174 176 136Z"/>
+            </g>
+
+            <g class="hit-target cytoskeleton-hit" data-target="cytoskeleton" role="button" tabindex="0" aria-label="Inspect cytoskeleton">
+              <path class="fiber fiber-one" d="M181 230 C304 197 381 230 487 206 S684 200 787 244"/>
+              <path class="fiber fiber-two" d="M176 393 C310 351 391 382 489 358 S666 354 784 397"/>
+              <path class="fiber fiber-three" d="M274 147 C333 238 328 328 292 475"/>
+              <path class="fiber fiber-four" d="M633 146 C580 245 594 366 676 479"/>
+              <text class="svg-label" x="515" y="478">CYTOSKELETON</text>
+            </g>
+
+            <g class="hit-target nucleus-hit" data-target="nucleus" role="button" tabindex="0" aria-label="Inspect nucleus">
+              <ellipse class="nucleus-body" cx="343" cy="305" rx="103" ry="91"/>
+              <ellipse class="nucleus-core" cx="363" cy="313" rx="34" ry="29"/>
+              <path class="nucleus-strand" d="M277 282 C301 257 319 324 342 293 S383 267 405 300 M280 334 C303 362 323 307 344 340 S386 360 410 327"/>
+              <text class="svg-label svg-label-strong" x="302" y="420">NUCLEUS</text>
+            </g>
+
+            <g class="hit-target rough-er-hit" data-target="rough_er" role="button" tabindex="0" aria-label="Inspect rough endoplasmic reticulum">
+              <path class="er-membrane rough-line" d="M438 235 C483 207 513 211 544 231 S605 246 642 222 M433 253 C477 226 510 232 542 250 S602 265 642 241 M431 272 C478 249 510 251 541 271 S600 283 637 261"/>
+              <g class="ribosome-dots"><circle cx="461" cy="226" r="3"/><circle cx="488" cy="218" r="3"/><circle cx="521" cy="232" r="3"/><circle cx="556" cy="245" r="3"/><circle cx="596" cy="246" r="3"/><circle cx="472" cy="245" r="3"/><circle cx="510" cy="244" r="3"/><circle cx="573" cy="263" r="3"/><circle cx="615" cy="258" r="3"/></g>
+              <text class="svg-label" x="501" y="199">ROUGH ER</text>
+            </g>
+
+            <g class="hit-target smooth-er-hit" data-target="smooth_er" role="button" tabindex="0" aria-label="Inspect smooth endoplasmic reticulum">
+              <path class="er-membrane smooth-line" d="M462 294 C491 280 512 289 529 303 S566 323 594 304 M461 309 C489 297 510 304 526 319 S565 338 594 320 M470 324 C495 314 512 321 526 335"/>
+              <text class="svg-label" x="480" y="357">SMOOTH ER</text>
+            </g>
+
+            <g class="hit-target mitochondrion-hit" data-target="mitochondrion" role="button" tabindex="0" aria-label="Open mitochondrion">
+              <path class="mitochondrion-body" d="M617 331 C637 300 691 300 724 322 C752 341 751 380 727 397 C699 417 648 411 622 391 C605 378 604 351 617 331Z"/>
+              <path class="mitochondrion-fold" d="M625 350 C640 338 644 373 659 361 S678 337 692 355 S711 379 728 355 M626 375 C642 361 651 393 668 378 S693 354 705 374"/>
+              <text class="svg-label svg-label-strong" x="637" y="435">MITOCHONDRION</text>
+              <text class="svg-hint" x="653" y="454">OPEN TO EXPLORE</text>
+            </g>
+
+            <g class="hit-target golgi-hit" data-target="golgi" role="button" tabindex="0" aria-label="Inspect Golgi apparatus">
+              <path class="golgi-stack" d="M294 461 C326 446 366 446 393 459 M287 474 C321 461 366 462 400 476 M293 487 C327 475 365 478 393 491 M306 500 C334 491 359 492 380 502"/>
+              <circle class="golgi-vesicle" cx="402" cy="455" r="7"/><circle class="golgi-vesicle" cx="282" cy="450" r="5"/>
+              <text class="svg-label" x="310" y="527">GOLGI</text>
+            </g>
+
+            <g class="hit-target ribosomes-hit" data-target="ribosomes" role="button" tabindex="0" aria-label="Inspect ribosomes">
+              <circle class="free-ribosome" cx="528" cy="403" r="5"/><circle class="free-ribosome" cx="550" cy="421" r="4"/><circle class="free-ribosome" cx="570" cy="397" r="4"/><circle class="free-ribosome" cx="506" cy="428" r="4"/><circle class="free-ribosome" cx="589" cy="416" r="5"/>
+              <text class="svg-label" x="503" y="449">RIBOSOMES</text>
+            </g>
+
+            <g class="hit-target lysosome-hit" data-target="lysosome" role="button" tabindex="0" aria-label="Inspect lysosome">
+              <circle class="lysosome-body" cx="738" cy="267" r="25"/><circle class="lysosome-dot" cx="729" cy="259" r="3"/><circle class="lysosome-dot" cx="746" cy="274" r="4"/><circle class="lysosome-dot" cx="745" cy="255" r="2.5"/>
+              <text class="svg-label" x="706" y="311">LYSOSOME</text>
+            </g>
+
+            <g class="hit-target peroxisome-hit" data-target="peroxisome" role="button" tabindex="0" aria-label="Inspect peroxisome">
+              <circle class="peroxisome-body" cx="222" cy="402" r="22"/><path class="peroxisome-mark" d="M211 402h22 M222 391v22"/>
+              <text class="svg-label" x="186" y="442">PEROXISOME</text>
+            </g>
+
+            <g class="hit-target vesicles-hit" data-target="vesicles" role="button" tabindex="0" aria-label="Inspect vesicles">
+              <circle class="vesicle-body" cx="686" cy="184" r="10"/><circle class="vesicle-body" cx="712" cy="199" r="7"/><circle class="vesicle-body" cx="672" cy="205" r="6"/>
+              <text class="svg-label" x="673" y="163">VESICLES</text>
+            </g>
+
+            <g class="hit-target centrosome-hit" data-target="centrosome" role="button" tabindex="0" aria-label="Inspect centrosome">
+              <path class="centrosome-ray" d="M197 234l23 18 M220 252l-20 24 M220 252l28-7 M220 252l5-30 M220 252l5 31"/>
+              <rect class="centriole" x="212" y="243" width="18" height="7" rx="3" transform="rotate(-25 221 246)"/><rect class="centriole" x="214" y="254" width="18" height="7" rx="3" transform="rotate(55 223 257)"/>
+              <text class="svg-label" x="158" y="293">CENTROSOME</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="scene scene-mitochondrion" id="scene-mitochondrion" hidden>
+          <svg class="mito-art" viewBox="0 0 820 510" role="group" aria-labelledby="mito-svg-title mito-svg-description">
+            <title id="mito-svg-title">Mitochondrion compartments</title>
+            <desc id="mito-svg-description">A cross-section of a mitochondrion showing the outer membrane, intermembrane space, folded inner membrane, matrix, mitochondrial DNA, and ribosomes.</desc>
+            <defs><linearGradient id="mito-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d99e"/><stop offset="1" stop-color="#efb477"/></linearGradient></defs>
+            <g class="hit-target" data-target="outer_membrane" role="button" tabindex="0" aria-label="Inspect outer membrane">
+              <path class="mito-outer" d="M118 266 C142 125 290 70 460 100 C621 68 746 164 716 296 C697 414 554 453 398 423 C241 461 88 390 118 266Z"/>
+              <text class="svg-label svg-label-dark" x="296" y="83">OUTER MEMBRANE</text>
+            </g>
+            <g class="hit-target" data-target="intermembrane_space" role="button" tabindex="0" aria-label="Inspect intermembrane space">
+              <path class="mito-space" d="M149 267 C170 151 300 105 454 127 C601 103 708 181 684 291 C663 386 544 417 400 392 C260 422 123 366 149 267Z"/>
+              <text class="svg-label svg-label-dark" x="502" y="132">INTERMEMBRANE SPACE</text>
+            </g>
+            <g class="hit-target" data-target="matrix" role="button" tabindex="0" aria-label="Inspect mitochondrial matrix">
+              <path class="mito-matrix" d="M183 268 C201 178 316 144 450 159 C572 142 672 200 650 289 C629 361 529 382 400 362 C286 385 162 347 183 268Z"/>
+              <text class="svg-label svg-label-dark svg-label-strong" x="334" y="330">MATRIX</text>
+            </g>
+            <g class="hit-target inner-membrane-hit" data-target="inner_membrane" role="button" tabindex="0" aria-label="Open inner membrane molecular view">
+              <path class="inner-membrane-line" d="M185 263 C206 184 310 160 391 184 C430 199 413 248 455 257 C497 265 516 214 551 207 C597 198 637 229 648 268 C657 310 613 343 570 333 C531 324 517 280 476 282 C431 284 425 333 381 343 C324 358 261 334 224 309 C196 290 178 280 185 263Z"/>
+              <path class="cristae-detail" d="M201 249 C230 216 262 231 282 254 S320 289 350 258 M474 193 C453 220 475 240 502 246 M543 317 C568 291 592 306 614 321"/>
+              <text class="svg-label svg-label-dark svg-label-strong" x="285" y="220">INNER MEMBRANE</text>
+              <text class="svg-hint svg-hint-dark" x="303" y="238">SELECT TO ZOOM INTO MOLECULES</text>
+            </g>
+            <g class="hit-target" data-target="mitochondrial_dna" role="button" tabindex="0" aria-label="Inspect mitochondrial DNA">
+              <path class="mito-dna" d="M322 275 C336 258 353 293 370 275 S404 257 420 276 S452 295 466 276 M322 288 C338 305 353 270 370 288 S404 307 420 288 S452 270 466 288"/>
+              <path class="dna-rung" d="M332 272l2 17 M349 276l3 12 M367 274l2 16 M385 273l2 17 M404 276l2 12 M423 276l1 13 M442 276l1 13"/>
+              <text class="svg-label svg-label-dark" x="345" y="317">mtDNA</text>
+            </g>
+            <g class="hit-target" data-target="mitochondrial_ribosomes" role="button" tabindex="0" aria-label="Inspect mitochondrial ribosomes">
+              <circle class="mito-ribosome" cx="511" cy="292" r="7"/><circle class="mito-ribosome" cx="535" cy="276" r="6"/><circle class="mito-ribosome" cx="549" cy="302" r="5"/>
+              <text class="svg-label svg-label-dark" x="490" y="352">RIBOSOMES</text>
+            </g>
+            <g class="mito-annotation"><path d="M623 180l46-39"/><text x="674" y="135">CRISTAE</text></g>
+            <text class="svg-label svg-label-dark" x="130" y="458">SELECT A COMPARTMENT · CLICK THE INNER MEMBRANE TO CONTINUE</text>
+          </svg>
+        </div>
+
+        <div class="scene scene-membrane" id="scene-membrane" hidden>
+          <svg class="membrane-art" viewBox="0 0 920 560" role="group" aria-labelledby="membrane-svg-title membrane-svg-description">
+            <title id="membrane-svg-title">Mitochondrial inner membrane and oxidative phosphorylation</title>
+            <desc id="membrane-svg-description">An interactive schematic of the phospholipid bilayer, electron transport complexes, proton pumping, oxygen reduction, and ATP synthase.</desc>
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0L0 6L8 3Z" fill="#f4db91"/></marker>
+              <marker id="arrow-mint" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0L0 6L8 3Z" fill="#92d7bc"/></marker>
+              <marker id="arrow-gold" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0L0 6L8 3Z" fill="#efc66d"/></marker>
+            </defs>
+            <rect class="space-band upper-band" x="24" y="26" width="872" height="126" rx="18"/>
+            <text class="band-label" x="52" y="61">INTERMEMBRANE SPACE</text>
+            <text class="band-subtitle" x="52" y="87">PROTONS ACCUMULATE HERE</text>
+            <g class="protons" aria-hidden="true">
+              <circle cx="281" cy="96" r="15"/><circle cx="326" cy="96" r="15"/><circle cx="371" cy="96" r="15"/><circle cx="416" cy="96" r="15"/><circle cx="461" cy="96" r="15"/><circle cx="506" cy="96" r="15"/><circle cx="551" cy="96" r="15"/><circle cx="596" cy="96" r="15"/>
+              <text x="281" y="101">H⁺</text><text x="326" y="101">H⁺</text><text x="371" y="101">H⁺</text><text x="416" y="101">H⁺</text><text x="461" y="101">H⁺</text><text x="506" y="101">H⁺</text><text x="551" y="101">H⁺</text><text x="596" y="101">H⁺</text>
+            </g>
+
+            <g class="hit-target lipid-layer" data-target="inner_membrane" role="button" tabindex="0" aria-label="Inspect the inner membrane bilayer">
+              <rect class="bilayer-core" x="38" y="206" width="844" height="150" rx="20"/>
+              <g class="lipid-heads">
+                <circle cx="65" cy="219" r="9"/><circle cx="105" cy="219" r="9"/><circle cx="145" cy="219" r="9"/><circle cx="185" cy="219" r="9"/><circle cx="225" cy="219" r="9"/><circle cx="265" cy="219" r="9"/><circle cx="305" cy="219" r="9"/><circle cx="345" cy="219" r="9"/><circle cx="385" cy="219" r="9"/><circle cx="425" cy="219" r="9"/><circle cx="465" cy="219" r="9"/><circle cx="505" cy="219" r="9"/><circle cx="545" cy="219" r="9"/><circle cx="585" cy="219" r="9"/><circle cx="625" cy="219" r="9"/><circle cx="665" cy="219" r="9"/><circle cx="705" cy="219" r="9"/><circle cx="745" cy="219" r="9"/><circle cx="785" cy="219" r="9"/><circle cx="825" cy="219" r="9"/><circle cx="855" cy="219" r="9"/>
+                <circle cx="65" cy="343" r="9"/><circle cx="105" cy="343" r="9"/><circle cx="145" cy="343" r="9"/><circle cx="185" cy="343" r="9"/><circle cx="225" cy="343" r="9"/><circle cx="265" cy="343" r="9"/><circle cx="305" cy="343" r="9"/><circle cx="345" cy="343" r="9"/><circle cx="385" cy="343" r="9"/><circle cx="425" cy="343" r="9"/><circle cx="465" cy="343" r="9"/><circle cx="505" cy="343" r="9"/><circle cx="545" cy="343" r="9"/><circle cx="585" cy="343" r="9"/><circle cx="625" cy="343" r="9"/><circle cx="665" cy="343" r="9"/><circle cx="705" cy="343" r="9"/><circle cx="745" cy="343" r="9"/><circle cx="785" cy="343" r="9"/><circle cx="825" cy="343" r="9"/><circle cx="855" cy="343" r="9"/>
+              </g>
+              <g class="lipid-tails">
+                <path d="M65 228l-5 32 7 24-6 26 M105 228l6 31-7 24 5 26 M145 228l-5 28 6 25-5 30 M185 228l6 30-5 24 6 26 M225 228l-4 28 5 25-6 30 M265 228l5 28-6 25 4 30 M305 228l-5 29 6 25-5 29 M345 228l5 30-6 25 5 28 M385 228l-5 29 6 25-4 29 M425 228l5 30-5 25 5 28 M465 228l-5 28 5 26-5 29 M505 228l5 29-6 25 4 29 M545 228l-5 28 6 25-5 30 M585 228l5 30-5 24 5 29 M625 228l-5 28 5 26-5 29 M665 228l5 30-5 25 5 28 M705 228l-5 28 5 26-5 29 M745 228l5 30-5 25 4 28 M785 228l-5 28 6 26-5 29 M825 228l5 30-5 25 5 28 M855 228l-5 28 5 26-5 29"/>
+              </g>
+            </g>
+
+            <g class="hit-target complex complex-one" data-target="complex_i" role="button" tabindex="0" aria-label="Inspect Complex I">
+              <path d="M178 196h68v172h-68z"/><path class="complex-cap" d="M164 196h96v22h-96z"/><text x="212" y="292">I</text>
+            </g>
+            <g class="hit-target complex complex-two" data-target="coq" role="button" tabindex="0" aria-label="Inspect coenzyme Q">
+              <circle cx="309" cy="286" r="19"/><text x="309" y="291">Q</text>
+            </g>
+            <g class="hit-target complex complex-three" data-target="complex_iii" role="button" tabindex="0" aria-label="Inspect Complex III">
+              <path d="M371 203h61v158h-61z"/><path class="complex-cap" d="M359 203h85v19h-85z"/><text x="401" y="291">III</text>
+            </g>
+            <g class="hit-target cytochrome" data-target="cytochrome_c" role="button" tabindex="0" aria-label="Inspect cytochrome c">
+              <circle cx="483" cy="184" r="17"/><text x="483" y="189">c</text>
+            </g>
+            <g class="hit-target complex complex-four" data-target="complex_iv" role="button" tabindex="0" aria-label="Inspect Complex IV">
+              <path d="M532 201h61v161h-61z"/><path class="complex-cap" d="M521 201h83v20h-83z"/><text x="563" y="290">IV</text>
+            </g>
+            <g class="hit-target oxygen-target" data-target="oxygen" role="button" tabindex="0" aria-label="Inspect oxygen">
+              <circle cx="641" cy="278" r="22"/><text x="641" y="283">O₂</text>
+            </g>
+            <g class="hit-target atp-machine" data-target="atp_synthase" role="button" tabindex="0" aria-label="Inspect ATP synthase">
+              <path class="synthase-stalk" d="M747 344v-51"/><path class="synthase-head" d="M713 289c0-22 14-37 34-37s34 15 34 37c0 12-8 18-17 18h-34c-9 0-17-6-17-18Z"/><path class="synthase-base" d="M735 205h24v48h-24z"/><text x="747" y="276">F₁</text>
+              <text class="machine-label" x="747" y="386">ATP SYNTHASE</text>
+            </g>
+
+            <g class="electron-flow" aria-hidden="true"><path d="M248 179h41 M329 179h36 M435 179h30 M501 179h19 M604 179h17"/><text x="280" y="168">e⁻</text><text x="350" y="168">e⁻</text><text x="452" y="168">e⁻</text><text x="507" y="168">e⁻</text></g>
+            <g class="proton-flow" aria-hidden="true"><path d="M211 195V141 M401 202V141 M561 199V141"/><text x="218" y="174">H⁺</text><text x="409" y="181">H⁺</text><text x="569" y="180">H⁺</text></g>
+
+            <rect class="space-band lower-band" x="24" y="398" width="872" height="136" rx="18"/>
+            <text class="band-label" x="52" y="439">MATRIX</text>
+            <text class="band-subtitle" x="52" y="465">LOWER PROTON CONCENTRATION</text>
+            <g class="atp-reaction" data-target="atp_synthase" role="button" tabindex="0" aria-label="Inspect ATP synthesis">
+              <text x="467" y="459">ADP</text><text x="516" y="459">+</text><text x="541" y="459">Pi</text><path d="M573 453h59"/><text x="647" y="459">ATP</text>
+              <text class="reaction-note" x="553" y="485">PROTON FLOW POWERS THIS REACTION</text>
+            </g>
+            <text class="svg-label svg-label-dark" x="53" y="511">FOLLOW AN ELECTRON CARRIER OR SELECT A MOLECULE IN THE INSPECTOR</text>
+          </svg>
+        </div>
+
+        <div class="scene scene-detail" id="scene-detail" hidden>
+          <div id="dynamic-scene" class="dynamic-scene"></div>
+        </div>
+
+        <div class="stage-footer">
+          <span id="stage-instruction">Every labeled structure is selectable.</span>
+          <span class="stage-key"><i></i> SELECTABLE</span>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-live="polite" aria-label="Selected structure details">
+        <div class="inspector-heading">
+          <p class="eyebrow" id="target-kind">CELL OVERVIEW</p>
+          <h2 id="target-name">A eukaryotic cell</h2>
+          <p class="target-summary" id="target-summary">A living cell is an organized system of membranes, compartments, molecular machines, and fluid space.</p>
+        </div>
+        <div class="detail-block">
+          <span class="detail-label">WHAT IT DOES</span>
+          <p id="target-function">Select any labeled structure to inspect its role. Choose the mitochondrion to explore its compartments and inner-membrane chemistry.</p>
+        </div>
+        <div class="detail-block composition-block">
+          <span class="detail-label">STRUCTURE</span>
+          <p id="target-components">13 selectable structures</p>
+        </div>
+        <section class="molecule-section" aria-labelledby="molecule-heading">
+          <div class="molecule-heading-row">
+            <div>
+              <span class="detail-label">CHEMISTRY VIEW</span>
+              <h3 id="molecule-heading">Molecules in focus</h3>
+            </div>
+            <span id="molecule-count" class="molecule-count">0</span>
+          </div>
+          <p class="molecule-intro" id="molecule-intro">Choose a membrane, pathway, or molecule to see its structure drawn from its chemical representation.</p>
+          <div class="molecule-list" id="molecule-list">
+            {% for molecule in molecules %}
+            <button class="molecule-card" type="button" data-molecule="{{ molecule.id }}" hidden>
+              <span class="molecule-image-wrap"><img src="{{ molecule.image }}" alt="RDKit structure of {{ molecule.name }}" loading="lazy"></span>
+              <span class="molecule-meta">
+                <span class="molecule-name">{{ molecule.name }}</span>
+                <span class="molecule-formula">{{ molecule.formula }}</span>
+                <span class="molecule-role">{{ molecule.role }}</span>
+              </span>
+            </button>
+            {% endfor %}
+          </div>
+        </section>
+        <button class="zoom-action" id="zoom-action" type="button" data-target="mitochondrion">
+          <span>Explore the mitochondrion</span><span aria-hidden="true">↗</span>
+        </button>
+      </aside>
+    </div>
+
+    <footer class="page-footer"><span> CELL SIMULATOR <b>·</b> EXPLORATION BUILD 01</span><span>MOLECULE DRAWINGS GENERATED WITH RDKIT</span></footer>
+  </main>
+
+  <script>window.CELL_EXPLORATION_DATA = {{ exploration_data|tojson }};</script>
+  <script src="{{ url_for('cell_simulator.static', filename='cell_simulator/js/explorer.js') }}" defer></script>
+</body>
+</html>
