@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reaction Lab (Bio)</title>
+  <link rel="stylesheet" href="{{ url_for('reaction_lab.static', filename='reaction_lab/css/style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>Organic Reaction Lab — Bio Edition</h1>
+
+    <p class="lead">
+      Choose the correct biochemical “process” for the goal.
+      Molecules are drawn with RDKit and your choice generates a product structure.
+    </p>
+
+    <ul>
+      <li>Methylation, acetylation, phosphorylation</li>
+      <li>Glycosylation, lipidation</li>
+      <li>Cu²⁺ complexation (coordination)</li>
+      <li>Starters include phosphatidylserine (mini), glycerol, amino acids, peptides, sugars, sterols</li>
+    </ul>
+
+    <a class="btn" href="{{ url_for('reaction_lab.play') }}">Start</a>
+    <a class="btn secondary" href="{{ url_for('home') }}">Back</a>
+  </div>
+</body>
+</html>

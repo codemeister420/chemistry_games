@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Isomer Quiz</title>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      background: #f6f6f6;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 22px;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .hud {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .mols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafafa;
+    }
+
+    .card img {
+      max-width: 100%;
+      background: white;
+      border-radius: 6px;
+    }
+
+    .choices {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      padding: 10px 14px;
+      border-radius: 7px;
+      border: 1px solid #222;
+      background: #eef2f7;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #dbe5f1;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 14px;
+      background: #fff7d6;
+      border: 1px solid #e7d39b;
+      border-radius: 8px;
+    }
+
+    .explanation {
+      margin-top: 14px;
+      padding: 14px;
+      background: #eef7ee;
+      border: 1px solid #b9d6b9;
+      border-radius: 8px;
+      line-height: 1.45;
+    }
+
+    .small {
+      color: #555;
+      font-size: 0.9em;
+    }
+
+    .numbered {
+      margin-top: 12px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    a {
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Isomer Quiz</h1>
+
+    <div class="hud">
+      <div><b>Round answered:</b> {{ answered }} / 10</div>
+      <div><b>Score:</b> {{ score }}</div>
+      <div><b>Pair pool:</b> {{ total_pairs }} examples</div>
+    </div>
+
+    <div class="mols">
+      <div class="card">
+        <h2>Molecule 1</h2>
+        <p><b>Name:</b> {{ name1 }}</p>
+        <p><b>Formula:</b> {{ formula1 }}</p>
+
+        {% if mol1_img %}
+          <img src="{{ url_for('isomer.static', filename=mol1_img) }}" alt="Molecule 1">
+        {% endif %}
+
+        {% if show_result and mol1_numbered_img %}
+          <div class="numbered">
+            <p><b>Carbon-numbered view:</b></p>
+            <img src="{{ url_for('isomer.static', filename=mol1_numbered_img) }}" alt="Molecule 1 numbered">
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Molecule 2</h2>
+        <p><b>Name:</b> {{ name2 }}</p>
+        <p><b>Formula:</b> {{ formula2 }}</p>
+
+        {% if mol2_img %}
+          <img src="{{ url_for('isomer.static', filename=mol2_img) }}" alt="Molecule 2">
+        {% endif %}
+
+        {% if show_result and mol2_numbered_img %}
+          <div class="numbered">
+            <p><b>Carbon-numbered view:</b></p>
+            <img src="{{ url_for('isomer.static', filename=mol2_numbered_img) }}" alt="Molecule 2 numbered">
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if not show_result %}
+      <form method="POST" class="choices">
+        <input type="hidden" name="action" value="answer">
+
+        {% for opt in options %}
+          <button type="submit" name="answer" value="{{ opt }}">
+            {{ opt }}
+          </button>
+        {% endfor %}
+      </form>
+    {% else %}
+      <div class="feedback">
+        <h3>{{ feedback }}</h3>
+        <p><b>Your answer:</b> {{ user_answer }}</p>
+        <p><b>Correct answer:</b> {{ correct_answer }}</p>
+      </div>
+
+      <div class="explanation">
+        <h3>Explanation</h3>
+        <p>{{ explanation }}</p>
+
+        <p class="small">
+          Tip: first compare formulas. If formulas differ, they are not isomers.
+          If formulas match, compare the carbon skeleton, functional group, position,
+          double-bond geometry, and stereocenters.
+        </p>
+      </div>
+
+      <form method="POST" class="choices">
+        <input type="hidden" name="action" value="next">
+        <button type="submit">Next →</button>
+      </form>
+    {% endif %}
+
+    <p style="margin-top: 18px;">
+      <a href="{{ url_for('home') }}">Back to homepage</a>
+    </p>
+  </div>
+</body>
+</html>

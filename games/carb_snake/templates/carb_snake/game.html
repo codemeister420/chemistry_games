@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Carbohydrate Snake</title>
+  <link rel="stylesheet" href="{{ url_for('carb_snake.static', filename='carb_snake/css/game.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>Carbohydrate Snake</h1>
+
+    <p style="margin-top:0;">
+      <b>Story:</b> You’re a carbon snake trapped inside a lipid vesicle (bilayer).
+      Touching the bilayer normally ends your run. But if you eat <b>F</b> (fluorine),
+      you become membrane-permeable for a few seconds and can pass through to the opposite side.
+    </p>
+
+    <div class="hud">
+      <div><b>Score:</b> <span id="score">0</span></div>
+      <div><b>Speed:</b> <span id="speed">1.00x</span></div>
+      <div><b>Rotation penalty:</b> <span id="turnPenalty">0</span></div>
+      <div><b>Membrane:</b> <span id="perm">OFF</span></div>
+      <div><b>Last token:</b> <span id="lastToken">—</span></div>
+    </div>
+
+    <canvas id="game" width="640" height="640"></canvas>
+
+    <div class="help">
+      <p><b>Controls:</b> Arrow keys / WASD.</p>
+
+      <p><b>RNG chemistry tokens:</b></p>
+      <ul>
+        <li><b>C</b> = carbon added (grows chain)</li>
+        <li><b>C=</b> = double bond (restricted rotation + slower)</li>
+        <li><b>O</b> = oxygen (adds sidechain hazard)</li>
+        <li><b>N</b> = nitrogen (minor handling + occasional branching)</li>
+        <li><b>X</b> = heavy halogen (slower)</li>
+        <li><b>F</b> = membrane-permeable (wrap through the bilayer / walls temporarily)</li>
+      </ul>
+
+      <p><a href="{{ url_for('home') }}">Back to homepage</a></p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('carb_snake.static', filename='carb_snake/js/game.js') }}"></script>
+</body>
+</html>

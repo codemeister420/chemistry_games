@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reaction Lab</title>
+  <link rel="stylesheet" href="{{ url_for('reaction_lab.static', filename='reaction_lab/css/style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>Reaction Lab — Bio Edition</h1>
+
+    <div class="hud">
+      <div><b>Round:</b> {{ answered }}/10</div>
+      <div><b>Score:</b> {{ score }}</div>
+    </div>
+
+    <div class="goal">
+      <b>{{ goal_text }}</b>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Start molecule</h3>
+        {% if starter_url %}
+          <img src="{{ starter_url }}" alt="starter" />
+        {% else %}
+          <p>No image.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>Product</h3>
+        {% if product_url %}
+          <img src="{{ product_url }}" alt="product" />
+          {% if product_formula %}
+            <p class="small"><b>Formula:</b> {{ product_formula }}</p>
+          {% endif %}
+        {% else %}
+          <p class="small">Answer to generate a product.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if feedback %}
+      <div class="feedback">{{ feedback }}</div>
+    {% endif %}
+
+    {% if not show_result %}
+      <form method="POST" class="choices">
+        <input type="hidden" name="action" value="answer">
+        {% for opt in options %}
+          <button class="btn" type="submit" name="choice" value="{{ opt }}">
+            {{ option_labels.get(opt, opt) }}
+          </button>
+        {% endfor %}
+      </form>
+    {% else %}
+      <form method="POST" class="choices">
+        <input type="hidden" name="action" value="next">
+        <button class="btn" type="submit">Next →</button>
+      </form>
+    {% endif %}
+
+    <div class="footer-links">
+      <a href="{{ url_for('home') }}">Back to homepage</a>
+    </div>
+  </div>
+</body>
+</html>

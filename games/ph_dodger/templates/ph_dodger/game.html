@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>pH Dodger</title>
+  <link rel="stylesheet" href="{{ url_for('ph_dodger.static', filename='ph_dodger/css/game.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>pH Dodger</h1>
+
+    <p class="story">
+      <b>Story:</b> You’re a tiny droplet trying to survive random chemistry.
+      <b>H⁺</b> makes you more acidic, <b>OH⁻</b> makes you more basic.
+      Grab <b>Buffer</b> to resist pH swings (works best near its pK<span style="font-size:0.9em;">a</span>).
+      <b>CO₂</b> acidifies slowly. <b>Salt</b> is mostly harmless.
+    </p>
+
+    <div class="hud">
+      <div><b>Score:</b> <span id="score">0</span></div>
+      <div><b>pH:</b> <span id="ph">7.00</span></div>
+      <div><b>Buffer:</b> <span id="buf">OFF</span></div>
+      <div><b>pK<span style="font-size:0.9em;">a</span>:</b> <span id="pka">—</span></div>
+      <div><b>Difficulty:</b> <span id="diff">1.0x</span></div>
+    </div>
+
+    <canvas id="game" width="720" height="520"></canvas>
+
+    <div class="help">
+      <p><b>Controls:</b> Arrow keys / WASD. Refresh to restart (for now).</p>
+      <p><a href="{{ url_for('home') }}">Back to homepage</a></p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('ph_dodger.static', filename='ph_dodger/js/game.js') }}"></script>
+</body>
+</html>

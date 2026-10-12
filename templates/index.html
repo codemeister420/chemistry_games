@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chemistry Games</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 28px;
+        }
+
+        ul.games {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul.games li {
+            margin: 18px 0;
+        }
+
+        ul.games a {
+            display: block;
+            padding: 18px;
+            background: #eef2f7;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #222;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        ul.games a:hover {
+            background: #dbe5f1;
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .game-desc {
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.45;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        }
+
+        footer {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chemistry Games</h1>
+
+        <p class="subtitle">
+            Learn chemistry by playing — structure, reactivity, and controlled chaos.
+        </p>
+
+        <ul class="games">
+            <!-- Functional Group Quiz -->
+            <li>
+                <a href="{{ url_for('functional_group.start') }}">
+                    <div class="game-title">Functional Group Quiz</div>
+                    <div class="game-desc">
+                        Identify functional groups on randomly generated molecules.
+                        Train pattern recognition and chemical intuition.
+                    </div>
+                </a>
+            </li>
+
+            <!-- Isomer Quiz -->
+            <li>
+                <a href="{{ url_for('isomer.start') }}">
+                    <div class="game-title">Isomer Quiz</div>
+                    <div class="game-desc">
+                        Decide whether two molecules are identical, isomers, or unrelated.
+                        Covers structural and stereoisomerism.
+                    </div>
+                </a>
+            </li>
+
+            <!-- Carbohydrate Snake -->
+            <li>
+                <a href="{{ url_for('carb_snake.start') }}">
+                    <div class="game-title">Carbohydrate Snake</div>
+                    <div class="game-desc">
+                        <b>Story:</b> You’re a carbon snake trapped inside a lipid vesicle.
+                        Touch the bilayer and you die — unless you eat <span class="mono">F</span> (fluorine),
+                        which makes you membrane-permeable for a short time.
+                        <br>
+                        Mechanics: <span class="mono">C=</span> restricts rotation, O/N cause branching,
+                        X slows movement.
+                    </div>
+                </a>
+            </li>
+
+            <!-- pH Dodger -->
+            <li>
+                <a href="{{ url_for('ph_dodger.start') }}">
+                    <div class="game-title">pH Dodger</div>
+                    <div class="game-desc">
+                        Dodge acids and bases to keep your pH between 0 and 14.
+                        Grab buffers to resist swings (strongest near pK<span style="font-size:0.9em;">a</span>),
+                        survive CO<span style="font-size:0.9em;">2</span> dissolution,
+                        and stabilize chaos in solution.
+                    </div>
+                </a>
+            </li>
+
+            <!-- Organic Reaction Lab (Bio) -->
+            <li>
+                <a href="{{ url_for('reaction_lab.start') }}">
+                    <div class="game-title">Organic Reaction Lab (Bio Edition)</div>
+                    <div class="game-desc">
+                        Choose biochemical processes and instantly see the RDKit-drawn product.
+                        Includes phosphorylation, methylation, acetylation, glycosylation, lipidation,
+                        and Cu²⁺ complexation — with starters like phosphatidylserine, amino acids, peptides,
+                        sugars, glycerol, and sterols.
+                    </div>
+                </a>
+            </li>
+        </ul>
+
+        <footer>
+            Built with Flask, RDKit, and questionable chemical life choices 🧪
+        </footer>
+    </div>
+</body>
+</html>

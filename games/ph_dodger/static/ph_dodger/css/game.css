@@ -1,0 +1,39 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f6f6f6;
+  margin: 0;
+  padding: 0;
+}
+
+.wrap {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 16px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+canvas {
+  border: 1px solid #222;
+  background: #fafafa;
+  display: block;
+}
+
+.hud {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 10px 0 12px;
+}
+
+.story {
+  margin-top: 0;
+  color: #333;
+  line-height: 1.35;
+}
+
+.help {
+  margin-top: 10px;
+  color: #333;
+}

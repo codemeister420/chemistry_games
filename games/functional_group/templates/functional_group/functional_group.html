@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Functional Group Quiz</title>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <h1>Functional Group Quiz</h1>
+
+  <p><b>Round:</b> {{ round }} / 10</p>
+  <p><b>Score:</b> {{ score }}</p>
+
+  {% if feedback %}
+    <p>{{ feedback }}</p>
+  {% endif %}
+
+  {% if molecule_img %}
+    <img
+      src="{{ url_for('functional_group.static', filename=molecule_img) }}"
+      alt="Molecule"
+      width="300"
+      height="300"
+    />
+  {% else %}
+    <p>(No molecule image generated)</p>
+  {% endif %}
+
+  <form method="POST">
+    <p>Select the highlighted group:</p>
+
+    {% for opt in options %}
+      <label style="display:block; margin: 4px 0;">
+        <input type="radio" name="answer" value="{{ opt }}" required>
+        {{ opt }}
+      </label>
+    {% endfor %}
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p style="margin-top: 16px;">
+    <a href="{{ url_for('home') }}">Back to homepage</a>
+  </p>
+</body>
+</html>

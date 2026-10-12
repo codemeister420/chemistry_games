@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+
+games/functional_group/static/generated/*.png
+games/isomer/static/generated/*.png
+games/reaction_lab/static/reaction_lab/gen/rxn_*.png

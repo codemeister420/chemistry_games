@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reaction Lab — Results</title>
+  <link rel="stylesheet" href="{{ url_for('reaction_lab.static', filename='reaction_lab/css/style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <h1>Reaction Lab — Finished</h1>
+    <p class="lead">Final score: <b>{{ score }}/10</b></p>
+
+    <a class="btn" href="{{ url_for('reaction_lab.play') }}">Play again</a>
+    <a class="btn secondary" href="{{ url_for('home') }}">Back</a>
+  </div>
+</body>
+</html>
