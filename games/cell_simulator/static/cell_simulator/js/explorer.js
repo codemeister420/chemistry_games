@@ -14,6 +14,7 @@
     function: document.getElementById("target-function"),
     functionBlock: document.getElementById("target-function").closest(".detail-block"),
     components: document.getElementById("target-components"),
+    moleculeSection: document.querySelector(".molecule-section"),
     moleculeList: document.getElementById("molecule-list"),
     moleculeCount: document.getElementById("molecule-count"),
     moleculeIntro: document.getElementById("molecule-intro"),
@@ -165,10 +166,117 @@
     return `${glycocalyx}${proteins}`;
   }
 
+  function cytosolSceneSvg(target, targetId) {
+    const moleculeIds = (target.molecules || []).filter((id) => moleculeCards.has(id));
+    const nameOverrides = {
+      water: "H₂O",
+      glucose: "Glucose",
+      pyruvate: "Pyruvate",
+      adp: "ADP",
+      atp: "ATP",
+      phosphate: "Pi",
+      sodium: "Na⁺",
+      potassium: "K⁺",
+      magnesium: "Mg²⁺",
+      chloride: "Cl⁻",
+    };
+    function moleculeNode(id, label, x, y, width = 80, height = 46) {
+      const molecule = moleculeCards.get(id);
+      if (!molecule) return "";
+      return `<g class="cytosol-molecule flow-molecule" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(molecule.name)}">
+        <rect class="flow-molecule-bg" x="${x - width / 2 - 5}" y="${y - height / 2 - 5}" width="${width + 10}" height="${height + 10}" rx="5"/>
+        <image class="cytosol-structure" href="${escapeHtml(molecule.image)}" x="${x - width / 2}" y="${y - height / 2}" width="${width}" height="${height}" preserveAspectRatio="xMidYMid meet"/>
+        <text class="flow-molecule-label" x="${x}" y="${y + height / 2 + 15}">${escapeHtml(label || nameOverrides[id] || molecule.name)}</text>
+      </g>`;
+    }
+
+    function reactionToken(id, text, x, y) {
+      return `<g class="reaction-token" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(nameOverrides[id] || moleculeCards.get(id)?.name || id)}">
+        <rect x="${x - 37}" y="${y - 13}" width="74" height="26" rx="13"/>
+        <text x="${x}" y="${y + 4}">${escapeHtml(text)}</text>
+      </g>`;
+    }
+
+    function arrow(x1, x2, y, label) {
+      return `<g class="glycolysis-arrow"><path d="M${x1} ${y}H${x2 - 8}"/><path class="arrow-tip" d="M${x2 - 8} ${y - 5}l8 5-8 5Z"/><text x="${(x1 + x2) / 2}" y="${y - 11}">${escapeHtml(label)}</text></g>`;
+    }
+
+    function ionNode(id, x, y) {
+      const molecule = moleculeCards.get(id);
+      if (!molecule) return "";
+      return `<g class="cytosol-ion" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(molecule.name)}">
+        <circle class="ion-node" cx="${x}" cy="${y}" r="25"/><text class="ion-symbol" x="${x}" y="${y + 4}">${escapeHtml(nameOverrides[id])}</text>
+        <text class="ion-name" x="${x}" y="${y + 40}">${escapeHtml(molecule.name.replace(" ion", ""))}</text>
+      </g>`;
+    }
+
+    if (targetId !== "cytoplasm") {
+      const nodes = moleculeIds.map((id, index) => moleculeNode(id, nameOverrides[id], 180 + index * (540 / Math.max(moleculeIds.length - 1, 1)), 295, 96, 58)).join("");
+      return `<g class="cytosol-scene"><path class="cytosol-fluid" d="M93 224c36-90 167-121 283-84 99-48 244-28 324 39 81 68 61 170-17 221-83 55-221 34-318 50-107 17-228-15-272-87-28-45-25-98 0-139Z"/><text class="cytosol-scene-label" x="450" y="142">DISSOLVED IN CYTOSOL</text>${nodes}<text class="cytosol-note lower" x="450" y="440">CONCENTRATIONS VARY THROUGH THE CELL</text></g>`;
+    }
+
+    const flow = [
+      { id: "glucose", label: "Glucose", x: 95 },
+      { id: "glucose_6_phosphate", label: "Glucose-6-P", x: 250 },
+      { id: "glyceraldehyde_3_phosphate", label: "2 × G3P", x: 420 },
+      { id: "pyruvate", label: "2 × Pyruvate", x: 590 },
+    ].map((node) => moleculeNode(node.id, node.label, node.x, 250, 82, 48)).join("");
+    const ions = [
+      ionNode("sodium", 775, 264),
+      ionNode("potassium", 848, 264),
+      ionNode("magnesium", 775, 365),
+      ionNode("chloride", 848, 365),
+    ].join("");
+    const solvent = moleculeNode("water", "Water · solvent", 662, 465, 62, 38);
+
+    return `<g class="cytosol-scene glycolysis-scene">
+      <path class="cytosol-fluid" d="M45 171c86-74 212-54 322-54 111 0 242-26 320 46 56 51 44 253-12 302-86 69-221 54-336 48-131-7-250 18-306-58-39-53-35-232 12-284Z"/>
+      <rect class="glycolysis-flow-area" x="53" y="188" width="638" height="157" rx="16"/>
+      <text class="cytosol-scene-label" x="370" y="139">GLYCOLYSIS · CYTOSOL</text>
+      <text class="cytosol-note" x="370" y="159">10 ENZYME-CATALYZED STEPS · SIMPLIFIED OVERVIEW</text>
+      ${arrow(141, 205, 241, "INVEST")} ${arrow(297, 370, 241, "SPLIT")} ${arrow(467, 540, 241, "PAYOFF")}
+      ${flow}
+      <text class="phase-label" x="78" y="333">ENERGY INVESTMENT · 2 ATP → 2 ADP</text>
+      <text class="phase-label" x="389" y="333">2 × THREE-CARBON PATHWAY</text>
+
+      <g class="reaction-ledger">
+        <text class="ledger-label" x="62" y="390">REDOX</text>
+        ${reactionToken("nad_plus", "2 NAD⁺", 182, 386)}
+        ${arrow(224, 294, 386, "ACCEPT e⁻")}
+        ${reactionToken("nadh", "2 NADH", 348, 386)}
+        <text class="ledger-label" x="420" y="390">ATP PAYOFF</text>
+        ${reactionToken("adp", "4 ADP", 534, 386)}
+        <text class="ledger-plus" x="580" y="391">+</text>
+        ${reactionToken("phosphate", "4 Pi", 622, 386)}
+        <text class="ledger-arrow-text" x="662" y="391">→</text>
+        ${reactionToken("atp", "4 ATP", 688, 386)}
+      </g>
+
+      <g class="investment-row">
+        <text class="ledger-label" x="62" y="442">INVESTED EARLIER</text>
+        ${reactionToken("atp", "2 ATP", 207, 438)}
+        <text class="ledger-arrow-text" x="260" y="442">→</text>
+        ${reactionToken("adp", "2 ADP", 315, 438)}
+        ${solvent}
+      </g>
+
+      <g class="ion-panel">
+        <rect x="724" y="177" width="162" height="339" rx="17"/>
+        <text class="ion-panel-title" x="805" y="211">DISSOLVED IONS</text>
+        ${ions}
+        <text class="ion-panel-note" x="805" y="487">EACH ION SELECTABLE</text>
+      </g>
+      <text class="net-yield" x="370" y="535">NET PER GLUCOSE · 2 PYRUVATE · 2 ATP · 2 NADH</text>
+      <text class="cytosol-note lower" x="450" y="575">SIMPLIFIED STOICHIOMETRY · INTERMEDIATES AND POSITIONS NOT TO SCALE</text>
+    </g>`;
+  }
+
   function focusGraphic(visual, target, targetId) {
     switch (visual) {
       case "membrane":
         return `${membraneLipidsSvg(target.molecules || [], targetId === "plasma_membrane")}${targetId === "plasma_membrane" ? plasmaMembraneFeaturesSvg() : ""}`;
+      case "cytosol":
+        return cytosolSceneSvg(target, targetId);
       case "double_membrane":
         return `<g class="double-membrane-visual"><ellipse class="membrane-outer" cx="450" cy="282" rx="238" ry="126"/><ellipse class="membrane-inner" cx="450" cy="282" rx="215" ry="105"/><path class="double-membrane-dna" d="M375 277c20-41 40 42 61 0s40-42 60 0 40 42 60 0"/><text class="diagram-note" x="450" y="440">TWO SEPARATE LIPID BILAYERS</text></g>`;
       case "mitochondrion":
@@ -220,7 +328,6 @@
         return `<g class="stack-visual"><path d="M283 226c86-34 251-34 336 0-85 34-250 34-336 0Zm-19 43c95-34 276-34 371 0-95 34-276 34-371 0Zm-11 43c102-35 291-35 393 0-102 35-291 35-393 0Zm16 43c91-33 260-33 351 0-91 33-260 33-351 0Z"/><text class="diagram-note" x="450" y="440">STACKED, MEMBRANE-BOUND COMPARTMENTS</text></g>`;
       case "vesicle":
       case "compartment":
-      case "cytosol":
         return `<g class="vesicle-visual"><circle class="vesicle-shell" cx="450" cy="282" r="132"/><circle class="vesicle-core" cx="450" cy="282" r="114"/><circle class="cargo-dot" cx="407" cy="255" r="15"/><circle class="cargo-dot" cx="474" cy="231" r="10"/><circle class="cargo-dot" cx="493" cy="303" r="18"/><circle class="cargo-dot" cx="427" cy="333" r="8"/><circle class="cargo-dot" cx="474" cy="357" r="11"/><text class="diagram-note" x="450" y="447">ENCLOSED SPACE · SELECT A COMPONENT</text></g>`;
       case "filament_network":
       case "filament":
@@ -284,18 +391,19 @@
 
     const childRowY = target.visual === "membrane" ? 505 : 457;
     const embeddedPlasmaFeatures = targetId === "plasma_membrane";
-    const childMarkup = embeddedPlasmaFeatures
+    const embeddedCytosolFeatures = target.visual === "cytosol";
+    const childMarkup = embeddedPlasmaFeatures || embeddedCytosolFeatures
       ? ""
       : childIds.map((id, index) => childActionSvg(id, index, childIds.length, childRowY)).join("");
     const moleculeRowY = childIds.length ? 560 : 457;
-    const moleculeMarkup = target.visual !== "membrane" && target.visual !== "nachr_pentamer"
+    const moleculeMarkup = target.visual !== "membrane" && target.visual !== "nachr_pentamer" && !embeddedCytosolFeatures
       ? moleculeIds.map((id, index) => moleculeActionSvg(id, index, moleculeIds.length, moleculeRowY)).join("")
       : "";
     const showChildren = childIds.length > 0;
     const showMolecules = moleculeIds.length > 0;
     const pathwayView = ["respiration", "pathway", "gradient"].includes(target.visual);
     const customProteinView = ["aquaporin_tetramer", "nachr_pentamer", "glut1_transporter"].includes(target.visual);
-    const secondaryMarkup = showChildren && showMolecules && !pathwayView && target.visual !== "membrane"
+    const secondaryMarkup = showChildren && showMolecules && !pathwayView && target.visual !== "membrane" && !embeddedCytosolFeatures
       ? `<g class="secondary-label"><text x="450" y="519">MOLECULES IN THIS STRUCTURE</text></g>${moleculeMarkup}`
       : moleculeMarkup;
     return `<svg class="detail-svg" viewBox="0 0 900 620" role="group" aria-label="${escapeHtml(target.name)} composition">
@@ -304,7 +412,7 @@
       <g class="focus-art">${focusGraphic(target.visual || "protein_complex", target, targetId)}</g>
       ${target.visual === "membrane" && !embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="449">SELECT A LIPID TO VIEW ITS MOLECULAR STRUCTURE</text></g>` : ""}
       ${embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="482">SELECT A NAMED LIPID OR EMBEDDED FEATURE TO ZOOM IN</text></g>` : ""}
-      ${showChildren && !pathwayView && !embeddedPlasmaFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
+      ${showChildren && !pathwayView && !embeddedPlasmaFeatures && !embeddedCytosolFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
       ${secondaryMarkup}
       ${!showChildren && !showMolecules && !customProteinView ? `<text class="diagram-note" x="450" y="505">DEEPEST CURRENT VIEW · USE THE TRAIL ABOVE TO ZOOM OUT</text>` : ""}
     </svg>`;
@@ -318,6 +426,7 @@
     elements.function.textContent = target.function;
     elements.functionBlock.hidden = target.function === target.summary;
     elements.components.textContent = target.components;
+    elements.moleculeSection.hidden = target.visual === "cytosol";
 
     const moleculeIds = target.molecules || [];
     const cards = [...elements.moleculeList.querySelectorAll("[data-molecule]")];
@@ -412,7 +521,7 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    if ((event.key === "Enter" || event.key === " ") && event.target.matches(".hit-target, .diagram-action, .bilayer-lipid, .atp-reaction")) {
+    if ((event.key === "Enter" || event.key === " ") && event.target.matches(".hit-target, .diagram-action, .bilayer-lipid, .atp-reaction, .cytosol-molecule, .cytosol-ion, .cytosol-structure-hit, .reaction-token")) {
       event.preventDefault();
       openTarget(event.target.dataset.target);
     }

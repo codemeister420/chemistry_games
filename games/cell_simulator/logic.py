@@ -115,10 +115,10 @@ EXPLORATION_DATA = {
     "cytoplasm": {
         "kind": "CELL COMPARTMENT",
         "name": "Cytoplasm",
-        "summary": "The aqueous interior surrounding the organelles, including the cytosol and suspended structures.",
-        "function": "Many reactions happen in the cytosol, including the first steps of glucose breakdown.",
-        "components": "Water · ions · metabolites · proteins · organelles",
-        "molecules": ["glucose", "pyruvate", "water"],
+        "summary": "A water-rich cell interior where dissolved compounds diffuse and glycolysis converts glucose into pyruvate while transferring energy to ATP and NADH.",
+        "function": "Follow the key glycolysis intermediates and energy-carrier changes. Dissolved ions are shown separately alongside the reaction flow.",
+        "components": "Glycolysis · dissolved ions · cytosol",
+        "molecules": ["water", "glucose", "glucose_6_phosphate", "glyceraldehyde_3_phosphate", "pyruvate", "adp", "atp", "phosphate", "nad_plus", "nadh", "sodium", "potassium", "magnesium", "chloride"],
     },
     "outer_membrane": {
         "kind": "MITOCHONDRION",
@@ -314,7 +314,7 @@ ORGANCELLE_CONTENT = {
     },
     "cytoplasm": {
         "visual": "cytosol",
-        "children": ["cytosol_water", "cytosol_ions", "cytosol_metabolites", "glycolysis"],
+        "children": [],
     },
 }
 
@@ -393,8 +393,8 @@ COMPONENT_DATA = {
     "membrane_channel": _component("Membrane channel", "TRANSPORT PROTEIN", "A selective protein pore allows particular ions or molecules to cross the membrane.", "protein_complex"),
     "membrane_receptor": _component("Membrane receptor", "SIGNALING PROTEIN", "Receptors bind external signals and transmit information to the cell interior.", "protein_complex"),
     "cytosol_water": _component("Water in cytosol", "SOLVENT", "Water is the main solvent in which ions, metabolites, and proteins move and react.", "molecule", (), ["water"]),
-    "cytosol_ions": _component("Cytosolic ions", "DISSOLVED IONS", "Ion concentrations help set pH, membrane potential, and enzyme activity.", "molecule", (), ["water"]),
-    "cytosol_metabolites": _component("Cytosolic metabolites", "SMALL MOLECULES", "Small molecules such as glucose and pyruvate connect cellular pathways.", "pathway", (), ["glucose", "pyruvate", "atp"]),
+    "cytosol_ions": _component("Dissolved cytosolic ions", "IONS IN SOLUTION", "Potassium, sodium, magnesium, and chloride ions remain dissolved in water. Their concentrations contribute to osmotic balance, electrical properties, and enzyme activity.", "cytosol", (), ["sodium", "potassium", "magnesium", "chloride"]),
+    "cytosol_metabolites": _component("Cytosolic metabolites", "SMALL MOLECULES", "Small molecules such as glucose, pyruvate, ADP, ATP, and phosphate diffuse through cytosol and participate in cellular reactions.", "cytosol", (), ["glucose", "pyruvate", "adp", "atp", "phosphate"]),
     "glycolysis": _component("Glycolysis", "METABOLIC PATHWAY", "In the cytosol, glucose is converted through a series of reactions to pyruvate, producing ATP and NADH.", "pathway", (), ["glucose", "pyruvate", "atp"]),
     "atp_synthase_f0": _component("F₀ membrane motor", "PROTON CHANNEL", "The membrane-embedded F₀ portion provides a proton path and rotates as protons flow through.", "protein_complex"),
     "atp_synthase_f1": _component("F₁ catalytic head", "ATP-FORMING ENZYME", "The F₁ head changes shape during rotation and catalyzes ATP formation from ADP and phosphate.", "protein_complex", (), ["adp", "phosphate", "atp"]),
@@ -462,6 +462,18 @@ MOLECULES = [
         "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
     },
     {
+        "id": "glucose_6_phosphate",
+        "name": "Glucose-6-phosphate",
+        "role": "The first phosphorylated intermediate in glycolysis, formed when glucose receives a phosphate from ATP.",
+        "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)OP(=O)(O)O",
+    },
+    {
+        "id": "glyceraldehyde_3_phosphate",
+        "name": "Glyceraldehyde-3-phosphate (G3P)",
+        "role": "A three-carbon glycolysis intermediate oxidized to help produce NADH and ATP.",
+        "smiles": "O=C[C@H](O)COP(=O)(O)O",
+    },
+    {
         "id": "acetylcholine",
         "name": "Acetylcholine",
         "role": "A neurotransmitter that binds nicotinic acetylcholine receptors and opens their cation channel.",
@@ -485,6 +497,10 @@ MOLECULES = [
         "role": "A product of oxygen reduction at Complex IV and the solvent of the cell interior.",
         "smiles": "O",
     },
+    {"id": "sodium", "name": "Sodium ion", "role": "A dissolved extracellularly enriched cation that contributes to membrane potential and transport gradients.", "smiles": "[Na+]"},
+    {"id": "potassium", "name": "Potassium ion", "role": "The principal intracellular cation in many animal cells; its gradient is maintained by membrane transporters.", "smiles": "[K+]"},
+    {"id": "magnesium", "name": "Magnesium ion", "role": "A common cytosolic ion that associates with ATP and supports the activity of many enzymes.", "smiles": "[Mg+2]"},
+    {"id": "chloride", "name": "Chloride ion", "role": "A dissolved anion involved in charge balance, cell volume, and membrane transport.", "smiles": "[Cl-]"},
     {
         "id": "adp",
         "name": "Adenosine diphosphate (ADP)",
@@ -502,6 +518,18 @@ MOLECULES = [
         "name": "Adenosine triphosphate (ATP)",
         "role": "A widely used cellular energy-transfer molecule made by ATP synthase.",
         "smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)OP(=O)(O)OP(=O)(O)O)[C@@H](O)[C@H]1O",
+    },
+    {
+        "id": "nad_plus",
+        "name": "Nicotinamide adenine dinucleotide (NAD⁺)",
+        "role": "The oxidized electron carrier that accepts electrons during glycolysis to form NADH.",
+        "smiles": "C1=CC(=C[N+](=C1)[C@H]2[C@@H]([C@@H]([C@H](O2)COP(=O)([O-])OP(=O)(O)OC[C@@H]3[C@H]([C@H]([C@@H](O3)N4C=NC5=C(N=CN=C54)N)O)O)O)O)C(=O)N",
+    },
+    {
+        "id": "nadh",
+        "name": "Reduced NAD (NADH)",
+        "role": "The reduced electron carrier produced when NAD⁺ accepts electrons during glycolysis.",
+        "smiles": "C1C=CN(C=C1C(=O)N)[C@H]2[C@@H]([C@@H]([C@H](O2)COP(=O)(O)OP(=O)(O)OC[C@@H]3[C@H]([C@H]([C@@H](O3)N4C=NC5=C(N=CN=C54)N)O)O)O)O",
     },
     {"id": "coq", "name": "Ubiquinone-0 (CoQ head-group model)", "role": "This short-chain ubiquinone model shows the redox-active quinone head group. Mitochondrial coenzyme Q also has a long isoprenoid tail that anchors it in the membrane.", "smiles": "COC1=C(OC)C(=O)C(C)=CC1=O"},
     {"id": "adenine", "name": "Adenine", "role": "A purine nucleobase found in DNA and RNA.", "smiles": "Nc1ncnc2[nH]cnc12"},
