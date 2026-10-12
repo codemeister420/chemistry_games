@@ -295,11 +295,15 @@ def _render_png(mol, out_path, highlight_atoms=None):
 def cleanup_old_images(gen_dir, keep=160):
     os.makedirs(gen_dir, exist_ok=True)
     files = glob.glob(os.path.join(gen_dir, "rxn_*.png"))
-    if len(files) <= keep:
-        return
+    if keep <= 0:
+        files_to_delete = files
+    elif len(files) > keep:
+        files.sort(key=lambda p: os.path.getmtime(p))
+        files_to_delete = files[:-keep]
+    else:
+        files_to_delete = []
 
-    files.sort(key=lambda p: os.path.getmtime(p))
-    for f in files[:-keep]:
+    for f in files_to_delete:
         try:
             os.remove(f)
         except Exception:
