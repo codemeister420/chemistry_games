@@ -116,9 +116,9 @@ EXPLORATION_DATA = {
         "kind": "CELL COMPARTMENT",
         "name": "Cytoplasm",
         "summary": "A water-rich cell interior where dissolved compounds diffuse and glycolysis converts glucose into pyruvate while transferring energy to ATP and NADH.",
-        "function": "Follow the key glycolysis intermediates and energy-carrier changes. Dissolved ions are shown separately alongside the reaction flow.",
+        "function": "Follow the ten cytosolic glycolysis reactions from glucose to pyruvate. Select a molecule in any reaction to zoom in on its structure.",
         "components": "Glycolysis · dissolved ions · cytosol",
-        "molecules": ["water", "glucose", "glucose_6_phosphate", "glyceraldehyde_3_phosphate", "pyruvate", "adp", "atp", "phosphate", "nad_plus", "nadh", "sodium", "potassium", "magnesium", "chloride"],
+        "molecules": ["water", "glucose", "glucose_6_phosphate", "fructose_6_phosphate", "fructose_1_6_bisphosphate", "dihydroxyacetone_phosphate", "glyceraldehyde_3_phosphate", "1_3_bisphosphoglycerate", "3_phosphoglycerate", "2_phosphoglycerate", "phosphoenolpyruvate", "pyruvate", "adp", "atp", "phosphate", "nad_plus", "nadh", "sodium", "potassium", "magnesium", "chloride"],
     },
     "outer_membrane": {
         "kind": "MITOCHONDRION",
@@ -468,10 +468,52 @@ MOLECULES = [
         "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)OP(=O)(O)O",
     },
     {
+        "id": "fructose_6_phosphate",
+        "name": "Fructose-6-phosphate",
+        "role": "A six-carbon sugar phosphate formed from glucose-6-phosphate before the second ATP-investment step of glycolysis.",
+        "smiles": "OCC(=O)C(O)C(O)C(O)COP(=O)(O)O",
+    },
+    {
+        "id": "fructose_1_6_bisphosphate",
+        "name": "Fructose-1,6-bisphosphate",
+        "role": "The six-carbon bisphosphate formed when phosphofructokinase uses ATP; aldolase splits it into two three-carbon molecules.",
+        "smiles": "OP(=O)(O)OCC(=O)C(O)C(O)C(O)COP(=O)(O)O",
+    },
+    {
+        "id": "dihydroxyacetone_phosphate",
+        "name": "Dihydroxyacetone phosphate (DHAP)",
+        "role": "A three-carbon glycolysis intermediate converted into glyceraldehyde-3-phosphate.",
+        "smiles": "OCC(=O)COP(=O)(O)O",
+    },
+    {
         "id": "glyceraldehyde_3_phosphate",
         "name": "Glyceraldehyde-3-phosphate (G3P)",
         "role": "A three-carbon glycolysis intermediate oxidized to help produce NADH and ATP.",
         "smiles": "O=C[C@H](O)COP(=O)(O)O",
+    },
+    {
+        "id": "1_3_bisphosphoglycerate",
+        "name": "1,3-Bisphosphoglycerate",
+        "role": "A high-energy three-carbon intermediate that transfers phosphate to ADP to make ATP during glycolysis.",
+        "smiles": "O=C(OP(=O)(O)O)C(O)COP(=O)(O)O",
+    },
+    {
+        "id": "3_phosphoglycerate",
+        "name": "3-Phosphoglycerate",
+        "role": "A three-carbon glycolysis intermediate formed when 1,3-bisphosphoglycerate transfers phosphate to ADP.",
+        "smiles": "O=C(O)C(O)COP(=O)(O)O",
+    },
+    {
+        "id": "2_phosphoglycerate",
+        "name": "2-Phosphoglycerate",
+        "role": "A three-carbon glycolysis intermediate formed from 3-phosphoglycerate before water is released.",
+        "smiles": "O=C(O)C(OP(=O)(O)O)CO",
+    },
+    {
+        "id": "phosphoenolpyruvate",
+        "name": "Phosphoenolpyruvate (PEP)",
+        "role": "A high-energy glycolysis intermediate that transfers phosphate to ADP to make ATP and pyruvate.",
+        "smiles": "O=C(O)C(=C)OP(=O)(O)O",
     },
     {
         "id": "acetylcholine",
@@ -494,7 +536,7 @@ MOLECULES = [
     {
         "id": "water",
         "name": "Water",
-        "role": "A product of oxygen reduction at Complex IV and the solvent of the cell interior.",
+        "role": "A product released when enolase converts 2-phosphoglycerate to phosphoenolpyruvate, and the main solvent of the cell interior.",
         "smiles": "O",
     },
     {"id": "sodium", "name": "Sodium ion", "role": "A dissolved extracellularly enriched cation that contributes to membrane potential and transport gradients.", "smiles": "[Na+]"},

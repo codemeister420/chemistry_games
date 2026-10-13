@@ -190,84 +190,154 @@
       </g>`;
     }
 
-    function reactionToken(id, text, x, y) {
-      return `<g class="reaction-token" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(nameOverrides[id] || moleculeCards.get(id)?.name || id)}">
-        <rect x="${x - 37}" y="${y - 13}" width="74" height="26" rx="13"/>
-        <text x="${x}" y="${y + 4}">${escapeHtml(text)}</text>
-      </g>`;
-    }
-
-    function arrow(x1, x2, y, label) {
-      return `<g class="glycolysis-arrow"><path d="M${x1} ${y}H${x2 - 8}"/><path class="arrow-tip" d="M${x2 - 8} ${y - 5}l8 5-8 5Z"/><text x="${(x1 + x2) / 2}" y="${y - 11}">${escapeHtml(label)}</text></g>`;
-    }
-
-    function ionNode(id, x, y) {
-      const molecule = moleculeCards.get(id);
-      if (!molecule) return "";
-      return `<g class="cytosol-ion" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(molecule.name)}">
-        <circle class="ion-node" cx="${x}" cy="${y}" r="25"/><text class="ion-symbol" x="${x}" y="${y + 4}">${escapeHtml(nameOverrides[id])}</text>
-        <text class="ion-name" x="${x}" y="${y + 40}">${escapeHtml(molecule.name.replace(" ion", ""))}</text>
-      </g>`;
-    }
-
     if (targetId !== "cytoplasm") {
       const nodes = moleculeIds.map((id, index) => moleculeNode(id, nameOverrides[id], 180 + index * (540 / Math.max(moleculeIds.length - 1, 1)), 295, 96, 58)).join("");
       return `<g class="cytosol-scene"><path class="cytosol-fluid" d="M93 224c36-90 167-121 283-84 99-48 244-28 324 39 81 68 61 170-17 221-83 55-221 34-318 50-107 17-228-15-272-87-28-45-25-98 0-139Z"/><text class="cytosol-scene-label" x="450" y="142">DISSOLVED IN CYTOSOL</text>${nodes}<text class="cytosol-note lower" x="450" y="440">CONCENTRATIONS VARY THROUGH THE CELL</text></g>`;
     }
 
-    const flow = [
-      { id: "glucose", label: "Glucose", x: 95 },
-      { id: "glucose_6_phosphate", label: "Glucose-6-P", x: 250 },
-      { id: "glyceraldehyde_3_phosphate", label: "2 × G3P", x: 420 },
-      { id: "pyruvate", label: "2 × Pyruvate", x: 590 },
-    ].map((node) => moleculeNode(node.id, node.label, node.x, 250, 82, 48)).join("");
-    const ions = [
-      ionNode("sodium", 775, 264),
-      ionNode("potassium", 848, 264),
-      ionNode("magnesium", 775, 365),
-      ionNode("chloride", 848, 365),
-    ].join("");
-    const solvent = moleculeNode("water", "Water · solvent", 662, 465, 62, 38);
+    const steps = [
+      {
+        substrate: [{ id: "glucose", label: "Glucose" }],
+        product: [{ id: "glucose_6_phosphate", label: "Glucose-6-P" }],
+        enzyme: ["Hexokinase"],
+        carriers: [["atp", "ATP"], ["→", "arrow"], ["adp", "ADP"]],
+      },
+      {
+        substrate: [{ id: "glucose_6_phosphate", label: "Glucose-6-P" }],
+        product: [{ id: "fructose_6_phosphate", label: "Fructose-6-P" }],
+        enzyme: ["Phosphoglucose", "isomerase"],
+      },
+      {
+        substrate: [{ id: "fructose_6_phosphate", label: "Fructose-6-P" }],
+        product: [{ id: "fructose_1_6_bisphosphate", label: "Fructose-1,6-BP" }],
+        enzyme: ["Phosphofructokinase-1"],
+        carriers: [["atp", "ATP"], ["→", "arrow"], ["adp", "ADP"]],
+      },
+      {
+        substrate: [{ id: "fructose_1_6_bisphosphate", label: "Fructose-1,6-BP" }],
+        product: [
+          { id: "dihydroxyacetone_phosphate", label: "DHAP" },
+          { id: "glyceraldehyde_3_phosphate", label: "G3P" },
+        ],
+        enzyme: ["Aldolase"],
+      },
+      {
+        substrate: [{ id: "dihydroxyacetone_phosphate", label: "DHAP" }],
+        product: [{ id: "glyceraldehyde_3_phosphate", label: "2nd G3P" }],
+        enzyme: ["Triose phosphate", "isomerase"],
+      },
+      {
+        substrate: [{ id: "glyceraldehyde_3_phosphate", label: "2 × G3P" }],
+        product: [{ id: "1_3_bisphosphoglycerate", label: "2 × 1,3-BPG" }],
+        enzyme: ["Glyceraldehyde-3-P", "dehydrogenase"],
+        carriers: [
+          ["nad_plus", "2 NAD⁺"], ["+", "operator"], ["phosphate", "2 Pi"],
+          ["→", "arrow"], ["nadh", "2 NADH"], ["+", "operator"], ["2 H⁺", "text"],
+        ],
+      },
+      {
+        substrate: [{ id: "1_3_bisphosphoglycerate", label: "2 × 1,3-BPG" }],
+        product: [{ id: "3_phosphoglycerate", label: "2 × 3-PG" }],
+        enzyme: ["Phosphoglycerate", "kinase"],
+        carriers: [["adp", "2 ADP"], ["→", "arrow"], ["atp", "2 ATP"]],
+      },
+      {
+        substrate: [{ id: "3_phosphoglycerate", label: "2 × 3-PG" }],
+        product: [{ id: "2_phosphoglycerate", label: "2 × 2-PG" }],
+        enzyme: ["Phosphoglycerate", "mutase"],
+      },
+      {
+        substrate: [{ id: "2_phosphoglycerate", label: "2 × 2-PG" }],
+        product: [
+          { id: "phosphoenolpyruvate", label: "2 × PEP" },
+          { id: "water", label: "2 × H₂O" },
+        ],
+        enzyme: ["Enolase"],
+      },
+      {
+        substrate: [{ id: "phosphoenolpyruvate", label: "2 × PEP" }],
+        product: [{ id: "pyruvate", label: "2 × Pyruvate" }],
+        enzyme: ["Pyruvate kinase"],
+        carriers: [["adp", "2 ADP"], ["→", "arrow"], ["atp", "2 ATP"]],
+      },
+    ];
+
+    function carrierEquation(carriers, centerX, y) {
+      if (!carriers) return "";
+      const widths = carriers.map(([id, label]) => {
+        if (label === "operator" || label === "arrow") return 9;
+        return Math.max(17, (label === "text" ? id : label).length * 3.7);
+      });
+      const totalWidth = widths.reduce((sum, width) => sum + width, 0);
+      let x = centerX - totalWidth / 2;
+      return carriers.map(([id, label], index) => {
+        const width = widths[index];
+        const itemX = x + width / 2;
+        x += width;
+        if (label === "operator" || label === "arrow" || label === "text") {
+          const mark = label === "operator" ? "+" : label === "arrow" ? "→" : id;
+          return `<text class="carrier-equation-mark" x="${itemX}" y="${y + 3}">${escapeHtml(mark)}</text>`;
+        }
+        const molecule = moleculeCards.get(id);
+        const accessibleName = molecule ? molecule.name : label;
+        return `<g class="carrier-equation-token" data-target="${escapeHtml(id)}" role="button" tabindex="0" aria-label="Inspect ${escapeHtml(accessibleName)}">
+          <text x="${itemX}" y="${y + 3}">${escapeHtml(label)}</text>
+        </g>`;
+      }).join("");
+    }
+
+    function reactionCard(step, index) {
+      const row = index < 5 ? 0 : 1;
+      const column = row === 0 ? index : 9 - index;
+      const centerX = 124 + column * 162;
+      const top = row === 0 ? 160 : 368;
+      const moleculeNodes = (molecules, y) => molecules.map((molecule, moleculeIndex) => {
+        const paired = molecules.length > 1;
+        const x = centerX + (moleculeIndex - (molecules.length - 1) / 2) * (paired ? 66 : 0);
+        return moleculeNode(
+          molecule.id,
+          molecule.label,
+          x,
+          y,
+          paired ? 54 : 104,
+          paired ? 30 : 40,
+        );
+      }).join("");
+      const textLines = (lines, y, className) => lines.map((line, lineIndex) =>
+        `<text class="${className}" x="${centerX}" y="${y + lineIndex * 10}">${escapeHtml(line)}</text>`
+      ).join("");
+      return `<g class="glycolysis-step">
+        <rect class="reaction-step-bg" x="${centerX - 69}" y="${top}" width="138" height="204" rx="9"/>
+        <circle class="reaction-step-badge" cx="${centerX - 55}" cy="${top + 17}" r="8"/>
+        <text class="reaction-step-number" x="${centerX - 55}" y="${top + 17}">${index + 1}</text>
+        <text class="reaction-step-heading" x="${centerX + 8}" y="${top + 20}">STEP ${index + 1}</text>
+        ${moleculeNodes(step.substrate, top + 53)}
+        <text class="reaction-step-direction" x="${centerX}" y="${top + 105}">↓</text>
+        ${moleculeNodes(step.product, top + 119)}
+        ${textLines(step.enzyme, top + 170, "reaction-step-enzyme-full")}
+        ${carrierEquation(step.carriers, centerX, top + 191)}
+      </g>`;
+    }
+
+    const cards = steps.map(reactionCard).join("");
+    const connectors = Array.from({ length: 4 }, (_, index) => {
+      const rightX = 124 + index * 162 + 70;
+      const leftX = 124 + (4 - index) * 162 - 70;
+      const topY = 262;
+      const bottomY = 470;
+      return `<path class="glycolysis-connector forward" d="M${rightX} ${topY}h17m-5-4 5 4-5 4"/>
+        <path class="glycolysis-connector reverse" d="M${leftX} ${bottomY}h-17m5-4-5 4 5 4"/>`;
+    }).join("");
 
     return `<g class="cytosol-scene glycolysis-scene">
       <path class="cytosol-fluid" d="M45 171c86-74 212-54 322-54 111 0 242-26 320 46 56 51 44 253-12 302-86 69-221 54-336 48-131-7-250 18-306-58-39-53-35-232 12-284Z"/>
-      <rect class="glycolysis-flow-area" x="53" y="188" width="638" height="157" rx="16"/>
-      <text class="cytosol-scene-label" x="370" y="139">GLYCOLYSIS · CYTOSOL</text>
-      <text class="cytosol-note" x="370" y="159">10 ENZYME-CATALYZED STEPS · SIMPLIFIED OVERVIEW</text>
-      ${arrow(141, 205, 241, "INVEST")} ${arrow(297, 370, 241, "SPLIT")} ${arrow(467, 540, 241, "PAYOFF")}
-      ${flow}
-      <text class="phase-label" x="78" y="333">ENERGY INVESTMENT · 2 ATP → 2 ADP</text>
-      <text class="phase-label" x="389" y="333">2 × THREE-CARBON PATHWAY</text>
-
-      <g class="reaction-ledger">
-        <text class="ledger-label" x="62" y="390">REDOX</text>
-        ${reactionToken("nad_plus", "2 NAD⁺", 182, 386)}
-        ${arrow(224, 294, 386, "ACCEPT e⁻")}
-        ${reactionToken("nadh", "2 NADH", 348, 386)}
-        <text class="ledger-label" x="420" y="390">ATP PAYOFF</text>
-        ${reactionToken("adp", "4 ADP", 534, 386)}
-        <text class="ledger-plus" x="580" y="391">+</text>
-        ${reactionToken("phosphate", "4 Pi", 622, 386)}
-        <text class="ledger-arrow-text" x="662" y="391">→</text>
-        ${reactionToken("atp", "4 ATP", 688, 386)}
-      </g>
-
-      <g class="investment-row">
-        <text class="ledger-label" x="62" y="442">INVESTED EARLIER</text>
-        ${reactionToken("atp", "2 ATP", 207, 438)}
-        <text class="ledger-arrow-text" x="260" y="442">→</text>
-        ${reactionToken("adp", "2 ADP", 315, 438)}
-        ${solvent}
-      </g>
-
-      <g class="ion-panel">
-        <rect x="724" y="177" width="162" height="339" rx="17"/>
-        <text class="ion-panel-title" x="805" y="211">DISSOLVED IONS</text>
-        ${ions}
-        <text class="ion-panel-note" x="805" y="487">EACH ION SELECTABLE</text>
-      </g>
-      <text class="net-yield" x="370" y="535">NET PER GLUCOSE · 2 PYRUVATE · 2 ATP · 2 NADH</text>
-      <text class="cytosol-note lower" x="450" y="575">SIMPLIFIED STOICHIOMETRY · INTERMEDIATES AND POSITIONS NOT TO SCALE</text>
+      <text class="cytosol-scene-label" x="450" y="135">GLYCOLYSIS · CYTOSOL</text>
+      <text class="cytosol-note" x="450" y="155">ONE GLUCOSE · TEN ENZYME-CATALYZED REACTIONS · FOLLOW THE NUMBERED PATH</text>
+      ${connectors}
+      <path class="glycolysis-connector turn" d="M846 349v16m-4-5 4 5 4-5"/>
+      ${cards}
+      <text class="net-yield" x="450" y="582">NET PER GLUCOSE · 2 PYRUVATE · 2 ATP · 2 NADH · 2 H₂O</text>
+      <text class="cytosol-note lower" x="450" y="603">SELECT ANY MOLECULE TO ZOOM INTO ITS STRUCTURE · ATP SPENT IN STEPS 1 &amp; 3, MADE IN STEPS 7 &amp; 10</text>
     </g>`;
   }
 
@@ -521,7 +591,7 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    if ((event.key === "Enter" || event.key === " ") && event.target.matches(".hit-target, .diagram-action, .bilayer-lipid, .atp-reaction, .cytosol-molecule, .cytosol-ion, .cytosol-structure-hit, .reaction-token")) {
+    if ((event.key === "Enter" || event.key === " ") && event.target.matches(".hit-target, .diagram-action, .bilayer-lipid, .atp-reaction, .cytosol-molecule, .cytosol-structure-hit, .carrier-equation-token")) {
       event.preventDefault();
       openTarget(event.target.dataset.target);
     }
