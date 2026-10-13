@@ -166,6 +166,71 @@
     return `${glycocalyx}${proteins}`;
   }
 
+  function cytosolicRibosomeSvg() {
+    const proteins = [
+      [287, 245], [316, 208], [353, 185], [391, 211], [421, 174],
+      [470, 190], [513, 177], [551, 205], [590, 222], [618, 258],
+      [302, 386], [339, 425], [391, 442], [499, 438], [552, 420], [595, 390],
+    ].map(([x, y]) => `<circle class="ribosome-protein-bead" cx="${x}" cy="${y}" r="7"/>`).join("");
+    const trnas = [
+      { site: "E", x: 360, anticodon: "CGA", state: "uncharged" },
+      { site: "P", x: 450, anticodon: "AAA", state: "peptidyl" },
+      { site: "A", x: 540, anticodon: "CUU", state: "aminoacyl" },
+    ].map(({ site, x, anticodon, state }) => `<g class="ribosome-trna diagram-action" data-target="transfer_rna" role="button" tabindex="0" aria-label="Inspect transfer RNA at the ${site} site, anticodon ${anticodon}">
+      <path class="trna-backbone ${state}" d="M${x} 386v-35c-20-8-22-27-9-34 6-4 13-1 18 4 10 11 4 24-9 30m0-20-20-14m20 14 21-15m-21 15v-28m-7 2 7-8 7 8"/>
+      <ellipse class="trna-hit" cx="${x}" cy="354" rx="28" ry="46"/>
+      <text class="ribosome-site-label" x="${x}" y="302">${site} SITE</text>
+      <text class="trna-anticodon" x="${x}" y="387">${anticodon}</text>
+      ${state === "aminoacyl" ? `<circle class="trna-amino-acid" cx="${x}" cy="311" r="8"/><text class="trna-state-label" x="${x}" y="289">AMINO ACID</text>` : ""}
+    </g>`).join("");
+    return `<g class="cytosolic-ribosome-visual">
+      <text class="ribosome-view-label" x="450" y="122">EUKARYOTIC CYTOSOLIC RIBOSOME · TRANSLATION ELONGATION</text>
+
+      <g class="ribosome-subunit diagram-action" data-target="large_subunit" role="button" tabindex="0" aria-label="Inspect the 60S large ribosomal subunit">
+        <path class="ribosome-large-body" d="M255 315C230 286 238 245 264 222c1-37 37-67 75-64 25-38 78-47 111-22 35-30 87-19 105 15 42-8 79 20 80 58 31 26 35 65 8 94-22 24-58 34-92 22-32 28-73 30-108 12-34 24-76 22-105 3-30 11-63 2-83-25Z"/>
+        <text class="ribosome-subunit-label" x="450" y="216">60S LARGE SUBUNIT</text>
+      </g>
+      <g class="ribosome-subunit diagram-action" data-target="small_subunit" role="button" tabindex="0" aria-label="Inspect the 40S small ribosomal subunit">
+        <path class="ribosome-small-body" d="M291 368c20-31 60-40 95-31 28-20 72-22 101-3 32-18 72-13 96 10 37-1 69 18 77 48 5 24-10 47-34 57-40 18-89 6-128 8-54 2-115 23-164 5-44-16-62-59-43-94Z"/>
+        <text class="ribosome-subunit-label" x="450" y="456">40S SMALL SUBUNIT</text>
+      </g>
+
+      <g class="ribosome-rna-feature diagram-action" data-target="ribosomal_rna" role="button" tabindex="0" aria-label="Inspect ribosomal RNA forming the structural and catalytic core">
+        <path class="ribosome-rrna-large" d="M278 280c21-34 40 28 63-4s39-44 60-4 41 35 63 2 37-28 58 6 44 28 73-15"/>
+        <path class="ribosome-rrna-large" d="M305 302c17-22 34 24 51 5s38-35 55-3 37 29 55 1 34-24 53 6 38 19 57-7"/>
+        <path class="ribosome-rrna-small" d="M309 384c21-17 31 27 51 10s34-20 51 3 36 18 53-4 34-17 50 4 34 12 53-7"/>
+        <path class="ribosome-rrna-small" d="M331 413c17-14 29 18 45 8s28-17 43 1 30 14 45-2 31-13 47 3 28 7 41-4"/>
+        <text class="ribosome-feature-label rrna-label" x="315" y="274">rRNA CORE</text>
+      </g>
+
+      <g class="ribosome-protein-feature diagram-action" data-target="ribosomal_proteins" role="button" tabindex="0" aria-label="Inspect ribosomal proteins surrounding the rRNA core">
+        ${proteins}
+        <text class="ribosome-feature-label protein-label" x="594" y="300">RIBOSOMAL PROTEINS</text>
+      </g>
+
+      <g class="ribosome-mrna diagram-action" data-target="messenger_rna" role="button" tabindex="0" aria-label="Inspect messenger RNA threaded through the decoding channel, read 5 prime to 3 prime">
+        <path class="mrna-backbone" d="M290 401H612"/>
+        <path class="mrna-codon-divider" d="M405 390v22m90-22v22m90-22v22"/>
+        <text class="mrna-codon" x="360" y="415">GCU</text>
+        <text class="mrna-codon" x="450" y="415">UUU</text>
+        <text class="mrna-codon" x="540" y="415">GAA</text>
+        <text class="mrna-direction" x="285" y="430">5′</text>
+        <text class="mrna-direction" x="617" y="430">3′</text>
+        <text class="ribosome-feature-label mrna-label" x="450" y="478">mRNA · CODONS READ 5′ → 3′</text>
+      </g>
+
+      ${trnas}
+      <path class="nascent-peptide-bond" d="M450 319v-64"/>
+      <g class="nascent-peptide" aria-hidden="true">
+        <circle cx="450" cy="252" r="7"/><circle cx="450" cy="234" r="7"/><circle cx="450" cy="216" r="7"/>
+        <path d="M450 209v-21"/>
+      </g>
+      <text class="nascent-peptide-label" x="484" y="193">GROWING PEPTIDE</text>
+      <text class="ribosome-model-note" x="450" y="509">E · EXIT (UNCHARGED)  /  P · PEPTIDYL-tRNA  /  A · INCOMING AMINOACYL-tRNA</text>
+      <text class="diagram-note" x="450" y="536">SCHEMATIC 80S MACHINE · SUBUNIT SILHOUETTES AND MOLECULAR POSITIONS SIMPLIFIED</text>
+    </g>`;
+  }
+
   function cytosolSceneSvg(target, targetId) {
     const moleculeIds = (target.molecules || []).filter((id) => moleculeCards.has(id));
     const nameOverrides = {
@@ -347,6 +412,8 @@
         return `${membraneLipidsSvg(target.molecules || [], targetId === "plasma_membrane")}${targetId === "plasma_membrane" ? plasmaMembraneFeaturesSvg() : ""}`;
       case "cytosol":
         return cytosolSceneSvg(target, targetId);
+      case "cytosolic_ribosome":
+        return cytosolicRibosomeSvg();
       case "double_membrane":
         return `<g class="double-membrane-visual"><ellipse class="membrane-outer" cx="450" cy="282" rx="238" ry="126"/><ellipse class="membrane-inner" cx="450" cy="282" rx="215" ry="105"/><path class="double-membrane-dna" d="M375 277c20-41 40 42 61 0s40-42 60 0 40 42 60 0"/><text class="diagram-note" x="450" y="440">TWO SEPARATE LIPID BILAYERS</text></g>`;
       case "mitochondrion":
@@ -462,18 +529,19 @@
     const childRowY = target.visual === "membrane" ? 505 : 457;
     const embeddedPlasmaFeatures = targetId === "plasma_membrane";
     const embeddedCytosolFeatures = target.visual === "cytosol";
-    const childMarkup = embeddedPlasmaFeatures || embeddedCytosolFeatures
+    const embeddedRibosomeFeatures = target.visual === "cytosolic_ribosome";
+    const childMarkup = embeddedPlasmaFeatures || embeddedCytosolFeatures || embeddedRibosomeFeatures
       ? ""
       : childIds.map((id, index) => childActionSvg(id, index, childIds.length, childRowY)).join("");
     const moleculeRowY = childIds.length ? 560 : 457;
-    const moleculeMarkup = target.visual !== "membrane" && target.visual !== "nachr_pentamer" && !embeddedCytosolFeatures
+    const moleculeMarkup = target.visual !== "membrane" && target.visual !== "nachr_pentamer" && !embeddedCytosolFeatures && !embeddedRibosomeFeatures
       ? moleculeIds.map((id, index) => moleculeActionSvg(id, index, moleculeIds.length, moleculeRowY)).join("")
       : "";
     const showChildren = childIds.length > 0;
     const showMolecules = moleculeIds.length > 0;
     const pathwayView = ["respiration", "pathway", "gradient"].includes(target.visual);
     const customProteinView = ["aquaporin_tetramer", "nachr_pentamer", "glut1_transporter"].includes(target.visual);
-    const secondaryMarkup = showChildren && showMolecules && !pathwayView && target.visual !== "membrane" && !embeddedCytosolFeatures
+    const secondaryMarkup = showChildren && showMolecules && !pathwayView && target.visual !== "membrane" && !embeddedCytosolFeatures && !embeddedRibosomeFeatures
       ? `<g class="secondary-label"><text x="450" y="519">MOLECULES IN THIS STRUCTURE</text></g>${moleculeMarkup}`
       : moleculeMarkup;
     return `<svg class="detail-svg" viewBox="0 0 900 620" role="group" aria-label="${escapeHtml(target.name)} composition">
@@ -482,7 +550,8 @@
       <g class="focus-art">${focusGraphic(target.visual || "protein_complex", target, targetId)}</g>
       ${target.visual === "membrane" && !embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="449">SELECT A LIPID TO VIEW ITS MOLECULAR STRUCTURE</text></g>` : ""}
       ${embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="482">SELECT A NAMED LIPID OR EMBEDDED FEATURE TO ZOOM IN</text></g>` : ""}
-      ${showChildren && !pathwayView && !embeddedPlasmaFeatures && !embeddedCytosolFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
+      ${embeddedRibosomeFeatures ? `<g class="secondary-label"><text x="450" y="565">SELECT A SUBUNIT, mRNA, tRNA, rRNA, OR RIBOSOMAL PROTEIN</text></g>` : ""}
+      ${showChildren && !pathwayView && !embeddedPlasmaFeatures && !embeddedCytosolFeatures && !embeddedRibosomeFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
       ${secondaryMarkup}
       ${!showChildren && !showMolecules && !customProteinView ? `<text class="diagram-note" x="450" y="505">DEEPEST CURRENT VIEW · USE THE TRAIL ABOVE TO ZOOM OUT</text>` : ""}
     </svg>`;

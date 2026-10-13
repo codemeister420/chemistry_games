@@ -265,6 +265,42 @@ h1 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; font-weig
 .ribosome-large { fill: #548c79; stroke: #d3e8c5; stroke-width: 3; }
 .ribosome-small { fill: #a2c99d; stroke: #e8d39a; stroke-width: 3; }
 .rna-thread { fill: none; stroke: #e88c6d; stroke-width: 3; stroke-linecap: round; }
+.ribosome-view-label { fill: #dcecdf; font: 700 10px "Segoe UI", sans-serif; letter-spacing: 1px; text-anchor: middle; }
+.ribosome-subunit { cursor: pointer; }
+.ribosome-large-body { fill: #477969; stroke: #c6dfbc; stroke-width: 3; }
+.ribosome-small-body { fill: #789d78; stroke: #e4d69e; stroke-width: 3; }
+.ribosome-subunit:hover .ribosome-large-body, .ribosome-subunit:focus .ribosome-large-body { fill: #57917b; stroke: #f0c66d; stroke-width: 4; }
+.ribosome-subunit:hover .ribosome-small-body, .ribosome-subunit:focus .ribosome-small-body { fill: #8bb489; stroke: #f0c66d; stroke-width: 4; }
+.ribosome-subunit:focus, .ribosome-rna-feature:focus, .ribosome-protein-feature:focus, .ribosome-mrna:focus, .ribosome-trna:focus { outline: none; filter: drop-shadow(0 0 5px rgba(239, 198, 109, .62)); }
+.ribosome-subunit-label { fill: #f1efdd; font: 700 10px "Segoe UI", sans-serif; letter-spacing: .7px; text-anchor: middle; }
+.ribosome-rna-feature, .ribosome-protein-feature, .ribosome-mrna, .ribosome-trna { cursor: pointer; }
+.ribosome-rrna-large, .ribosome-rrna-small { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ribosome-rrna-large { stroke: #96d2b0; stroke-width: 7; }
+.ribosome-rrna-small { stroke: #d8e59e; stroke-width: 6; }
+.ribosome-protein-bead { fill: #e9bd72; stroke: #fff0be; stroke-width: 1.5; }
+.ribosome-protein-feature:hover .ribosome-protein-bead, .ribosome-protein-feature:focus .ribosome-protein-bead { fill: #f3d58d; stroke: #fff8dc; stroke-width: 2.5; }
+.ribosome-feature-label { font: 700 8px "Segoe UI", sans-serif; letter-spacing: .7px; text-anchor: middle; }
+.rrna-label { fill: #bde4c4; }
+.protein-label { fill: #ffe1a3; }
+.mrna-backbone { fill: none; stroke: #e58e70; stroke-width: 6; stroke-linecap: round; }
+.mrna-codon-divider { stroke: #613f3c; stroke-width: 1.5; }
+.mrna-codon { fill: #fff0cf; font: 700 9px ui-monospace, Consolas, monospace; text-anchor: middle; }
+.mrna-direction { fill: #ffe0b4; font: 700 9px "Segoe UI", sans-serif; }
+.mrna-label { fill: #ffc09c; }
+.trna-hit { fill: transparent; }
+.trna-backbone { fill: none; stroke: #82c7bf; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.trna-backbone.uncharged { stroke: #aab8a0; }
+.trna-backbone.peptidyl { stroke: #ecc879; }
+.trna-backbone.aminoacyl { stroke: #78c5bc; }
+.ribosome-trna:hover .trna-backbone, .ribosome-trna:focus .trna-backbone { stroke: #fff0a8; stroke-width: 7; }
+.ribosome-site-label { fill: #f3e8c5; font: 700 8px "Segoe UI", sans-serif; text-anchor: middle; }
+.trna-anticodon { fill: #f5edce; font: 700 7px ui-monospace, Consolas, monospace; text-anchor: middle; }
+.trna-amino-acid { fill: #f1a477; stroke: #ffe0b8; stroke-width: 2; }
+.trna-state-label { fill: #ffd5a5; font: 700 6px "Segoe UI", sans-serif; letter-spacing: .3px; text-anchor: middle; }
+.nascent-peptide-bond, .nascent-peptide path { fill: none; stroke: #f1a477; stroke-width: 3; stroke-linecap: round; }
+.nascent-peptide circle { fill: #f1a477; stroke: #ffe0b8; stroke-width: 1.5; }
+.nascent-peptide-label { fill: #ffd5a5; font: 700 8px "Segoe UI", sans-serif; }
+.ribosome-model-note { fill: #b7ccbd; font: 700 7px "Segoe UI", sans-serif; letter-spacing: .35px; text-anchor: middle; }
 .network-visual path, .filament-visual path { fill: none; stroke: #8dc5a9; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
 .network-visual circle, .filament-visual circle { fill: #e8be72; stroke: #ffe7af; stroke-width: 2; }
 .stack-visual path { fill: #558d7b; stroke: #edc16d; stroke-width: 3; }
