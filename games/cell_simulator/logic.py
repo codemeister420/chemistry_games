@@ -274,7 +274,7 @@ ORGANCELLE_CONTENT = {
     },
     "ribosomes": {
         "visual": "cytosolic_ribosome",
-        "children": ["small_subunit", "large_subunit", "messenger_rna", "transfer_rna", "ribosomal_rna", "ribosomal_proteins"],
+        "children": ["small_subunit", "large_subunit", "messenger_rna", "transfer_rna", "ribosomal_rna", "ribosomal_proteins","trna_e_site", "trna_p_site", "trna_a_site",],
     },
     "rough_er": {
         "visual": "network",
@@ -344,12 +344,215 @@ COMPONENT_DATA = {
     "proton_gradient": _component("Proton gradient", "ELECTROCHEMICAL GRADIENT", "Respiratory complexes move protons out of the matrix. Their return through ATP synthase releases usable free energy.", "gradient", ["atp_synthase"], ["water"]),
     "cytochrome_c": _component("Cytochrome c", "ELECTRON-CARRIER PROTEIN", "This mobile heme protein carries electrons from Complex III to Complex IV along the intermembrane-space side of the inner membrane.", "protein_complex"),
     "citric_acid_cycle": _component("Citric acid cycle", "METABOLIC PATHWAY", "Matrix enzymes oxidize acetyl-CoA and load electrons onto NADH and FADH₂ for delivery to the respiratory chain.", "pathway", ["pyruvate_oxidation"], ["pyruvate", "atp"]),
-    "small_subunit": _component("Small ribosomal subunit · 40S", "RNA + PROTEINS", "The eukaryotic 40S subunit binds mRNA and checks codon–anticodon pairing as tRNAs enter the decoding center.", "cytosolic_ribosome", ["ribosomal_rna", "ribosomal_proteins", "messenger_rna", "transfer_rna"]),
-    "large_subunit": _component("Large ribosomal subunit · 60S", "RNA + PROTEINS", "The eukaryotic 60S subunit contains the peptidyl-transferase center, where rRNA catalyzes peptide-bond formation.", "cytosolic_ribosome", ["ribosomal_rna", "ribosomal_proteins", "messenger_rna", "transfer_rna"]),
-    "messenger_rna": _component("Messenger RNA (mRNA)", "TRANSLATION TEMPLATE", "The small ribosomal subunit reads mRNA codons in the 5′ to 3′ direction. Each codon specifies an amino acid or a stop signal.", "nucleic_acid", (), ["adenine", "cytosine", "guanine", "uracil"]),
+    
+    "small_subunit": _component(
+    "Small ribosomal subunit · 40S",
+    "RNA + PROTEINS",
+    "The eukaryotic 40S subunit binds mRNA and checks codon–anticodon pairing as tRNAs enter the decoding center.",
+    "cytosolic_ribosome",
+    ["small_subunit_rrna", "small_subunit_proteins", "messenger_rna", "transfer_rna"]
+),
+    
+"large_subunit": _component(
+    "Large ribosomal subunit · 60S",
+    "RNA + PROTEINS",
+    "The eukaryotic 60S subunit contains the peptidyl-transferase center, where rRNA catalyzes peptide-bond formation.",
+    "cytosolic_ribosome",
+    ["large_subunit_rrna", "large_subunit_proteins", "messenger_rna", "transfer_rna"]
+),
+
+    
+    "messenger_rna": _component(
+        "Messenger RNA (mRNA)",
+        "PROTEIN-CODING RNA · TRANSLATION TEMPLATE",
+        "Messenger RNA (mRNA) carries genetic instructions from DNA "
+        "to ribosomes, where its nucleotide sequence is translated "
+        "into a protein. The ribosome reads mRNA codons in the "
+        "5' to 3' direction, with each codon containing three "
+        "nucleotides. The four standard RNA bases are adenine, "
+        "uracil, guanine and cytosine. Mature eukaryotic mRNAs "
+        "typically possess a 5' cap containing 7-methylguanosine "
+        "(m7G), connected to the RNA through an unusual 5'-5' "
+        "triphosphate bridge. The cap helps protect mRNA and "
+        "supports translation initiation through the cap-binding "
+        "protein eIF4E. Many mRNAs also contain internal chemical "
+        "modifications such as N6-methyladenosine (m6A), which can "
+        "influence RNA stability, localization and translation. "
+        "At the 3' end, a poly(A) tail composed of repeated "
+        "adenosine residues helps regulate RNA stability and "
+        "translation. Poly(A)-binding proteins such as PABPC1 "
+        "associate with this tail. These proteins bind mRNA "
+        "but are not chemically part of the RNA polymer.",
+        "nucleic_acid",
+        (),
+        [
+            "m7_guanosine",
+            "m6_adenosine",
+            "adenosine",
+            "protein_eif4e",
+            "protein_pabpc1",
+        ]
+    ),
+
     "transfer_rna": _component("Transfer RNA (tRNA)", "AMINO-ACID ADAPTER", "A tRNA pairs its anticodon with an mRNA codon and delivers its attached amino acid to the ribosome's A site.", "nucleic_acid", (), ["adenine", "cytosine", "guanine", "uracil"]),
-    "ribosomal_rna": _component("Ribosomal RNA (rRNA)", "STRUCTURAL + CATALYTIC RNA", "rRNA forms the core of both eukaryotic ribosomal subunits. Large-subunit rRNA makes the catalytic peptidyl-transferase center.", "nucleic_acid", (), ["adenine", "cytosine", "guanine", "uracil"]),
+
+    "trna_e_site": _component(
+        "E-site tRNA",
+        "EXIT SITE · DEACYLATED tRNA",
+        "The E site is the exit site of the ribosome. During "
+        "translation elongation, a tRNA that has already donated "
+        "its amino acid moves from the P site into the E site "
+        "after translocation. It is now deacylated, meaning "
+        "that its terminal 3'-CCA end no longer carries an "
+        "amino acid. The tRNA generally leaves the ribosome "
+        "from this position and can later be recharged by "
+        "its corresponding aminoacyl-tRNA synthetase. "
+        "A key structural feature to examine is the "
+        "terminal adenosine (A76), whose 3'-hydroxyl "
+        "normally serves as an amino-acid attachment site.",
+        "trna_site",
+        (),
+        ["adenosine","protein_eef2"]
+    ),
+
+    "trna_p_site": _component(
+        "P-site tRNA",
+        "PEPTIDYL SITE · GROWING PROTEIN",
+        "The P site holds the peptidyl-tRNA during translation "
+        "elongation. Its terminal adenosine is connected "
+        "through an ester bond to the growing polypeptide. "
+        "During peptide-bond formation, the nascent peptide "
+        "is transferred from the P-site tRNA to the amino "
+        "acid on the A-site tRNA. The 60S peptidyl-transferase "
+        "center catalyzes this reaction. "
+        "Following translocation, the newly deacylated "
+        "P-site tRNA moves toward the E site. "
+        "The alanyl-phenylalanine molecule shown below "
+        "is a simplified example of a short peptide, "
+        "not the complete tRNA-linked growing chain.",
+        "trna_site",
+        (),
+        ["nascent_peptide_ala_phe", "adenosine","protein_eif5a"]
+    ),
+
+    "trna_a_site": _component(
+        "A-site tRNA",
+        "AMINOACYL SITE · INCOMING AMINO ACID",
+        "The A site accepts an incoming aminoacyl-tRNA "
+        "whose anticodon matches the mRNA codon. "
+        "During eukaryotic elongation, eEF1A-GTP helps "
+        "deliver the charged tRNA. Correct codon-anticodon "
+        "recognition allows accommodation into the ribosome. "
+        "The amino acid is attached to the terminal "
+        "adenosine of the tRNA by an ester linkage. "
+        "The peptidyl-transferase center then transfers "
+        "the growing peptide from the P-site tRNA "
+        "to this A-site amino acid. "
+        "In our displayed example, the mRNA codon GAA "
+        "specifies glutamate, and its matching tRNA "
+        "has the anticodon CUU.",
+        "trna_site",
+        (),
+        ["glutamate", "adenosine", "protein_eef1a", "protein_ears1"]
+    ),
+
+    "ribosomal_rna": _component(
+    "Ribosomal RNA (rRNA)",
+    "STRUCTURAL + CATALYTIC RNA",
+    "Ribosomal RNA (rRNA) is a long, highly folded RNA polymer "
+    "that forms the structural and functional core of the ribosome. "
+    "Unlike messenger RNA, which carries protein-coding information, "
+    "rRNA directly participates in the machinery of protein synthesis. "
+    "In eukaryotic cytosolic ribosomes, the 40S small subunit contains "
+    "18S rRNA, which helps form the decoding center and monitors "
+    "codon–anticodon interactions between mRNA and tRNA. "
+    "The 60S large subunit contains 28S, 5.8S and 5S rRNAs. "
+    "The 28S rRNA forms the catalytic peptidyl-transferase center "
+    "responsible for peptide-bond formation. This makes the ribosome "
+    "a ribozyme: an RNA-based catalyst. "
+    "rRNA folds into complex secondary and tertiary structures through "
+    "intramolecular base pairing, including helices, loops, bulges "
+    "and junctions. Ribosomal proteins stabilize and organize these "
+    "structures. rRNA also contains chemically modified nucleotides, "
+    "including pseudouridine and 2'-O-methylated residues, which "
+    "contribute to ribosome structure and function.",
+    "nucleic_acid",
+    (),
+    ["adenine", "cytosine", "guanine", "uracil"]
+),
+
+
+    "large_subunit_rrna": _component(
+        "Large-subunit ribosomal RNA (rRNA)",
+        "60S · STRUCTURAL + CATALYTIC RNA",
+        "The eukaryotic 60S ribosomal subunit contains 28S, 5.8S and 5S "
+        "ribosomal RNAs. These highly folded RNA molecules form the "
+        "structural core of the large subunit. The 28S rRNA contributes "
+        "the peptidyl-transferase center, where peptide bonds are formed "
+        "during translation. Ribosomal RNA therefore performs the central "
+        "catalytic reaction of protein synthesis. Chemical modifications "
+        "such as pseudouridylation and 2'-O-methylation help regulate "
+        "local RNA structure, stability and ribosome function. "
+        "Pseudouridine (Psi) is formed by isomerization of uridine, "
+        "whereas 2'-O-methylguanosine contains a methyl group attached "
+        "to the ribose 2'-oxygen.",
+        "nucleic_acid",
+        (),
+        ["pseudouridine", "o2_methylguanosine"]
+    ),
+
+    "small_subunit_rrna": _component(
+        "Small-subunit ribosomal RNA (rRNA)",
+        "40S · DECODING RNA",
+        "The eukaryotic 40S ribosomal subunit contains 18S rRNA, which "
+        "forms the structural and functional basis of the decoding center. "
+        "This region helps monitor correct codon-anticodon pairing between "
+        "messenger RNA and transfer RNA. The 18S rRNA contains numerous "
+        "post-transcriptional modifications. A particularly interesting "
+        "example is N6,N6-dimethyladenosine (m6,6A), found at two adjacent "
+        "conserved positions near the 3' end of eukaryotic 18S rRNA. "
+        "Another modification type is 2'-O-methylcytidine (Cm), in which "
+        "the ribose 2'-hydroxyl is methylated. These modifications can "
+        "influence RNA folding, ribosome maturation and function.",
+        "nucleic_acid",
+        (),
+        ["dimethyladenosine_m66", "o2_methylcytidine"]
+    ),
+
     "ribosomal_proteins": _component("Ribosomal proteins", "RIBOSOME-ASSOCIATED PROTEINS", "Ribosomal proteins assemble around rRNA, stabilize the subunits, and help support translation and ribosome dynamics.", "protein_complex", (), ["glycine", "alanine", "serine"]),
+    
+    "large_subunit_proteins": _component(
+        "Large-subunit ribosomal proteins",
+        "60S · RIBOSOMAL PROTEIN COMPLEX",
+        "The eukaryotic 60S subunit contains a distinct collection of "
+        "ribosomal proteins assembled around 28S, 5.8S and 5S rRNAs. "
+        "These proteins stabilize the complex architecture of the "
+        "large subunit, support ribosome assembly, and help organize "
+        "the peptide exit tunnel and translation machinery. "
+        "The peptidyl-transferase center itself is formed primarily "
+        "by rRNA. Explore four representative 60S proteins below.",
+        "protein_complex",
+        (),
+        ["protein_ul3", "protein_ul4",
+         "protein_ul22", "protein_el24"]
+    ),
+
+    "small_subunit_proteins": _component(
+        "Small-subunit ribosomal proteins",
+        "40S · RIBOSOMAL PROTEIN COMPLEX",
+        "The eukaryotic 40S subunit contains proteins associated "
+        "with 18S rRNA. Together they support mRNA binding, "
+        "codon recognition, small-subunit assembly and translation "
+        "accuracy. Several proteins contribute to the architecture "
+        "of the mRNA entry channel, while others have important "
+        "roles in ribosome maturation and cellular regulation. "
+        "Explore four representative 40S proteins below.",
+        "protein_complex",
+        (),
+        ["protein_us3", "protein_us5",
+         "protein_us7", "protein_es6"]
+    ),
+
     "rough_er_membrane": _component("Rough-ER membrane", "LIPID BILAYER", "The ER membrane anchors ribosomes and contains channels that feed new proteins into the ER lumen.", "membrane", ["bound_ribosomes", "protein_translocon"], ["phosphatidylcholine", "phosphatidylethanolamine"]),
     "bound_ribosomes": _component("ER-bound ribosomes", "80S RNA + PROTEIN MACHINE", "Eukaryotic 80S ribosomes docked at the rough ER translate proteins destined for secretion, membranes, or the endomembrane system.", "cytosolic_ribosome", ["small_subunit", "large_subunit", "messenger_rna", "transfer_rna", "ribosomal_rna", "ribosomal_proteins"]),
     "rough_er_lumen": _component("Rough-ER lumen", "COMPARTMENT", "Newly made proteins fold and receive early processing inside this enclosed space.", "compartment", ["protein_folding"], ["water"]),
@@ -584,6 +787,199 @@ MOLECULES = [
     {"id": "glycine", "name": "Glycine", "role": "The smallest amino acid and one of the building blocks of proteins.", "smiles": "NCC(=O)O"},
     {"id": "alanine", "name": "Alanine", "role": "A protein-building amino acid with a methyl side chain.", "smiles": "C[C@H](N)C(=O)O"},
     {"id": "serine", "name": "Serine", "role": "A protein-building amino acid with a hydroxymethyl side chain.", "smiles": "N[C@@H](CO)C(=O)O"},
+        {
+        "id": "pseudouridine",
+        "name": "Pseudouridine (Ψ)",
+        "role": "A modified uridine isomer that is especially important in ribosomal RNA. Pseudouridine helps stabilize local RNA structure and can improve hydrogen-bonding interactions within folded rRNA.",
+        "smiles": "C1=C(C(=O)NC(=O)N1)[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O",
+    },
+    {
+        "id": "o2_methylguanosine",
+        "name": "2′-O-Methylguanosine (Gm)",
+        "role": "A guanosine residue modified by methylation at the ribose 2′-oxygen. In rRNA, 2′-O-methylation helps tune RNA folding, stability, and ribosome function.",
+        "smiles": "CO[C@@H]1[C@@H]([C@H](O[C@H]1N2C=NC3=C2N=C(NC3=O)N)CO)O",
+    },
+    {
+        "id": "dimethyladenosine_m66",
+        "name": "N6,N6-Dimethyladenosine (m6,6A)",
+        "role": "A dimethylated adenosine found in eukaryotic small-subunit rRNA. This modification is associated with 18S rRNA maturation and the functional organization of the decoding subunit.",
+        "smiles": "CN(C)C1=NC=NC2=C1N=CN2[C@H]3[C@@H]([C@@H]([C@H](O3)CO)O)O",
+    },
+    {
+        "id": "o2_methylcytidine",
+        "name": "2′-O-Methylcytidine (Cm)",
+        "role": "A cytidine residue with methylation at the ribose 2′-oxygen. In ribosomal RNA, this type of modification helps stabilize local structure and supports correct ribosome assembly and function.",
+        "smiles": "CO[C@@H]1[C@@H]([C@H](O[C@H]1N2C=CC(=NC2=O)N)CO)O",
+    },
+    
+    {
+        "id": "protein_ul3",
+        "name": "uL3 (RPL3)",
+        "role": "A conserved large-subunit ribosomal protein with extensive contacts to 28S rRNA. It contributes to the structural organization of the peptidyl-transferase-center region and supports large-subunit function.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_ul4",
+        "name": "uL4 (RPL4)",
+        "role": "A conserved protein of the 60S subunit that helps form the architecture of the nascent polypeptide exit tunnel. Its extended regions interact with the large-subunit rRNA.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_ul22",
+        "name": "uL22 (RPL17)",
+        "role": "A conserved 60S ribosomal protein associated with the polypeptide exit tunnel. Together with other proteins and rRNA, it contributes to the environment through which newly synthesized polypeptides pass.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_el24",
+        "name": "eL24 (RPL24)",
+        "role": "A eukaryote-specific 60S ribosomal protein that participates in large-subunit architecture and ribosome biogenesis. It associates with the rRNA-protein framework of the mature large subunit.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_us3",
+        "name": "uS3 (RPS3)",
+        "role": "A conserved small-subunit ribosomal protein located near the mRNA entry channel. It contributes to mRNA interactions and the structural organization of the 40S subunit.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_us5",
+        "name": "uS5 (RPS2)",
+        "role": "A conserved 40S ribosomal protein that interacts with small-subunit rRNA and contributes to the architecture needed for accurate translation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_us7",
+        "name": "uS7 (RPS5)",
+        "role": "A conserved small-subunit ribosomal protein involved in organizing the ribosomal head region and supporting interactions important for mRNA decoding.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_es6",
+        "name": "eS6 (RPS6)",
+        "role": "A eukaryote-specific 40S ribosomal protein that undergoes regulated phosphorylation and is linked to signaling pathways controlling cellular growth and protein synthesis.",
+        "type": "protein",
+    },
+
+
+    {
+        "id": "m7_guanosine",
+        "name": "7-Methylguanosine (m7G)",
+        "role": "A guanosine modified by methylation at nitrogen 7. "
+                "It forms the characteristic modified nucleoside "
+                "of the eukaryotic mRNA 5' cap. The complete cap "
+                "contains a 5'-5' triphosphate linkage connecting "
+                "m7G to the RNA chain. This drawing shows the "
+                "modified nucleoside, not the entire cap.",
+        "smiles": "CN1C=[N+](C2=C1C(=O)NC(=N2)N)[C@H]3[C@@H]([C@@H]([C@H](O3)CO)O)O",
+    },
+    {
+        "id": "m6_adenosine",
+        "name": "N6-Methyladenosine (m6A)",
+        "role": "An adenosine modified by a single methyl group "
+                "on the exocyclic nitrogen at position 6 of adenine. "
+                "It is a common internal mRNA modification that can "
+                "affect RNA stability, processing and translation "
+                "through interactions with specialized reader proteins.",
+        "smiles": "CNC1=C2C(=NC=N1)N(C=N2)[C@H]3[C@@H]([C@@H]([C@H](O3)CO)O)O",
+    },
+    {
+        "id": "adenosine",
+        "name": "Adenosine",
+        "role": "A ribonucleoside composed of adenine attached "
+                "to ribose. Repeated adenosine residues form "
+                "the poly(A) tail found at the 3' end of many "
+                "eukaryotic mRNAs. The actual poly(A) tail contains "
+                "nucleotides connected by phosphodiester bonds.",
+        "smiles": "C1=NC(=C2C(=N1)N(C=N2)[C@H]3[C@@H]([C@@H]([C@H](O3)CO)O)O)N",
+    },
+
+    {
+        "id": "protein_eif4e",
+        "name": "eIF4E · Cap-binding protein",
+        "role": "Eukaryotic translation initiation factor 4E "
+                "(eIF4E) recognizes the 7-methylguanosine-containing "
+                "cap at the 5' end of many eukaryotic mRNAs. "
+                "It forms part of the eIF4F initiation complex "
+                "and helps recruit translation initiation machinery "
+                "to the mRNA.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_pabpc1",
+        "name": "PABPC1 · Poly(A)-binding protein",
+        "role": "Cytoplasmic poly(A)-binding protein 1 "
+                "(PABPC1) binds the polyadenylated 3' tail "
+                "of many eukaryotic mRNAs. It helps regulate "
+                "mRNA stability and translation. Through "
+                "interactions involving eIF4G, it can contribute "
+                "to functional communication between the "
+                "5' cap and 3' poly(A) tail.",
+        "type": "protein",
+    },
+
+    {
+        "id": "glutamate",
+        "name": "L-Glutamate",
+        "role": "The amino acid specified by the mRNA codon GAA. "
+                "Before delivery to the ribosome, glutamate is "
+                "attached to the terminal adenosine of its "
+                "corresponding tRNA by glutamyl-tRNA synthetase. "
+                "The structure shown represents the free amino acid, "
+                "not the complete charged tRNA.",
+        "smiles": "N[C@@H](CCC(=O)O)C(=O)O",
+    },
+    {
+        "id": "nascent_peptide_ala_phe",
+        "name": "Alanyl-phenylalanine (Ala-Phe)",
+        "role": "A short dipeptide illustrating a fragment of a "
+                "nascent polypeptide. During translation, the growing "
+                "chain remains ester-linked to the terminal adenosine "
+                "of peptidyl-tRNA until transfer to the A-site "
+                "amino acid. This structure shows the isolated peptide.",
+        "smiles": "C[C@@H](N)C(=O)N[C@@H](Cc1ccccc1)C(=O)O",
+    },
+    {
+        "id": "protein_eef2",
+        "name": "eEF2 · Elongation Factor 2",
+        "role": "A GTP-dependent elongation factor that promotes "
+                "ribosomal translocation. It facilitates movement "
+                "of peptidyl-tRNA toward the P site and deacylated "
+                "tRNA toward the E site. It interacts transiently "
+                "with the ribosome rather than remaining permanently "
+                "bound to the E site.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_eif5a",
+        "name": "eIF5A · Translation Factor",
+        "role": "A translation factor that assists difficult "
+                "peptide-bond formation events, particularly during "
+                "polyproline synthesis. It binds near the E-site "
+                "region and contains the unusual modified "
+                "amino acid hypusine.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_eef1a",
+        "name": "eEF1A · Elongation Factor 1A",
+        "role": "A GTP-binding elongation factor that delivers "
+                "aminoacyl-tRNA to the ribosomal A site. Correct "
+                "codon-anticodon recognition promotes GTP hydrolysis "
+                "and accommodation of the charged tRNA.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_ears1",
+        "name": "EARS1 · Glutamyl-tRNA Synthetase",
+        "role": "An enzyme that uses ATP to attach glutamate to "
+                "its corresponding cytosolic tRNA before translation. "
+                "The resulting glutamyl-tRNA can subsequently "
+                "be delivered to the ribosomal A site.",
+        "type": "protein",
+    },
+
+
 ]
 
 
@@ -610,20 +1006,88 @@ def build_exploration_data():
         }
     return data
 
-
 @lru_cache(maxsize=1)
 def molecule_gallery():
     gallery = []
 
     for item in MOLECULES:
+
+        # Large proteins are handled separately from
+        # small molecules drawn by RDKit.
+        if item.get("type") == "protein":
+
+            protein_name = item["name"]
+
+            # This is intentionally a labeled placeholder,
+            # not a fabricated molecular structure.
+            svg = f"""
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="420" height="250"
+                 viewBox="0 0 420 250">
+              <rect width="420" height="250" fill="#f7f9fc"/>
+
+              <path
+                d="M100 135 C130 55 180 65 190 120
+                   S255 215 280 135
+                   S340 75 330 150
+                   S240 200 210 145
+                   S125 185 100 135"
+                fill="none"
+                stroke="#697d9b"
+                stroke-width="13"
+                stroke-linecap="round"
+              />
+
+              <text x="210" y="45"
+                    text-anchor="middle"
+                    font-family="Arial"
+                    font-size="24"
+                    font-weight="bold"
+                    fill="#253247">
+                {protein_name}
+              </text>
+
+              <text x="210" y="229"
+                    text-anchor="middle"
+                    font-family="Arial"
+                    font-size="16"
+                    fill="#526276">
+                PROTEIN SCHEMATIC - NOT ATOMIC STRUCTURE
+              </text>
+            </svg>
+            """
+
+            encoded = base64.b64encode(
+                svg.encode("utf-8")
+            ).decode("ascii")
+
+            gallery.append({
+                "id": item["id"],
+                "name": item["name"],
+                "role": item["role"],
+                "formula": "Ribosomal protein",
+                "image": f"data:image/svg+xml;base64,{encoded}",
+            })
+
+            continue
+
+        # Existing RDKit molecule generation
         molecule = Chem.MolFromSmiles(item["smiles"])
+
         if molecule is None:
             continue
 
-        image = Draw.MolToImage(molecule, size=(420, 250))
+        image = Draw.MolToImage(
+            molecule,
+            size=(420, 250)
+        )
+
         buffer = BytesIO()
         image.save(buffer, format="PNG")
-        item_image = base64.b64encode(buffer.getvalue()).decode("ascii")
+
+        item_image = base64.b64encode(
+            buffer.getvalue()
+        ).decode("ascii")
 
         gallery.append({
             "id": item["id"],

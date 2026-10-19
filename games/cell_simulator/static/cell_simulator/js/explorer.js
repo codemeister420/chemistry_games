@@ -176,7 +176,7 @@
       { site: "E", x: 360, anticodon: "CGA", state: "uncharged" },
       { site: "P", x: 450, anticodon: "AAA", state: "peptidyl" },
       { site: "A", x: 540, anticodon: "CUU", state: "aminoacyl" },
-    ].map(({ site, x, anticodon, state }) => `<g class="ribosome-trna diagram-action" data-target="transfer_rna" role="button" tabindex="0" aria-label="Inspect transfer RNA at the ${site} site, anticodon ${anticodon}">
+    ].map(({ site, x, anticodon, state }) => `<g class="ribosome-trna diagram-action" data-target="${site === 'E' ? 'trna_e_site' : site === 'P' ? 'trna_p_site' : 'trna_a_site'}" role="button" tabindex="0" aria-label="Inspect transfer RNA at the ${site} site, anticodon ${anticodon}">
       <path class="trna-backbone ${state}" d="M${x} 386v-35c-20-8-22-27-9-34 6-4 13-1 18 4 10 11 4 24-9 30m0-20-20-14m20 14 21-15m-21 15v-28m-7 2 7-8 7 8"/>
       <ellipse class="trna-hit" cx="${x}" cy="354" rx="28" ry="46"/>
       <text class="ribosome-site-label" x="${x}" y="302">${site} SITE</text>
@@ -193,14 +193,6 @@
       <g class="ribosome-subunit diagram-action" data-target="small_subunit" role="button" tabindex="0" aria-label="Inspect the 40S small ribosomal subunit">
         <path class="ribosome-small-body" d="M291 368c20-31 60-40 95-31 28-20 72-22 101-3 32-18 72-13 96 10 37-1 69 18 77 48 5 24-10 47-34 57-40 18-89 6-128 8-54 2-115 23-164 5-44-16-62-59-43-94Z"/>
         <text class="ribosome-subunit-label" x="450" y="456">40S SMALL SUBUNIT</text>
-      </g>
-
-      <g class="ribosome-rna-feature diagram-action" data-target="ribosomal_rna" role="button" tabindex="0" aria-label="Inspect ribosomal RNA forming the structural and catalytic core">
-        <path class="ribosome-rrna-large" d="M278 280c21-34 40 28 63-4s39-44 60-4 41 35 63 2 37-28 58 6 44 28 73-15"/>
-        <path class="ribosome-rrna-large" d="M305 302c17-22 34 24 51 5s38-35 55-3 37 29 55 1 34-24 53 6 38 19 57-7"/>
-        <path class="ribosome-rrna-small" d="M309 384c21-17 31 27 51 10s34-20 51 3 36 18 53-4 34-17 50 4 34 12 53-7"/>
-        <path class="ribosome-rrna-small" d="M331 413c17-14 29 18 45 8s28-17 43 1 30 14 45-2 31-13 47 3 28 7 41-4"/>
-        <text class="ribosome-feature-label rrna-label" x="315" y="274">rRNA CORE</text>
       </g>
 
       <g class="ribosome-protein-feature diagram-action" data-target="ribosomal_proteins" role="button" tabindex="0" aria-label="Inspect ribosomal proteins surrounding the rRNA core">
@@ -229,6 +221,122 @@
       <text class="ribosome-model-note" x="450" y="509">E · EXIT (UNCHARGED)  /  P · PEPTIDYL-tRNA  /  A · INCOMING AMINOACYL-tRNA</text>
       <text class="diagram-note" x="450" y="536">SCHEMATIC 80S MACHINE · SUBUNIT SILHOUETTES AND MOLECULAR POSITIONS SIMPLIFIED</text>
     </g>`;
+  }
+
+  // Display only the selected ribosome subunit, enlarged.
+  function ribosomeSubunitSvg(targetId) {
+    const isLarge = targetId === "large_subunit";
+
+    const zoom = isLarge ? 1.55 : 1.75;
+    const translateY = isLarge ? 245 : 400;
+
+    const subunitShape = isLarge
+      ? `<path class="ribosome-large-body" d="M255 315C230 286 238 245 264 222c1-37 37-67 75-64 25-38 78-47 111-22 35-30 87-19 105 15 42-8 79 20 80 58 31 26 35 65 8 94-22 24-58 34-92 22-32 28-73 30-108 12-34 24-76 22-105 3-30 11-63 2-83-25Z"/>`
+      : `<path class="ribosome-small-body" d="M291 368c20-31 60-40 95-31 28-20 72-22 101-3 32-18 72-13 96 10 37-1 69 18 77 48 5 24-10 47-34 57-40 18-89 6-128 8-54 2-115 23-164 5-44-16-62-59-43-94Z"/>`;
+
+    const rrna = isLarge
+      ? `
+        <path class="ribosome-rrna-large" d="M278 280c21-34 40 28 63-4s39-44 60-4 41 35 63 2 37-28 58 6 44 28 73-15"/>
+        <path class="ribosome-rrna-large" d="M305 302c17-22 34 24 51 5s38-35 55-3 37 29 55 1 34-24 53 6 38 19 57-7"/>
+      `
+      : `
+        <path class="ribosome-rrna-small" d="M309 384c21-17 31 27 51 10s34-20 51 3 36 18 53-4 34-17 50 4 34 12 53-7"/>
+        <path class="ribosome-rrna-small" d="M331 413c17-14 29 18 45 8s28-17 43 1 30 14 45-2 31-13 47 3 28 7 41-4"/>
+      `;
+
+    const proteinPositions = isLarge
+      ? [
+          [287, 245], [316, 208], [353, 185], [391, 211],
+          [421, 174], [470, 190], [513, 177],
+          [551, 205], [590, 222], [618, 258]
+        ]
+      : [
+          [302, 386], [339, 425], [391, 442],
+          [499, 438], [552, 420], [595, 390]
+        ];
+
+    const proteins = proteinPositions
+      .map(([x, y]) =>
+        `<circle class="ribosome-protein-bead" cx="${x}" cy="${y}" r="7"/>`
+      )
+      .join("");
+
+    const name = isLarge
+      ? "60S LARGE SUBUNIT"
+      : "40S SMALL SUBUNIT";
+
+    const labelY = isLarge ? 216 : 456;
+
+    const description = isLarge
+      ? "60S · rRNA AND RIBOSOMAL PROTEINS · PEPTIDE-BOND CATALYSIS"
+      : "40S · rRNA AND RIBOSOMAL PROTEINS · mRNA DECODING";
+
+    return `
+      <g class="cytosolic-ribosome-visual ribosome-isolated-view">
+
+        <text class="ribosome-view-label" x="450" y="121">
+          ${name} · ISOLATED VIEW
+        </text>
+
+        <g transform="translate(450 322) scale(${zoom}) translate(-450 -${translateY})">
+
+          <g class="ribosome-subunit">
+            ${subunitShape}
+            <text class="ribosome-subunit-label"
+                  x="450" y="${labelY}">
+              ${name}
+            </text>
+          </g>
+
+         
+           <g
+          class="ribosome-rna-feature diagram-action"
+          data-target="${isLarge ? 'large_subunit_rrna' : 'small_subunit_rrna'}"
+          role="button"
+          tabindex="0"
+          aria-label="Inspect ribosomal RNA"
+        >
+          ${rrna}
+          <text
+            class="ribosome-feature-label rrna-label"
+            x="${isLarge ? 315 : 335}"
+            y="${isLarge ? 274 : 380}"
+          >
+            rRNA CORE
+          </text>
+        </g>
+
+
+         
+          <g
+            class="ribosome-protein-feature diagram-action"
+            data-target="${isLarge ? 'large_subunit_proteins' : 'small_subunit_proteins'}"
+            role="button"
+            tabindex="0"
+            aria-label="Inspect ribosomal proteins"
+          >
+            ${proteins}
+
+            <text
+              class="ribosome-feature-label protein-label"
+              x="${isLarge ? 575 : 560}"
+              y="${isLarge ? 310 : 430}"
+            >
+              RIBOSOMAL PROTEINS
+            </text>
+          </g>
+
+
+        <text class="diagram-note" x="450" y="560">
+          ${description}
+        </text>
+
+        <text class="diagram-note" x="450" y="585">
+          USE THE NAVIGATION TRAIL TO RETURN TO THE 80S RIBOSOME
+        </text>
+
+      </g>
+    `;
   }
 
   function cytosolSceneSvg(target, targetId) {
@@ -407,6 +515,12 @@
   }
 
   function focusGraphic(visual, target, targetId) {
+
+    // Display only the selected ribosome subunit, enlarged.
+    if (targetId === "large_subunit" || targetId === "small_subunit") {
+      return ribosomeSubunitSvg(targetId);
+    }
+
     switch (visual) {
       case "membrane":
         return `${membraneLipidsSvg(target.molecules || [], targetId === "plasma_membrane")}${targetId === "plasma_membrane" ? plasmaMembraneFeaturesSvg() : ""}`;
@@ -515,7 +629,11 @@
       <text class="detail-subtitle" x="58" y="80">${escapeHtml(molecule.formula)}</text>
       <rect class="molecule-viewer" x="115" y="105" width="670" height="264" rx="8"/>
       <image href="${escapeHtml(molecule.image)}" x="132" y="113" width="636" height="247" preserveAspectRatio="xMidYMid meet"/>
-      <text class="diagram-note" x="450" y="395">2D STRUCTURE GENERATED FROM ITS SMILES WITH RDKIT</text>
+      <text class="diagram-note" x="450" y="395">
+        ${molecule.id.startsWith("protein_")
+          ? "PROTEIN SCHEMATIC · ATOMIC STRUCTURE NOT YET LOADED"
+          : "2D STRUCTURE GENERATED FROM ITS SMILES WITH RDKIT"}
+      </text>
       ${context}</svg>`;
   }
 
@@ -550,7 +668,9 @@
       <g class="focus-art">${focusGraphic(target.visual || "protein_complex", target, targetId)}</g>
       ${target.visual === "membrane" && !embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="449">SELECT A LIPID TO VIEW ITS MOLECULAR STRUCTURE</text></g>` : ""}
       ${embeddedPlasmaFeatures ? `<g class="secondary-label"><text x="450" y="482">SELECT A NAMED LIPID OR EMBEDDED FEATURE TO ZOOM IN</text></g>` : ""}
-      ${embeddedRibosomeFeatures ? `<g class="secondary-label"><text x="450" y="565">SELECT A SUBUNIT, mRNA, tRNA, rRNA, OR RIBOSOMAL PROTEIN</text></g>` : ""}
+     
+      ${embeddedRibosomeFeatures ? `<g class="secondary-label"><text x="450" y="565">SELECT A SUBUNIT TO EXPLORE ITS INTERNAL RNA AND PROTEINS</text></g>` : ""}
+
       ${showChildren && !pathwayView && !embeddedPlasmaFeatures && !embeddedCytosolFeatures && !embeddedRibosomeFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
       ${secondaryMarkup}
       ${!showChildren && !showMolecules && !customProteinView ? `<text class="diagram-note" x="450" y="505">DEEPEST CURRENT VIEW · USE THE TRAIL ABOVE TO ZOOM OUT</text>` : ""}
