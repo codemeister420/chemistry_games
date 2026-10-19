@@ -136,6 +136,168 @@
       ${showLeafletAsymmetry ? "" : `<text class="diagram-note" x="450" y="313">HYDROPHOBIC CORE</text>`}</g>`;
   }
 
+  function roughErMembraneFeaturesSvg() {
+
+    // Three major protein systems embedded in
+    // or associated with the rough ER membrane.
+
+    const proteins = [
+      {
+        id: "protein_translocon",
+        label: "Sec61",
+        x: 240,
+        color: "#8a70b0",
+        width: 68,
+        pore: true
+      },
+      {
+        id: "er_srp_receptor",
+        label: "SRP RECEPTOR",
+        x: 450,
+        color: "#538c9b",
+        width: 76,
+        pore: false
+      },
+      {
+        id: "er_ost",
+        label: "OST",
+        x: 665,
+        color: "#b38355",
+        width: 92,
+        pore: false
+      }
+    ];
+
+    const proteinMarkup = proteins.map((protein) => {
+
+      const left = protein.x - protein.width / 2;
+
+      const body = `
+        <rect
+          x="${left}"
+          y="230"
+          width="${protein.width}"
+          height="161"
+          rx="20"
+          fill="${protein.color}"
+          stroke="#344054"
+          stroke-width="2"
+        />
+      `;
+
+      const pore = protein.pore
+        ? `
+          <rect
+            x="${protein.x - 9}"
+            y="244"
+            width="18"
+            height="132"
+            rx="9"
+            fill="#daeaf2"
+            stroke="#344054"
+            stroke-width="1.5"
+          />
+          <path
+            d="M${protein.x - 9} 308h18"
+            stroke="#344054"
+            stroke-width="3"
+          />
+        `
+        : "";
+
+      const details = protein.id === "er_srp_receptor"
+        ? `
+          <ellipse
+            cx="${protein.x}"
+            cy="215"
+            rx="42"
+            ry="29"
+            fill="${protein.color}"
+            stroke="#344054"
+            stroke-width="2"
+          />
+        `
+        : protein.id === "er_ost"
+          ? `
+            <ellipse
+              cx="${protein.x}"
+              cy="217"
+              rx="50"
+              ry="28"
+              fill="${protein.color}"
+              stroke="#344054"
+              stroke-width="2"
+            />
+          `
+          : "";
+
+      return `
+        <g
+          class="diagram-action er-membrane-protein"
+          data-target="${protein.id}"
+          role="button"
+          tabindex="0"
+          aria-label="Explore ${protein.label}"
+          style="cursor:pointer"
+        >
+
+          <rect
+            x="${left - 9}"
+            y="182"
+            width="${protein.width + 18}"
+            height="250"
+            fill="transparent"
+          />
+
+          ${body}
+          ${pore}
+          ${details}
+
+          <text
+            x="${protein.x}"
+            y="451"
+            text-anchor="middle"
+            font-size="15"
+            font-weight="bold"
+            fill="#64748b"
+          >
+            ${protein.label}
+          </text>
+
+        </g>
+      `;
+    }).join("");
+
+    return `
+      <g class="rough-er-membrane-features">
+
+        <text
+          x="450"
+          y="146"
+          text-anchor="middle"
+          font-size="17"
+          font-weight="bold"
+          fill="#64748b"
+        >
+          ROUGH ER · MEMBRANE PROTEINS
+        </text>
+
+        <text
+          x="450"
+          y="174"
+          text-anchor="middle"
+          font-size="13"
+          fill="#64748b"
+        >
+          PROTEIN TRANSLOCATION · TARGETING · GLYCOSYLATION
+        </text>
+
+        ${proteinMarkup}
+
+      </g>
+    `;
+  }
+
   function plasmaMembraneFeaturesSvg() {
     const glycocalyx = `<g class="hit-target glycocalyx-feature" data-target="glycocalyx" role="button" tabindex="0" aria-label="Explore the extracellular glycocalyx">
       <rect class="glycocalyx-hit-area" x="145" y="116" width="490" height="124"/>
@@ -511,6 +673,24 @@
   }
 
   function focusGraphic(visual, target, targetId) {
+    
+    // ER N-linked glycosylation overview
+    if (targetId === "er_n_glycosylation") {
+      return erGlycosylationSvg();
+    }
+
+    
+    // Dedicated Rough ER lumen exploration
+    if (targetId === "rough_er_lumen") {
+      return roughErLumenSvg();
+    }
+
+    
+    // Dedicated rough ER overview
+    if (targetId === "rough_er") {
+      return roughErOverviewSvg();
+    }
+
 
     // Display only the selected ribosome subunit, enlarged.
     if (targetId === "large_subunit" || targetId === "small_subunit") {
@@ -518,8 +698,23 @@
     }
 
     switch (visual) {
+      
       case "membrane":
-        return `${membraneLipidsSvg(target.molecules || [], targetId === "plasma_membrane")}${targetId === "plasma_membrane" ? plasmaMembraneFeaturesSvg() : ""}`;
+        return `
+          ${membraneLipidsSvg(
+            target.molecules || [],
+            targetId === "plasma_membrane"
+          )}
+
+          ${targetId === "plasma_membrane"
+            ? plasmaMembraneFeaturesSvg()
+            : ""}
+
+          ${targetId === "rough_er_membrane"
+            ? roughErMembraneFeaturesSvg()
+            : ""}
+        `;
+
       case "cytosol":
         return cytosolSceneSvg(target, targetId);
       case "cytosolic_ribosome":
@@ -597,6 +792,470 @@
       default:
         return `<g class="protein-visual"><path d="M323 290c-54-35-19-111 42-93 23-75 108-73 127-16 68-18 109 47 68 88 35 60-17 111-74 87-38 57-114 38-124-15-45 12-79-8-39-51Z"/><circle cx="395" cy="268" r="16"/><circle cx="470" cy="231" r="13"/><circle cx="520" cy="294" r="18"/><circle cx="422" cy="326" r="11"/></g>`;
     }
+  }
+
+function erGlycosylationSvg() {
+
+    const steps = [
+      {
+        id: "er_glycan_assembly",
+        x: 175,
+        title: "GLYCAN ASSEMBLY",
+        note: "Dolichol-linked donor",
+        color: "#628aaa"
+      },
+      {
+        id: "er_glycan_transfer",
+        x: 450,
+        title: "OST TRANSFER",
+        note: "Glycan attaches to Asn",
+        color: "#9571b5"
+      },
+      {
+        id: "er_glycan_trimming",
+        x: 725,
+        title: "GLYCAN TRIMMING",
+        note: "Glucose removal",
+        color: "#5c987e"
+      }
+    ];
+
+    const cards = steps.map((step, index) => `
+      <g class="diagram-action"
+         data-target="${step.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${step.title}">
+
+        <rect x="${step.x - 113}" y="211"
+              width="226" height="154"
+              rx="18" fill="${step.color}"
+              fill-opacity="0.13"
+              stroke="${step.color}"
+              stroke-width="2"/>
+
+        <circle cx="${step.x}" cy="253" r="25"
+                fill="${step.color}"/>
+
+        <text x="${step.x}" y="261"
+              text-anchor="middle"
+              font-size="21"
+              font-weight="bold"
+              fill="white">${index + 1}</text>
+
+        <text x="${step.x}" y="306"
+              text-anchor="middle"
+              font-size="15"
+              font-weight="bold"
+              fill="${step.color}">
+          ${step.title}
+        </text>
+
+        <text x="${step.x}" y="332"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          ${step.note}
+        </text>
+      </g>
+
+      ${index < steps.length - 1
+        ? `<path d="M${step.x + 118} 282h39"
+                 fill="none"
+                 stroke="#94a3b8"
+                 stroke-width="3"/>
+           <path d="M${step.x + 148} 274l10 8-10 8"
+                 fill="none"
+                 stroke="#94a3b8"
+                 stroke-width="3"/>`
+        : ""}
+    `).join("");
+
+    return `
+      <g class="er-glycosylation-visual">
+
+        <text x="450" y="120"
+              text-anchor="middle"
+              class="ribosome-view-label">
+          N-LINKED GLYCOSYLATION
+        </text>
+
+        <text x="450" y="157"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#64748b">
+          Glc3Man9GlcNAc2
+        </text>
+
+        <text x="450" y="181"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          3 GLUCOSE · 9 MANNOSE · 2 N-ACETYLGLUCOSAMINE
+        </text>
+
+        ${cards}
+
+        <text x="450" y="417"
+              text-anchor="middle"
+              class="diagram-note">
+          SELECT A STAGE TO EXPLORE THE BIOCHEMISTRY
+        </text>
+
+      </g>
+    `;
+  }
+  function roughErLumenSvg() {
+    const features = [
+      {
+        id: "protein_folding",
+        title: "PROTEIN FOLDING",
+        subtitle: "BiP · ATP-dependent chaperone",
+        x: 160,
+        y: 218,
+        color: "#8873b1",
+        symbol: "F"
+      },
+      {
+        id: "er_disulfide",
+        title: "DISULFIDE BONDS",
+        subtitle: "PDI · Cysteine · S-S",
+        x: 450,
+        y: 218,
+        color: "#b98658",
+        symbol: "S-S"
+      },
+      {
+        id: "er_calnexin_cycle",
+        title: "GLYCOPROTEIN FOLDING",
+        subtitle: "Calnexin · Calreticulin",
+        x: 740,
+        y: 218,
+        color: "#63958a",
+        symbol: "G"
+      },
+      {
+        id: "er_quality_control",
+        title: "QUALITY CONTROL",
+        subtitle: "Folding check · ERAD",
+        x: 305,
+        y: 363,
+        color: "#ba7382",
+        symbol: "QC"
+      },
+      {
+        id: "er_lumen_calcium",
+        title: "CALCIUM STORAGE",
+        subtitle: "Ca²⁺ · Calreticulin",
+        x: 595,
+        y: 363,
+        color: "#638cb1",
+        symbol: "Ca"
+      },
+      
+      {
+        id: "er_n_glycosylation",
+        title: "N-LINKED GLYCOSYLATION",
+        subtitle: "OST · Glycans · Asparagine",
+        x: 450,
+        y: 510,
+        color: "#9271ae",
+        symbol: "N"
+      }
+
+    ];
+
+    const markup = features.map((feature) => `
+      <g class="diagram-action"
+         data-target="${feature.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${feature.title}"
+         style="cursor:pointer">
+
+        <rect
+          x="${feature.x - 127}"
+          y="${feature.y - 55}"
+          width="254"
+          height="116"
+          rx="18"
+          fill="#ffffff"
+          fill-opacity="0.94"
+          stroke="${feature.color}"
+          stroke-width="2"
+        />
+
+        <circle
+          cx="${feature.x}"
+          cy="${feature.y - 18}"
+          r="21"
+          fill="${feature.color}"
+        />
+
+        <text
+          x="${feature.x}"
+          y="${feature.y - 12}"
+          text-anchor="middle"
+          font-size="13"
+          font-weight="bold"
+          fill="#ffffff">
+          ${feature.symbol}
+        </text>
+
+        <text
+          x="${feature.x}"
+          y="${feature.y + 17}"
+          text-anchor="middle"
+          font-size="13"
+          font-weight="bold"
+          fill="#334155">
+          ${feature.title}
+        </text>
+
+        <text
+          x="${feature.x}"
+          y="${feature.y + 39}"
+          text-anchor="middle"
+          font-size="11"
+          fill="#64748b">
+          ${feature.subtitle}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="rough-er-lumen-visual">
+
+        <rect
+          x="18" y="130"
+          width="864" height="310"
+          rx="50"
+          fill="#e8f1f7"
+          stroke="#b2cddd"
+          stroke-width="3"
+        />
+
+        <text
+          x="450" y="152"
+          text-anchor="middle"
+          font-size="15"
+          font-weight="bold"
+          fill="#4b7390">
+          ER LUMEN · PROTEIN MATURATION ENVIRONMENT
+        </text>
+
+        ${markup}
+
+        <text
+          x="450" y="430"
+          text-anchor="middle"
+          font-size="12"
+          fill="#64748b">
+          SELECT A PROCESS TO EXPLORE ITS MOLECULAR MACHINERY
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function roughErOverviewSvg() {
+
+    const ribosomePositions = [
+      [180, 178], [270, 171], [360, 176],
+      [450, 171], [540, 178], [625, 188]
+    ];
+
+    const ribosomes = ribosomePositions.map(([x, y]) => `
+      <g transform="translate(${x} ${y})">
+        <ellipse cx="0" cy="-10" rx="20" ry="15"
+                 fill="#9472af" stroke="#684e86"
+                 stroke-width="2"/>
+        <ellipse cx="0" cy="8" rx="15" ry="10"
+                 fill="#c5a3da" stroke="#684e86"
+                 stroke-width="2"/>
+      </g>
+    `).join("");
+
+    const upperMembrane = `
+      M110 220
+      C200 200 285 218 370 212
+      S540 199 635 215
+      S740 235 770 220
+    `;
+
+    const lowerMembrane = `
+      M110 385
+      C200 365 285 383 370 377
+      S540 364 635 380
+      S740 400 770 385
+    `;
+
+    return `
+      <g class="rough-er-overview">
+
+        <text x="450" y="115"
+              text-anchor="middle"
+              font-size="16"
+              font-weight="bold"
+              fill="#64748b">
+          ROUGH ENDOPLASMIC RETICULUM
+        </text>
+
+        <!-- ER lumen: enclosed between two membrane sheets -->
+        <g class="diagram-action"
+           data-target="rough_er_lumen"
+           role="button"
+           tabindex="0"
+           aria-label="Explore the rough ER lumen">
+
+          <path
+            d="${upperMembrane}
+               L770 385
+               C735 399 680 382 635 380
+               S455 366 370 377
+               S200 365 110 385 Z"
+            fill="#daeaf2"
+            stroke="none"
+          />
+
+          <text x="450" y="306"
+                text-anchor="middle"
+                font-size="24"
+                font-weight="bold"
+                fill="#47728a">
+            ER LUMEN
+          </text>
+
+          <text x="450" y="330"
+                text-anchor="middle"
+                font-size="13"
+                fill="#47728a">
+            PROTEIN FOLDING · MODIFICATION
+          </text>
+
+          <rect x="160" y="245"
+                width="565" height="115"
+                rx="22"
+                fill="transparent"/>
+        </g>
+
+        <!-- ER membranes -->
+        <g class="diagram-action"
+           data-target="rough_er_membrane"
+           role="button"
+           tabindex="0"
+           aria-label="Explore the rough ER membrane">
+
+          <path d="${upperMembrane}"
+                fill="none"
+                stroke="#c78f64"
+                stroke-width="19"
+                stroke-linecap="round"/>
+
+          <path d="${lowerMembrane}"
+                fill="none"
+                stroke="#c78f64"
+                stroke-width="19"
+                stroke-linecap="round"/>
+
+          <path d="${upperMembrane}"
+                fill="none"
+                stroke="#e9bb8e"
+                stroke-width="6"
+                stroke-linecap="round"/>
+
+          <path d="${lowerMembrane}"
+                fill="none"
+                stroke="#e9bb8e"
+                stroke-width="6"
+                stroke-linecap="round"/>
+
+          <text x="205" y="410"
+                font-size="13"
+                font-weight="bold"
+                fill="#986744">
+            ER MEMBRANE
+          </text>
+        </g>
+
+        <!-- ER-bound ribosomes -->
+        <g class="diagram-action"
+           data-target="bound_ribosomes"
+           role="button"
+           tabindex="0"
+           aria-label="Explore ER-bound ribosomes">
+
+          ${ribosomes}
+
+          <text x="338" y="144"
+                text-anchor="middle"
+                font-size="16"
+                font-weight="bold"
+                fill="#8863a5">
+            ER-BOUND RIBOSOMES
+          </text>
+
+          <rect x="150" y="155"
+                width="510" height="55"
+                fill="transparent"/>
+        </g>
+
+        <!-- COPII exit-site region -->
+        <g class="diagram-action"
+           data-target="rough_er_exit_sites"
+           role="button"
+           tabindex="0"
+           aria-label="Explore ER exit sites">
+
+          <path
+            d="M685 235 C728 225 758 249 756 285"
+            fill="none"
+            stroke="#648fa3"
+            stroke-width="13"
+            stroke-linecap="round"/>
+
+          <circle cx="752" cy="279" r="32"
+                  fill="#c4dce8"
+                  stroke="#648fa3"
+                  stroke-width="5"/>
+
+          <circle cx="741" cy="272" r="5"
+                  fill="#648fa3"/>
+
+          <circle cx="761" cy="283" r="5"
+                  fill="#648fa3"/>
+
+          <text x="748" y="345"
+                text-anchor="middle"
+                font-size="15"
+                font-weight="bold"
+                fill="#47728a">
+            COPII
+          </text>
+
+          <text x="748" y="364"
+                text-anchor="middle"
+                font-size="12"
+                fill="#47728a">
+            EXIT SITE
+          </text>
+
+          <rect x="708" y="242"
+                width="78" height="127"
+                fill="transparent"/>
+        </g>
+
+        <text x="450" y="440"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          SELECT A STRUCTURE TO EXPLORE
+        </text>
+
+      </g>
+    `;
   }
 
   function contextualMembrane(target, selectedMoleculeId) {

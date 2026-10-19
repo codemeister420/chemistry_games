@@ -276,10 +276,17 @@ ORGANCELLE_CONTENT = {
         "visual": "cytosolic_ribosome",
         "children": ["small_subunit", "large_subunit", "messenger_rna", "transfer_rna", "ribosomal_rna", "ribosomal_proteins","trna_e_site", "trna_p_site", "trna_a_site",],
     },
+    
     "rough_er": {
         "visual": "network",
-        "children": ["rough_er_membrane", "bound_ribosomes", "rough_er_lumen", "protein_folding"],
+        "children": [
+            "rough_er_membrane",
+            "bound_ribosomes",
+            "rough_er_lumen",
+            "rough_er_exit_sites",
+        ],
     },
+
     "smooth_er": {
         "visual": "network",
         "children": ["smooth_er_membrane", "lipid_synthesis", "calcium_store", "detoxification"],
@@ -322,7 +329,26 @@ ORGANCELLE_CONTENT = {
 COMPONENT_DATA = {
     "dna": _component("DNA", "NUCLEIC ACID", "DNA is a polymer of nucleotide units carrying genetic information in its sequence.", "nucleic_acid", (), ["adenine", "cytosine", "guanine", "thymine"]),
     "histones": _component("Histone proteins", "DNA-PACKAGING PROTEINS", "Histone proteins help package and organize DNA into chromatin.", "protein_complex", (), ["glycine", "alanine", "serine"]),
-    "protein_translocon": _component("Protein translocon", "MEMBRANE CHANNEL", "A protein-conducting channel allows selected newly made proteins to enter the ER lumen.", "protein_complex"),
+
+    "protein_translocon": _component(
+        "Sec61 protein translocon",
+        "ER PROTEIN-CONDUCTING CHANNEL",
+        "The Sec61 translocon is a membrane-embedded protein "
+        "complex composed of Sec61 alpha, beta and gamma "
+        "subunits. Its alpha subunit forms the main channel "
+        "through which newly synthesized polypeptides can "
+        "enter the ER lumen. A lateral gate also permits "
+        "hydrophobic segments of membrane proteins to "
+        "partition into the lipid bilayer. Sec61 can interact "
+        "with translating ribosomes during cotranslational "
+        "protein translocation. It is not a permanently "
+        "open pore; its gating is regulated by interacting "
+        "proteins and nascent-chain signals.",
+        "protein_complex",
+        (),
+        ["protein_sec61_alpha"]
+    ),
+
     "nuclear_envelope": _component("Nuclear envelope", "DOUBLE MEMBRANE", "Two lipid membranes surround the nucleus. Nuclear pores control traffic between nucleus and cytoplasm.", "double_membrane", ["nuclear_pores", "nuclear_membrane_lipids"], ["phosphatidylcholine", "phosphatidylethanolamine"]),
     "chromatin": _component("Chromatin", "DNA + PROTEINS", "DNA is packaged with histone proteins. Its organization changes as genes are accessed or compacted.", "chromatin", ["dna", "histones"], ["adenine", "cytosine", "guanine", "thymine"]),
     "nucleolus": _component("Nucleolus", "RNA + PROTEINS", "Ribosomal RNA is produced and combined with proteins to assemble ribosome subunits.", "ribosome", ["ribosomal_rna", "ribosomal_proteins"]),
@@ -553,10 +579,342 @@ COMPONENT_DATA = {
          "protein_us7", "protein_es6"]
     ),
 
-    "rough_er_membrane": _component("Rough-ER membrane", "LIPID BILAYER", "The ER membrane anchors ribosomes and contains channels that feed new proteins into the ER lumen.", "membrane", ["bound_ribosomes", "protein_translocon"], ["phosphatidylcholine", "phosphatidylethanolamine"]),
+    "rough_er_exit_sites": _component(
+        "ER exit sites",
+        "COPII TRANSPORT · SECRETORY PATHWAY",
+        "ER exit sites are specialized regions of the endoplasmic "
+        "reticulum where proteins and lipids are selected for "
+        "transport toward the Golgi apparatus. The small GTPase "
+        "Sar1 initiates COPII coat recruitment. Sec23 and Sec24 "
+        "help assemble the inner coat and select cargo, while "
+        "Sec13 and Sec31 contribute to the outer coat. "
+        "Cargo-containing transport carriers form at these sites "
+        "and subsequently deliver material toward the ER-Golgi "
+        "intermediate compartment. ER exit sites are generally "
+        "ribosome-poor regions of the ER membrane.",
+        "vesicle",
+        (),
+        ["phosphatidylcholine"]
+    ),
+
+    
+    "rough_er_membrane": _component(
+        "Rough ER membrane",
+        "PHOSPHOLIPID BILAYER + MEMBRANE PROTEINS",
+        "The rough endoplasmic reticulum is surrounded by a "
+        "phospholipid bilayer continuous with the outer nuclear "
+        "membrane. Its membrane contains relatively little "
+        "cholesterol compared with the plasma membrane and "
+        "includes phosphatidylcholine, phosphatidylethanolamine, "
+        "phosphatidylinositol and phosphatidylserine. "
+        "Specialized membrane proteins transport newly "
+        "synthesized polypeptides, recognize targeting signals "
+        "and modify proteins as they enter the ER. "
+        "The Sec61 translocon forms the central protein "
+        "conducting channel. The SRP receptor assists "
+        "targeting of ribosome-nascent-chain complexes, "
+        "while oligosaccharyltransferase attaches N-linked "
+        "oligosaccharides to suitable nascent proteins.",
+        "membrane",
+        [
+            "protein_translocon",
+            "er_srp_receptor",
+            "er_ost",
+        ],
+        [
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "phosphatidylinositol",
+            "phosphatidylserine",
+        ]
+    ),
+
+    "er_srp_receptor": _component(
+        "Signal recognition particle receptor",
+        "ER MEMBRANE · PROTEIN TARGETING",
+        "The signal recognition particle receptor helps "
+        "bring ribosome-nascent-chain complexes to the "
+        "endoplasmic reticulum membrane. The receptor "
+        "contains SRalpha and SRbeta subunits. SRP recognizes "
+        "appropriate signal sequences emerging from a "
+        "translating ribosome, and interactions involving "
+        "GTP help coordinate delivery to the Sec61 "
+        "translocon. This system directs many secretory "
+        "and membrane proteins into the ER pathway.",
+        "protein_complex",
+        (),
+        ["protein_sr_alpha", "protein_sr_beta"]
+    ),
+
+    "er_ost": _component(
+        "Oligosaccharyltransferase (OST)",
+        "ER MEMBRANE · N-LINKED GLYCOSYLATION",
+        "Oligosaccharyltransferase catalyzes transfer "
+        "of a preassembled oligosaccharide from "
+        "dolichol-linked donor molecules onto suitable "
+        "asparagine residues of proteins entering "
+        "the endoplasmic reticulum. Mammalian OST "
+        "complexes contain either STT3A or STT3B "
+        "as their catalytic subunit. The two forms "
+        "have overlapping but distinct functions "
+        "during and after protein translocation.",
+        "protein_complex",
+        ["er_n_glycosylation"],
+        ["protein_stt3a", "protein_stt3b"]
+
+    ),
+
     "bound_ribosomes": _component("ER-bound ribosomes", "80S RNA + PROTEIN MACHINE", "Eukaryotic 80S ribosomes docked at the rough ER translate proteins destined for secretion, membranes, or the endomembrane system.", "cytosolic_ribosome", ["small_subunit", "large_subunit", "messenger_rna", "transfer_rna", "ribosomal_rna", "ribosomal_proteins"]),
-    "rough_er_lumen": _component("Rough-ER lumen", "COMPARTMENT", "Newly made proteins fold and receive early processing inside this enclosed space.", "compartment", ["protein_folding"], ["water"]),
-    "protein_folding": _component("Protein folding", "PROTEIN PROCESSING", "Chaperone proteins help new polypeptide chains reach stable shapes and identify proteins that need quality control.", "protein_complex", (), ["glycine", "alanine", "serine"]),
+
+    "rough_er_lumen": _component(
+        "Rough ER lumen",
+        "PROTEIN MATURATION · CALCIUM-RICH COMPARTMENT",
+        "The endoplasmic reticulum lumen is the aqueous interior "
+        "of the ER membrane network. Newly synthesized secretory "
+        "proteins and luminal domains of membrane proteins enter "
+        "this compartment through protein translocation machinery. "
+        "The lumen provides a specialized chemical environment "
+        "for protein folding, disulfide-bond formation and "
+        "glycoprotein maturation. Chaperones such as BiP help "
+        "proteins fold while protein disulfide isomerases "
+        "catalyze the formation and rearrangement of disulfide "
+        "bonds. Calnexin and calreticulin assist glycoprotein "
+        "quality control. Proteins that cannot achieve an "
+        "acceptable conformation may be directed toward "
+        "ER-associated degradation. The ER lumen also serves "
+        "as an important intracellular calcium reservoir. "
+        "Its environment and protein composition differ "
+        "substantially from the surrounding cytosol.",
+        "compartment",
+        [
+            "protein_folding",
+            "er_disulfide",
+            "er_calnexin_cycle",
+            "er_quality_control",
+            "er_lumen_calcium",
+            "er_n_glycosylation"
+        ],
+        ["water", "calcium"]
+    ),
+    
+    "er_n_glycosylation": _component(
+        "N-linked protein glycosylation",
+        "ER GLYCOPROTEIN MATURATION",
+        "N-linked glycosylation is a major protein modification "
+        "that begins in the endoplasmic reticulum. "
+        "A complex oligosaccharide is assembled on a "
+        "dolichol-pyrophosphate lipid carrier in the ER membrane. "
+        "The mature donor typically contains three glucose, "
+        "nine mannose and two N-acetylglucosamine residues "
+        "(Glc3Man9GlcNAc2). Oligosaccharyltransferase "
+        "(OST) transfers this preassembled sugar chain "
+        "to the side-chain nitrogen of a suitable asparagine "
+        "residue in a nascent protein. The usual recognition "
+        "sequence is Asn-X-Ser or Asn-X-Thr, where X is "
+        "not proline. Following transfer, glucose residues "
+        "are removed during ER glycoprotein maturation. "
+        "The glycan helps regulate protein folding, "
+        "quality control and transport through the "
+        "secretory pathway.",
+        "er_glycosylation",
+        [
+            "er_glycan_assembly",
+            "er_glycan_transfer",
+            "er_glycan_trimming",
+        ],
+        [
+            "n_acetylglucosamine",
+            "mannose",
+            "glucose",
+            "asparagine",
+        ]
+    ),
+
+    "er_glycan_assembly": _component(
+        "Assembly of the N-linked glycan",
+        "DOLICHOL-LINKED OLIGOSACCHARIDE",
+        "The N-linked glycan precursor is assembled "
+        "stepwise on a dolichol-phosphate-derived "
+        "lipid carrier in the ER membrane. "
+        "N-acetylglucosamine and mannose residues "
+        "are initially added on the cytosolic side. "
+        "The growing lipid-linked glycan is then "
+        "translocated to the luminal side, "
+        "where additional mannose and glucose "
+        "residues are incorporated. "
+        "The completed donor contains 14 sugar "
+        "residues with the composition Glc3Man9GlcNAc2. "
+        "The sugar residues are connected by "
+        "specific glycosidic bonds, forming "
+        "a branched oligosaccharide rather "
+        "than a simple linear chain.",
+        "protein_complex",
+        (),
+        [
+            "n_acetylglucosamine",
+            "mannose",
+            "glucose",
+        ]
+    ),
+
+    "er_glycan_transfer": _component(
+        "Transfer of the glycan to protein",
+        "OST · ASPARAGINE GLYCOSYLATION",
+        "Oligosaccharyltransferase transfers "
+        "the preassembled Glc3Man9GlcNAc2 glycan "
+        "from its dolichol-pyrophosphate carrier "
+        "to the side-chain amide nitrogen of "
+        "a suitable asparagine residue. "
+        "This creates an N-glycosidic linkage "
+        "between the first N-acetylglucosamine "
+        "residue and the protein. "
+        "In mammals, complexes containing STT3A "
+        "perform much of the cotranslational "
+        "glycosylation, while STT3B-containing "
+        "complexes can modify certain sites "
+        "missed by the first machinery. "
+        "Not every potential glycosylation "
+        "sequence is necessarily modified.",
+        "protein_complex",
+        (),
+        [
+            "asparagine",
+            "n_acetylglucosamine",
+            "protein_stt3a",
+            "protein_stt3b",
+        ]
+    ),
+
+    "er_glycan_trimming": _component(
+        "ER glycan trimming",
+        "GLUCOSE REMOVAL · FOLDING QUALITY CONTROL",
+        "After the oligosaccharide is transferred "
+        "to a protein, ER glucosidases begin "
+        "removing its terminal glucose residues. "
+        "Glucosidase I first removes the outermost "
+        "glucose, and glucosidase II can remove "
+        "the remaining glucose residues in "
+        "subsequent steps. A monoglucosylated "
+        "glycan can interact with the lectin "
+        "chaperones calnexin and calreticulin. "
+        "The UGGT quality-control machinery "
+        "can reglucosylate certain incompletely "
+        "folded glycoproteins, allowing "
+        "additional folding attempts. "
+        "Glycan processing therefore helps "
+        "determine whether proteins continue "
+        "maturation or enter quality-control "
+        "and degradation pathways.",
+        "protein_complex",
+        (),
+        [
+            "glucose",
+            "protein_glucosidase_i",
+            "protein_glucosidase_ii",
+            "protein_calreticulin",
+        ]
+    ),
+
+
+   
+    "protein_folding": _component(
+        "Protein folding · BiP chaperone",
+        "ER CHAPERONE · ATP-DEPENDENT FOLDING",
+        "Proteins entering the ER lumen must acquire appropriate "
+        "three-dimensional conformations. BiP, also known as "
+        "GRP78 or HSPA5, is a member of the Hsp70 chaperone "
+        "family. It binds exposed hydrophobic regions of "
+        "unfolded or incompletely folded proteins, reducing "
+        "inappropriate aggregation. BiP uses an ATP-dependent "
+        "binding and release cycle regulated by co-chaperones. "
+        "ATP binding favors substrate exchange, while ATP "
+        "hydrolysis promotes tighter substrate binding. "
+        "Chaperones assist folding but do not necessarily "
+        "determine a protein's final structure.",
+        "protein_complex",
+        (),
+        ["protein_bip", "atp", "adp"]
+    ),
+
+    "er_disulfide": _component(
+        "Disulfide-bond formation",
+        "OXIDATIVE PROTEIN FOLDING",
+        "The ER lumen supports formation of disulfide bonds "
+        "between pairs of cysteine residues in proteins. "
+        "Oxidation links their sulfur atoms to create a "
+        "covalent S-S bond, helping stabilize many secretory "
+        "and extracellular proteins. Protein disulfide "
+        "isomerase, including PDI/P4HB, catalyzes disulfide "
+        "formation, reduction and rearrangement. "
+        "The small molecule cystine illustrates two cysteine "
+        "units joined by a disulfide bond, although real "
+        "protein disulfides connect residues within or "
+        "between polypeptide chains. Glutathione also "
+        "participates in the ER redox environment.",
+        "protein_complex",
+        (),
+        ["protein_pdi", "cysteine", "cystine", "glutathione"]
+    ),
+
+    "er_calnexin_cycle": _component(
+        "Calnexin-calreticulin cycle",
+        "GLYCOPROTEIN FOLDING QUALITY CONTROL",
+        "Calnexin and calreticulin are lectin chaperones "
+        "that recognize specific monoglucosylated N-linked "
+        "glycans on newly synthesized glycoproteins. "
+        "Calnexin is associated with the ER membrane, "
+        "whereas calreticulin is a soluble luminal protein. "
+        "They cooperate with additional folding factors, "
+        "including ERp57. Removal and readdition of terminal "
+        "glucose residues help control repeated folding "
+        "attempts. This cycle connects protein folding "
+        "to the chemical structure of N-linked glycans.",
+        "protein_complex",
+        (),
+        [
+            "protein_calnexin",
+            "protein_calreticulin",
+            "glucose",
+        ]
+    ),
+
+    "er_quality_control": _component(
+        "ER protein quality control",
+        "MISFOLDED PROTEINS · ERAD",
+        "The ER contains a surveillance network that "
+        "distinguishes proteins undergoing normal folding "
+        "from those that remain persistently misfolded. "
+        "BiP and other chaperones can support further "
+        "folding attempts. Some defective glycoproteins "
+        "undergo mannose trimming and recognition by "
+        "quality-control factors such as EDEM1. "
+        "Proteins selected for ER-associated degradation "
+        "(ERAD) can be transported toward the cytosol, "
+        "ubiquitinated and degraded by proteasomes. "
+        "The unfolded protein response helps cells "
+        "adapt when folding demand exceeds ER capacity.",
+        "protein_complex",
+        (),
+        ["protein_bip", "protein_edem1", "protein_pdi"]
+    ),
+
+    "er_lumen_calcium": _component(
+        "ER luminal calcium storage",
+        "CALCIUM RESERVOIR · CELLULAR SIGNALING",
+        "The endoplasmic reticulum maintains a substantial "
+        "store of calcium ions. ATP-driven SERCA pumps "
+        "transport calcium from the cytosol into the "
+        "ER lumen, while channels such as IP3 receptors "
+        "can release calcium during cell signaling. "
+        "The soluble luminal protein calreticulin "
+        "binds calcium and contributes to its buffering. "
+        "Luminal calcium also supports the activity "
+        "of several ER folding and processing proteins.",
+        "compartment",
+        (),
+        ["calcium", "protein_calreticulin", "atp"]
+    ),
+
     "smooth_er_membrane": _component("Smooth-ER membrane", "LIPID BILAYER", "Membrane enzymes synthesize lipids and help metabolize certain compounds.", "membrane", ["lipid_synthesis"], ["phosphatidylcholine", "phosphatidylethanolamine", "cholesterol"]),
     "lipid_synthesis": _component("Lipid synthesis", "BIOSYNTHETIC PROCESS", "Enzymes assemble fatty acids, glycerol, and other building blocks into cellular lipids.", "pathway", (), ["phosphatidylcholine", "phosphatidylethanolamine"]),
     "calcium_store": _component("Calcium store", "ION STORAGE", "The ER can store and release calcium ions that act as signals in many cell types.", "compartment"),
@@ -978,6 +1336,210 @@ MOLECULES = [
                 "be delivered to the ribosomal A site.",
         "type": "protein",
     },
+    
+    {
+        "id": "protein_sec61_alpha",
+        "name": "Sec61 alpha (SEC61A1)",
+        "role": "The pore-forming subunit of the Sec61 "
+                "translocon. It contains ten transmembrane "
+                "helices and provides a regulated pathway "
+                "for nascent polypeptides to cross the "
+                "ER membrane. Its lateral gate allows "
+                "hydrophobic protein segments to enter "
+                "the surrounding lipid bilayer.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sr_alpha",
+        "name": "SRalpha (SRPR)",
+        "role": "The alpha subunit of the signal recognition "
+                "particle receptor. It is a GTP-binding "
+                "protein that interacts with SRP during "
+                "targeting of nascent proteins to the "
+                "endoplasmic reticulum membrane.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sr_beta",
+        "name": "SRbeta (SRPRB)",
+        "role": "The membrane-anchored beta subunit of the "
+                "signal recognition particle receptor. "
+                "It is a GTP-binding protein that helps "
+                "associate the receptor with the ER membrane "
+                "and participates in protein targeting.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_stt3a",
+        "name": "STT3A",
+        "role": "A catalytic subunit of one form of the "
+                "oligosaccharyltransferase complex. "
+                "STT3A-containing OST operates closely "
+                "with the protein translocation machinery "
+                "and transfers N-linked oligosaccharides "
+                "to suitable sites during translation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_stt3b",
+        "name": "STT3B",
+        "role": "A catalytic subunit of an alternative "
+                "oligosaccharyltransferase complex. "
+                "STT3B-containing OST can glycosylate "
+                "certain protein sites missed during "
+                "the initial cotranslational process.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "calcium",
+        "name": "Calcium ion (Ca²⁺)",
+        "role": "A divalent calcium ion stored at relatively high "
+                "concentrations in the ER lumen compared with "
+                "the resting cytosol. Calcium supports "
+                "intracellular signaling and the functions "
+                "of several ER proteins.",
+        "smiles": "[Ca+2]",
+    },
+    {
+        "id": "cysteine",
+        "name": "L-Cysteine",
+        "role": "A sulfur-containing amino acid with a reactive "
+                "thiol (-SH) group. Pairs of cysteine residues "
+                "can undergo oxidation to form stabilizing "
+                "disulfide bonds within or between proteins.",
+        "smiles": "N[C@@H](CS)C(=O)O",
+    },
+    {
+        "id": "cystine",
+        "name": "L-Cystine",
+        "role": "Two cysteine molecules connected by a "
+                "disulfide (S-S) bond. It provides a simple "
+                "chemical model for disulfide linkages "
+                "in folded proteins.",
+        "smiles": "N[C@@H](CSSC[C@H](N)C(=O)O)C(=O)O",
+    },
+    {
+        "id": "glutathione",
+        "name": "Reduced glutathione (GSH)",
+        "role": "A tripeptide made from glutamate, cysteine "
+                "and glycine. Its cysteine thiol participates "
+                "in cellular redox chemistry. Reduced and "
+                "oxidized glutathione are involved in "
+                "the redox environment associated with "
+                "protein folding in the ER.",
+        "smiles": "N[C@@H](CCC(=O)N[C@@H](CS)C(=O)NCC(=O)O)C(=O)O",
+    },
+    {
+        "id": "protein_bip",
+        "name": "BiP (HSPA5 / GRP78)",
+        "role": "An ATP-dependent Hsp70-family molecular "
+                "chaperone of the ER lumen. BiP recognizes "
+                "exposed regions of incompletely folded "
+                "proteins and helps prevent aggregation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_pdi",
+        "name": "Protein disulfide isomerase (P4HB)",
+        "role": "An ER oxidoreductase that catalyzes "
+                "formation, reduction and rearrangement "
+                "of disulfide bonds during oxidative "
+                "protein folding.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_calnexin",
+        "name": "Calnexin (CANX)",
+        "role": "An ER membrane-associated lectin "
+                "chaperone that recognizes specific "
+                "monoglucosylated N-linked glycans "
+                "and assists glycoprotein folding.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_calreticulin",
+        "name": "Calreticulin (CALR)",
+        "role": "A soluble ER luminal lectin chaperone "
+                "that assists glycoprotein folding "
+                "and also functions as a major "
+                "calcium-binding protein.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_edem1",
+        "name": "EDEM1",
+        "role": "An ER quality-control protein involved "
+                "in processing and recognition of "
+                "certain misfolded glycoproteins "
+                "for ER-associated degradation.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "n_acetylglucosamine",
+        "name": "N-Acetyl-D-glucosamine (GlcNAc)",
+        "role": "An amino sugar containing an acetylated "
+                "amino group at carbon 2. Two GlcNAc "
+                "residues form the conserved core "
+                "linking an N-linked glycan to a "
+                "protein's asparagine residue. "
+                "This RDKit image shows the free "
+                "monosaccharide, not the complete "
+                "protein-bound glycan.",
+        "smiles": "CC(=O)N[C@@H]1[C@H]([C@@H]([C@H](OC1O)CO)O)O",
+    },
+    {
+        "id": "mannose",
+        "name": "D-Mannose (Man)",
+        "role": "A six-carbon monosaccharide and "
+                "C-2 epimer of glucose. "
+                "The initial eukaryotic N-linked "
+                "glycan precursor contains nine "
+                "mannose residues arranged in "
+                "a branched oligosaccharide. "
+                "Mannose trimming also contributes "
+                "to glycoprotein maturation "
+                "and ER quality control.",
+        "smiles": "C([C@@H]1[C@H]([C@@H]([C@@H](C(O1)O)O)O)O)O",
+    },
+    {
+        "id": "asparagine",
+        "name": "L-Asparagine (Asn)",
+        "role": "An amino acid with a carboxamide "
+                "side chain. During N-linked "
+                "glycosylation, the nitrogen "
+                "of this side-chain amide "
+                "forms a covalent N-glycosidic "
+                "bond with the first GlcNAc "
+                "residue of the transferred glycan.",
+        "smiles": "N[C@@H](CC(=O)N)C(=O)O",
+    },
+    {
+        "id": "protein_glucosidase_i",
+        "name": "ER glucosidase I (MOGS)",
+        "role": "An ER glycoprotein-processing enzyme "
+                "that removes the outermost "
+                "glucose residue from the "
+                "newly transferred N-linked "
+                "oligosaccharide.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_glucosidase_ii",
+        "name": "ER glucosidase II (GANAB complex)",
+        "role": "An ER glycan-processing enzyme "
+                "complex whose catalytic alpha "
+                "subunit is encoded by GANAB. "
+                "It removes additional glucose "
+                "residues during glycoprotein "
+                "maturation and the "
+                "calnexin-calreticulin cycle.",
+        "type": "protein",
+    },
+
+
+
 
 
 ]
