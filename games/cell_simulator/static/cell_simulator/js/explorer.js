@@ -195,10 +195,6 @@
         <text class="ribosome-subunit-label" x="450" y="456">40S SMALL SUBUNIT</text>
       </g>
 
-      <g class="ribosome-protein-feature diagram-action" data-target="ribosomal_proteins" role="button" tabindex="0" aria-label="Inspect ribosomal proteins surrounding the rRNA core">
-        ${proteins}
-        <text class="ribosome-feature-label protein-label" x="594" y="300">RIBOSOMAL PROTEINS</text>
-      </g>
 
       <g class="ribosome-mrna diagram-action" data-target="messenger_rna" role="button" tabindex="0" aria-label="Inspect messenger RNA threaded through the decoding channel, read 5 prime to 3 prime">
         <path class="mrna-backbone" d="M290 401H612"/>
