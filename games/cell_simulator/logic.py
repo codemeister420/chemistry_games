@@ -289,7 +289,7 @@ ORGANCELLE_CONTENT = {
 
     "smooth_er": {
         "visual": "network",
-        "children": ["smooth_er_membrane", "lipid_synthesis", "calcium_store", "detoxification"],
+        "children": ["smooth_er_membrane", "lipid_synthesis", "calcium_store", "detoxification","smooth_er_lumen"],
     },
     "golgi": {
         "visual": "stack",
@@ -579,23 +579,117 @@ COMPONENT_DATA = {
          "protein_us7", "protein_es6"]
     ),
 
+    
     "rough_er_exit_sites": _component(
-        "ER exit sites",
-        "COPII TRANSPORT · SECRETORY PATHWAY",
-        "ER exit sites are specialized regions of the endoplasmic "
-        "reticulum where proteins and lipids are selected for "
-        "transport toward the Golgi apparatus. The small GTPase "
-        "Sar1 initiates COPII coat recruitment. Sec23 and Sec24 "
-        "help assemble the inner coat and select cargo, while "
-        "Sec13 and Sec31 contribute to the outer coat. "
-        "Cargo-containing transport carriers form at these sites "
-        "and subsequently deliver material toward the ER-Golgi "
-        "intermediate compartment. ER exit sites are generally "
-        "ribosome-poor regions of the ER membrane.",
+        "ER exit sites · COPII transport",
+        "SECRETORY PATHWAY · ER EXPORT",
+        "ER exit sites are specialized, usually ribosome-poor "
+        "regions of the endoplasmic reticulum membrane where "
+        "export cargo is concentrated and COPII transport "
+        "carriers form. Sar1 activation initiates recruitment "
+        "of the COPII coat. Sec23/Sec24 forms the inner coat, "
+        "participating in cargo selection and regulation of "
+        "Sar1. Sec13/Sec31 forms the outer coat, contributing "
+        "to membrane deformation and carrier formation. "
+        "Transport carriers deliver cargo toward the ER-Golgi "
+        "intermediate compartment, from which proteins "
+        "can move onward through the secretory pathway.",
+        "vesicle",
+        [
+            "copii_sar1",
+            "copii_inner_coat",
+            "copii_outer_coat",
+            "copii_cargo",
+            "copii_carrier",
+        ],
+        ["gtp", "gdp", "phosphatidylcholine"]
+    ),
+
+    "copii_sar1": _component(
+        "Sar1 · COPII initiation",
+        "SMALL GTPASE · MEMBRANE RECRUITMENT",
+        "Sar1 is a small GTP-binding protein that initiates "
+        "COPII assembly. The ER membrane protein Sec12 acts "
+        "as a guanine nucleotide exchange factor, promoting "
+        "exchange of GDP for GTP on Sar1. GTP binding exposes "
+        "an amphipathic N-terminal helix that inserts into "
+        "the cytosolic leaflet of the ER membrane and helps "
+        "deform it. Active Sar1 recruits Sec23/Sec24. "
+        "GTP hydrolysis participates in regulation and "
+        "disassembly of the COPII coat.",
+        "protein_complex",
+        (),
+        ["protein_sar1", "protein_sec12", "gtp", "gdp"]
+    ),
+
+    "copii_inner_coat": _component(
+        "COPII inner coat · Sec23/Sec24",
+        "CARGO RECOGNITION · COAT ASSEMBLY",
+        "Sec23 and Sec24 form the inner layer of the COPII "
+        "coat. Sec24 helps recognize export signals on "
+        "selected cargo proteins or their cargo receptors. "
+        "Sec23 interacts with Sar1 and has GTPase-activating "
+        "activity that contributes to control of Sar1's "
+        "nucleotide cycle. The inner coat helps couple "
+        "cargo selection to transport carrier formation.",
+        "protein_complex",
+        (),
+        ["protein_sec23", "protein_sec24", "protein_sar1"]
+    ),
+
+    "copii_outer_coat": _component(
+        "COPII outer coat · Sec13/Sec31",
+        "MEMBRANE SHAPING · COAT SCAFFOLD",
+        "Sec13 and Sec31 assemble the outer COPII coat. "
+        "Their protein complexes form a flexible scaffold "
+        "that helps organize and stabilize curvature "
+        "during the development of ER export carriers. "
+        "The outer coat also regulates the Sar1 GTPase "
+        "cycle through interactions with Sec23. "
+        "COPII carrier geometry can vary depending "
+        "on the cargo and cellular conditions.",
+        "protein_complex",
+        (),
+        ["protein_sec13", "protein_sec31"]
+    ),
+
+    "copii_cargo": _component(
+        "Protein cargo selection",
+        "ER EXPORT SIGNALS · CARGO RECEPTORS",
+        "COPII transport is selective. Some membrane "
+        "proteins display cytosolic export signals "
+        "that can be recognized by COPII components. "
+        "Soluble luminal cargo generally requires "
+        "membrane-associated cargo receptors or "
+        "other packaging mechanisms. The receptor "
+        "LMAN1, together with MCFD2, helps export "
+        "certain glycoprotein cargoes. Correct "
+        "protein folding and ER quality control "
+        "influence which proteins are permitted "
+        "to proceed through the secretory pathway.",
+        "protein_complex",
+        (),
+        ["protein_lman1", "protein_mcfd2"]
+    ),
+
+    "copii_carrier": _component(
+        "COPII transport carrier",
+        "ER TO ER-GOLGI INTERMEDIATE COMPARTMENT",
+        "COPII machinery drives the formation of carriers "
+        "containing selected membrane and soluble cargo. "
+        "After formation, the coat is remodeled or "
+        "released and transport proceeds toward the "
+        "ER-Golgi intermediate compartment (ERGIC). "
+        "Further trafficking carries cargo toward "
+        "the cis-Golgi. Not all COPII carriers have "
+        "the same size or morphology, and cargo "
+        "delivery involves additional tethering "
+        "and membrane-fusion proteins.",
         "vesicle",
         (),
-        ["phosphatidylcholine"]
+        ["phosphatidylcholine", "phosphatidylethanolamine"]
     ),
+
 
     
     "rough_er_membrane": _component(
@@ -915,10 +1009,478 @@ COMPONENT_DATA = {
         ["calcium", "protein_calreticulin", "atp"]
     ),
 
-    "smooth_er_membrane": _component("Smooth-ER membrane", "LIPID BILAYER", "Membrane enzymes synthesize lipids and help metabolize certain compounds.", "membrane", ["lipid_synthesis"], ["phosphatidylcholine", "phosphatidylethanolamine", "cholesterol"]),
-    "lipid_synthesis": _component("Lipid synthesis", "BIOSYNTHETIC PROCESS", "Enzymes assemble fatty acids, glycerol, and other building blocks into cellular lipids.", "pathway", (), ["phosphatidylcholine", "phosphatidylethanolamine"]),
-    "calcium_store": _component("Calcium store", "ION STORAGE", "The ER can store and release calcium ions that act as signals in many cell types.", "compartment"),
-    "detoxification": _component("Detoxification enzymes", "ENZYME SYSTEM", "Enzymes in the smooth ER modify some drugs and other compounds, often making them easier to process.", "protein_complex"),
+        
+    "smooth_er_lumen": _component(
+        "Smooth ER lumen",
+        "AQUEOUS COMPARTMENT · CALCIUM HOMEOSTASIS",
+        "The smooth endoplasmic reticulum lumen is the "
+        "aqueous space enclosed by the ER membrane. "
+        "It is physically continuous with the rough "
+        "ER lumen and forms part of the same internal "
+        "membrane network. The ER stores calcium at "
+        "much higher free concentrations than the "
+        "resting cytosol. Calcium is accumulated by "
+        "ATP-dependent SERCA pumps, released through "
+        "channels such as IP3 receptors and buffered "
+        "by calcium-binding proteins including "
+        "calreticulin. The lumen also contains water, "
+        "ions and proteins involved in maintaining "
+        "the internal environment of the ER. "
+        "Smooth and rough ER share many functions, "
+        "but the prominence of calcium handling, "
+        "lipid metabolism and protein processing "
+        "varies among ER regions and cell types.",
+        "compartment",
+        [
+            "ser_lumen_calcium_pool",
+            "ser_calcium_buffer",
+            "ser_lumen_continuity",
+        ],
+        [
+            "water",
+            "calcium",
+            "protein_calreticulin",
+        ]
+    ),
+    
+    "ser_lumen_calcium_pool": _component(
+        "Luminal calcium pool",
+        "FREE AND BUFFERED CALCIUM · ER RESERVOIR",
+        "The ER lumen contains both free calcium ions "
+        "and calcium bound to luminal proteins. "
+        "The concentration of free calcium in the ER "
+        "is normally far greater than in the resting "
+        "cytosol, allowing the ER to function as a "
+        "reservoir for intracellular signaling. "
+        "SERCA pumps actively transport calcium "
+        "into the lumen using ATP. When calcium "
+        "release channels open, free calcium can "
+        "move into the cytosol down its "
+        "electrochemical gradient. Calcium-binding "
+        "proteins buffer the store and help regulate "
+        "changes in free luminal calcium.",
+        "compartment",
+        [
+            "ser_serca_pump",
+            "ser_ip3_receptor",
+        ],
+        ["calcium", "atp", "adp"]
+    ),
+
+    "ser_lumen_continuity": _component(
+        "Continuous ER lumen",
+        "SMOOTH ER · ROUGH ER CONNECTION",
+        "The smooth and rough endoplasmic reticulum "
+        "are interconnected regions of the same "
+        "membrane-bound organelle. Their luminal "
+        "spaces communicate through the continuous "
+        "ER network. The rough ER is typically "
+        "enriched in ribosome-associated membrane "
+        "sheets and protein-processing machinery, "
+        "while smooth ER regions often form "
+        "tubules enriched in lipid-metabolic "
+        "or calcium-handling functions. "
+        "These are functional and structural "
+        "specializations, not completely "
+        "separate organelles. The ER lumen "
+        "is also continuous with the "
+        "perinuclear space between the "
+        "two nuclear membranes.",
+        "compartment",
+        (),
+        ["water", "calcium"]
+    ),
+
+
+
+        
+    "smooth_er_membrane": _component(
+        "Smooth ER membrane",
+        "PHOSPHOLIPID BILAYER · TUBULAR MEMBRANE NETWORK",
+        "The smooth endoplasmic reticulum consists largely "
+        "of interconnected membrane tubules. Its phospholipid "
+        "bilayer is continuous with the rough ER and contains "
+        "relatively little cholesterol compared with the "
+        "plasma membrane. Reticulon proteins help stabilize "
+        "high membrane curvature, while atlastin GTPases "
+        "promote fusion between ER tubules. VAP proteins "
+        "help establish membrane contact sites with other "
+        "organelles. The ER membrane also contains enzymes "
+        "for lipid synthesis, calcium transport and metabolic "
+        "reactions. The relative importance of these "
+        "activities varies between cell types.",
+        "membrane",
+        [
+            "ser_reticulon",
+            "ser_atlastin",
+            "ser_vapb",
+        ],
+        [
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "phosphatidylinositol",
+            "phosphatidylserine",
+        ]
+    ),
+    
+    "ser_reticulon": _component(
+        "Reticulon-4 (RTN4)",
+        "ER MEMBRANE CURVATURE",
+        "Reticulon proteins are membrane-shaping proteins "
+        "that are enriched in highly curved ER tubules "
+        "and sheet edges. Their hydrophobic membrane-embedded "
+        "segments form a hairpin-like arrangement that "
+        "partially inserts into the bilayer, helping "
+        "generate and stabilize membrane curvature. "
+        "Reticulon-4, also called Nogo, is one member "
+        "of this family. Different cell types express "
+        "different reticulon isoforms.",
+        "protein_complex",
+        (),
+        ["protein_rtn4"]
+    ),
+
+    "ser_atlastin": _component(
+        "Atlastin GTPase",
+        "ER TUBULE FUSION",
+        "Atlastins are ER membrane-anchored dynamin-like "
+        "GTPases. They help fuse adjacent ER membrane "
+        "tubules, establishing and maintaining the "
+        "interconnected tubular ER network. "
+        "Atlastin molecules associated with opposing "
+        "membranes interact, and their GTPase cycle "
+        "helps drive membrane fusion. Mammals possess "
+        "three atlastin isoforms, ATL1, ATL2 and ATL3, "
+        "whose expression varies by tissue.",
+        "protein_complex",
+        (),
+        ["protein_atl3", "gtp", "gdp"]
+    ),
+
+    "ser_vapb": _component(
+        "VAPB membrane contact protein",
+        "ER-ORGANELLE CONTACT SITES",
+        "VAPB is a tail-anchored protein of the ER membrane. "
+        "Its cytosol-facing domain binds partner proteins "
+        "that help form close contacts between the ER "
+        "and other organelles, including mitochondria, "
+        "endosomes and the plasma membrane. "
+        "These contact sites support lipid exchange "
+        "and cellular signaling without requiring "
+        "the two organelle membranes to fuse.",
+        "protein_complex",
+        (),
+        ["protein_vapb"]
+    ),
+
+
+   
+    "lipid_synthesis": _component(
+        "Lipid synthesis in the Smooth ER",
+        "PHOSPHOLIPID · TRIACYLGLYCEROL · STEROL METABOLISM",
+        "The endoplasmic reticulum is a major site of cellular "
+        "lipid synthesis and metabolism. ER-associated enzymes "
+        "produce many membrane phospholipids and neutral lipids "
+        "and participate in cholesterol biosynthesis. "
+        "Phosphatidylcholine and phosphatidylethanolamine "
+        "are important structural membrane lipids. "
+        "Triacylglycerols can be assembled through acylation "
+        "of diacylglycerol and subsequently stored in lipid "
+        "droplets that originate from the ER. "
+        "The cholesterol biosynthetic pathway includes the "
+        "ER membrane enzyme HMG-CoA reductase, although "
+        "different reactions take place in different "
+        "cellular locations. These metabolic activities "
+        "are regulated according to cellular needs.",
+        "lipid_metabolism",
+        [
+            "ser_phospholipid_synthesis",
+            "ser_tag_synthesis",
+            "ser_cholesterol_synthesis",
+        ],
+        [
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "cholesterol",
+        ]
+    ),
+    
+    "ser_phospholipid_synthesis": _component(
+        "Phospholipid synthesis",
+        "MEMBRANE LIPID BIOSYNTHESIS",
+        "The ER is a major location for phospholipid "
+        "biosynthesis. Phosphatidylcholine (PC) and "
+        "phosphatidylethanolamine (PE) can be produced "
+        "through the Kennedy pathway. Choline or "
+        "ethanolamine is activated through phosphorylation "
+        "and reaction with CTP to form a CDP-linked "
+        "headgroup. ER-associated phosphotransferases "
+        "then transfer the headgroup to diacylglycerol, "
+        "producing PC or PE. These molecules contribute "
+        "to membrane structure, curvature and function. "
+        "Individual biosynthetic routes and their "
+        "importance vary across tissues.",
+        "protein_complex",
+        (),
+        [
+            "choline",
+            "ethanolamine",
+            "diacylglycerol_example",
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "protein_chpt1",
+        ]
+    ),
+
+    "ser_tag_synthesis": _component(
+        "Triacylglycerol synthesis",
+        "NEUTRAL LIPID STORAGE · LIPID DROPLETS",
+        "Triacylglycerols consist of a glycerol backbone "
+        "esterified to three fatty acid chains. "
+        "A major synthesis pathway begins with "
+        "glycerol-3-phosphate and proceeds through "
+        "lysophosphatidic acid and phosphatidic acid "
+        "to diacylglycerol. DGAT enzymes catalyze "
+        "the addition of a third fatty acyl group "
+        "from fatty acyl-CoA to produce triacylglycerol. "
+        "Neutral lipids accumulate between ER membrane "
+        "leaflets and can contribute to the formation "
+        "of cytosolic lipid droplets. Triolein is "
+        "one representative triacylglycerol.",
+        "protein_complex",
+        (),
+        [
+            "glycerol_3_phosphate",
+            "oleic_acid",
+            "diacylglycerol_example",
+            "triolein",
+            "protein_dgat1",
+        ]
+    ),
+
+    "ser_cholesterol_synthesis": _component(
+        "Cholesterol biosynthesis",
+        "STEROL METABOLISM · MEVALONATE PATHWAY",
+        "Cholesterol is synthesized through a multistep "
+        "pathway beginning with acetyl-CoA-derived "
+        "intermediates. HMG-CoA reductase, an integral "
+        "ER membrane protein with a cytosol-facing "
+        "catalytic domain, reduces HMG-CoA to mevalonate "
+        "using NADPH. Later reactions generate activated "
+        "isoprenoid units, squalene, lanosterol and "
+        "ultimately cholesterol. The pathway involves "
+        "enzymes associated with both the ER and other "
+        "cellular compartments. Cholesterol synthesis "
+        "is tightly regulated by sterol availability "
+        "and cellular metabolic demand.",
+        "protein_complex",
+        (),
+        [
+            "cholesterol",
+            "protein_hmgcr",
+        ]
+    ),
+
+
+   
+    "calcium_store": _component(
+        "Calcium regulation in the Smooth ER",
+        "CALCIUM STORAGE · TRANSPORT · CELLULAR SIGNALING",
+        "The endoplasmic reticulum is a major intracellular "
+        "calcium reservoir. SERCA pumps use energy from ATP "
+        "hydrolysis to transport calcium from the cytosol "
+        "into the ER lumen, against its electrochemical "
+        "gradient. IP3 receptors form calcium-release "
+        "channels in the ER membrane. When activated by "
+        "inositol 1,4,5-trisphosphate and appropriately "
+        "regulated by cytosolic calcium, they allow calcium "
+        "to flow from the ER into the cytosol. "
+        "ER luminal proteins, including calreticulin, "
+        "bind calcium and help buffer the stored pool. "
+        "Transient changes in cytosolic calcium control "
+        "many processes such as secretion, metabolism "
+        "and cellular signaling. In muscle cells, the "
+        "specialized sarcoplasmic reticulum uses related "
+        "calcium-handling machinery with a major role "
+        "for ryanodine receptors.",
+        "calcium_regulation",
+        [
+            "ser_serca_pump",
+            "ser_ip3_receptor",
+            "ser_calcium_buffer",
+        ],
+        ["calcium", "atp", "adp"]
+    ),
+    
+    "ser_serca_pump": _component(
+        "SERCA calcium pump",
+        "ATP-DEPENDENT CALCIUM TRANSPORT",
+        "SERCA is a P-type ATPase embedded in the "
+        "endoplasmic reticulum membrane. It uses "
+        "ATP hydrolysis to transport calcium ions "
+        "from the cytosol into the ER lumen. "
+        "In its transport cycle, calcium binds "
+        "to the pump, ATP-dependent phosphorylation "
+        "drives conformational changes, and calcium "
+        "is released on the luminal side. "
+        "The pump then returns to its initial state. "
+        "The canonical transport stoichiometry is "
+        "two calcium ions per ATP hydrolyzed, with "
+        "countertransport of protons. "
+        "SERCA activity helps restore low resting "
+        "cytosolic calcium concentrations after "
+        "a signaling event.",
+        "protein_complex",
+        (),
+        ["protein_serca2", "calcium", "atp", "adp", "phosphate"]
+    ),
+
+    "ser_ip3_receptor": _component(
+        "IP3 receptor calcium channel",
+        "SECOND-MESSENGER-ACTIVATED CALCIUM RELEASE",
+        "Inositol 1,4,5-trisphosphate receptors "
+        "(IP3Rs) are large tetrameric calcium "
+        "channels embedded in the ER membrane. "
+        "IP3 is a soluble second messenger "
+        "generated from membrane phosphoinositides "
+        "during signaling. Binding of IP3, together "
+        "with regulation by calcium and other factors, "
+        "controls channel opening. When an IP3 receptor "
+        "opens, calcium can move down its electrochemical "
+        "gradient from the ER lumen into the cytosol. "
+        "The resulting cytosolic calcium signal "
+        "can activate downstream cellular processes.",
+        "protein_complex",
+        (),
+        ["protein_itpr1", "inositol_trisphosphate", "calcium"]
+    ),
+
+    "ser_calcium_buffer": _component(
+        "Calcium buffering in the ER lumen",
+        "LUMINAL CALCIUM RESERVOIR",
+        "The ER lumen stores calcium in both free "
+        "and protein-bound forms. Calreticulin is "
+        "a soluble ER protein that can bind "
+        "substantial amounts of calcium. "
+        "Luminal buffering helps maintain the "
+        "calcium reservoir while allowing free "
+        "calcium concentrations to change during "
+        "signaling and transport. The specialized "
+        "sarcoplasmic reticulum of muscle cells "
+        "also contains calcium-binding proteins "
+        "such as calsequestrin.",
+        "compartment",
+        (),
+        ["calcium", "protein_calreticulin"]
+    ),
+
+
+   
+    "detoxification": _component(
+        "Smooth ER detoxification",
+        "CYTOCHROME P450 · OXIDATIVE METABOLISM",
+        "The smooth endoplasmic reticulum contains enzymes "
+        "that metabolize drugs, environmental chemicals "
+        "and endogenous compounds. Many cytochrome P450 "
+        "enzymes are anchored in the ER membrane, with "
+        "their catalytic domains facing the cytosol. "
+        "They contain a heme group and use electrons "
+        "supplied by NADPH through cytochrome P450 "
+        "oxidoreductase (POR). These electrons help "
+        "activate molecular oxygen and catalyze "
+        "oxidation reactions including hydroxylation "
+        "and dealkylation. Such reactions often alter "
+        "a compound's solubility and biological activity. "
+        "They do not necessarily reduce toxicity: "
+        "some metabolites are more reactive or toxic "
+        "than their parent compounds. CYP metabolism "
+        "is particularly prominent in hepatocytes.",
+        "ser_detoxification",
+        [
+            "ser_cyp450_enzyme",
+            "ser_p450_reductase",
+            "ser_cyp_reaction",
+        ],
+        ["nadph", "oxygen"]
+    ),
+    
+    "ser_cyp450_enzyme": _component(
+        "Cytochrome P450 enzyme",
+        "HEME MONOOXYGENASE · SUBSTRATE OXIDATION",
+        "Cytochrome P450 enzymes are heme-containing "
+        "monooxygenases. Many mammalian CYP enzymes "
+        "are associated with the endoplasmic reticulum "
+        "and catalyze metabolism of drugs and other "
+        "small molecules. Their catalytic iron changes "
+        "oxidation state as electrons and oxygen "
+        "participate in the reaction cycle. "
+        "The heme prosthetic group is essential for "
+        "oxygen activation. CYP3A4 is one important "
+        "human enzyme that metabolizes numerous drugs. "
+        "Different CYP isoforms have overlapping "
+        "but distinct substrate preferences.",
+        "protein_complex",
+        (),
+        [
+            "protein_cyp3a4",
+            "heme_b",
+            "oxygen",
+        ]
+    ),
+
+    "ser_p450_reductase": _component(
+        "NADPH-cytochrome P450 reductase",
+        "POR · ELECTRON TRANSFER",
+        "NADPH-cytochrome P450 reductase (POR) is an "
+        "ER membrane-associated flavoprotein that "
+        "transfers electrons from NADPH to many "
+        "microsomal cytochrome P450 enzymes. "
+        "The electrons pass through FAD and FMN "
+        "cofactors in the reductase before "
+        "reaching the CYP heme iron. "
+        "These electron-transfer steps support "
+        "oxygen activation and substrate oxidation. "
+        "POR is distinct from the CYP enzyme itself.",
+        "protein_complex",
+        (),
+        [
+            "protein_por",
+            "nadph",
+            "fad",
+            "fmn",
+        ]
+    ),
+
+    "ser_cyp_reaction": _component(
+        "Cytochrome P450 oxidation reaction",
+        "PHASE I METABOLISM · HYDROXYLATION",
+        "Many CYP enzymes catalyze monooxygenation: "
+        "one oxygen atom from molecular oxygen is "
+        "incorporated into a substrate, while the "
+        "other is reduced to water. "
+        "The reaction consumes reducing equivalents "
+        "supplied by NADPH. As an illustrative "
+        "reaction, CYP2E1 can oxidize benzene "
+        "through a reactive benzene oxide "
+        "intermediate, yielding phenol among "
+        "its products. This example demonstrates "
+        "why CYP metabolism is not always "
+        "detoxifying, because benzene metabolism "
+        "can also generate harmful intermediates. "
+        "Different substrates and CYP enzymes "
+        "produce many other types of products.",
+        "protein_complex",
+        (),
+        [
+            "protein_cyp2e1",
+            "benzene",
+            "phenol",
+            "oxygen",
+            "nadph",
+        ]
+    ),
+
+
     "cis_cisternae": _component("Cis Golgi cisternae", "MEMBRANE COMPARTMENT", "The receiving side of the Golgi accepts cargo from the ER.", "stack", ["golgi_membrane"], ["phosphatidylcholine"]),
     "medial_cisternae": _component("Medial Golgi cisternae", "MEMBRANE COMPARTMENT", "Middle Golgi compartments perform additional processing, including steps in glycan modification.", "stack", ["golgi_membrane"]),
     "trans_cisternae": _component("Trans Golgi cisternae", "MEMBRANE COMPARTMENT", "The shipping side of the Golgi sorts processed cargo into transport vesicles.", "stack", ["golgi_vesicles"], ["phosphatidylcholine"]),
@@ -1090,12 +1652,7 @@ MOLECULES = [
         "role": "The product of glycolysis that can be converted to acetyl-CoA before the citric acid cycle.",
         "smiles": "CC(=O)C(=O)[O-]",
     },
-    {
-        "id": "oxygen",
-        "name": "Molecular oxygen",
-        "role": "The terminal electron acceptor in the mitochondrial respiratory chain.",
-        "smiles": "O=O",
-    },
+
     {
         "id": "water",
         "name": "Water",
@@ -1537,6 +2094,347 @@ MOLECULES = [
                 "calnexin-calreticulin cycle.",
         "type": "protein",
     },
+    
+    {
+        "id": "protein_sar1",
+        "name": "Sar1 GTPase (SAR1A / SAR1B)",
+        "role": "A small GTPase that initiates COPII coat assembly. "
+                "In its GTP-bound state, its N-terminal "
+                "amphipathic helix associates with the ER "
+                "membrane and assists membrane curvature.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sec12",
+        "name": "Sec12 (PREB)",
+        "role": "An ER membrane-associated guanine nucleotide "
+                "exchange factor that promotes replacement "
+                "of GDP with GTP on Sar1.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sec23",
+        "name": "Sec23 (SEC23A / SEC23B)",
+        "role": "An inner COPII coat subunit. It binds Sar1 "
+                "and has GTPase-activating activity that "
+                "regulates coat assembly and turnover.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sec24",
+        "name": "Sec24 (SEC24A-D)",
+        "role": "An inner COPII coat subunit that helps "
+                "recognize cargo export signals and "
+                "recruit selected membrane proteins "
+                "or cargo receptors into carriers.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sec13",
+        "name": "Sec13 (SEC13)",
+        "role": "An outer COPII coat protein that forms "
+                "a complex with Sec31 and contributes "
+                "to the coat scaffold.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_sec31",
+        "name": "Sec31 (SEC31A / SEC31B)",
+        "role": "An outer COPII coat protein that interacts "
+                "with Sec13, helps organize coat structure "
+                "and contributes to regulation of Sar1.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_lman1",
+        "name": "LMAN1 (ERGIC-53)",
+        "role": "A cycling lectin cargo receptor involved "
+                "in ER export of certain glycoproteins, "
+                "including coagulation factors V and VIII.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_mcfd2",
+        "name": "MCFD2",
+        "role": "A calcium-binding protein that associates "
+                "with LMAN1 to support trafficking of "
+                "specific cargo proteins.",
+        "type": "protein",
+    },
+    {
+        "id": "gtp",
+        "name": "Guanosine triphosphate (GTP)",
+        "role": "A guanine nucleotide containing three "
+                "phosphate groups. Sar1 binds GTP to "
+                "enter its membrane-associated active "
+                "state during COPII coat initiation.",
+        "smiles": "Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)OP(=O)(O)O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+    },
+    {
+        "id": "gdp",
+        "name": "Guanosine diphosphate (GDP)",
+        "role": "A guanine nucleotide containing two "
+                "phosphate groups. Sar1 returns to "
+                "a GDP-bound state following GTP "
+                "hydrolysis, which helps regulate "
+                "COPII coat disassembly.",
+        "smiles": "Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+    },
+    
+    {
+        "id": "protein_rtn4",
+        "name": "Reticulon-4 (RTN4 / Nogo)",
+        "role": "An ER membrane-shaping protein whose "
+                "hydrophobic hairpin-like membrane "
+                "segments help generate and stabilize "
+                "the high curvature of ER tubules "
+                "and sheet edges.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_atl3",
+        "name": "Atlastin-3 (ATL3)",
+        "role": "An ER membrane-anchored dynamin-like "
+                "GTPase that participates in homotypic "
+                "fusion of ER membrane tubules. "
+                "GTP binding and hydrolysis are "
+                "coupled to conformational changes "
+                "during membrane fusion.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_vapb",
+        "name": "Vesicle-associated membrane protein-associated protein B (VAPB)",
+        "role": "An ER membrane protein with a "
+                "cytosol-facing domain that binds "
+                "partner proteins involved in "
+                "membrane contact sites and "
+                "interorganellar lipid exchange.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "glycerol_3_phosphate",
+        "name": "Glycerol-3-phosphate",
+        "role": "A phosphorylated glycerol intermediate that "
+                "provides the backbone for synthesis of "
+                "glycerophospholipids and triacylglycerols. "
+                "Sequential acylation produces lysophosphatidic "
+                "acid and then phosphatidic acid.",
+        "smiles": "OCC(O)COP(=O)(O)O",
+    },
+    {
+        "id": "choline",
+        "name": "Choline",
+        "role": "A quaternary ammonium alcohol used to "
+                "synthesize phosphatidylcholine. "
+                "In the Kennedy pathway, choline is "
+                "phosphorylated and converted into "
+                "a CDP-choline intermediate before "
+                "incorporation into a phospholipid.",
+        "smiles": "C[N+](C)(C)CCO",
+    },
+    {
+        "id": "ethanolamine",
+        "name": "Ethanolamine",
+        "role": "A small amino alcohol used as the "
+                "headgroup precursor for "
+                "phosphatidylethanolamine synthesis.",
+        "smiles": "NCCO",
+    },
+    {
+        "id": "oleic_acid",
+        "name": "Oleic acid",
+        "role": "A monounsaturated C18 fatty acid "
+                "containing a cis double bond. "
+                "After activation to oleoyl-CoA, "
+                "its acyl group can be incorporated "
+                "into phospholipids and "
+                "triacylglycerols.",
+        "smiles": "CCCCCCCC/C=C\\CCCCCCCC(=O)O",
+    },
+    {
+        "id": "diacylglycerol_example",
+        "name": "1,2-Dioleoylglycerol",
+        "role": "A representative diacylglycerol (DAG) "
+                "containing two oleoyl chains. "
+                "DAG is a precursor for the synthesis "
+                "of several phospholipids and "
+                "triacylglycerols. Actual cellular "
+                "DAG molecules have diverse fatty "
+                "acyl compositions.",
+        "smiles": "CCCCCCCC/C=C\\CCCCCCCC(=O)OCC(CO)OC(=O)CCCCCCC/C=C\\CCCCCCCC",
+    },
+    {
+        "id": "triolein",
+        "name": "Triolein (Glyceryl trioleate)",
+        "role": "A triacylglycerol containing three "
+                "oleoyl chains esterified to glycerol. "
+                "It illustrates neutral lipid storage "
+                "and the chemical product of a "
+                "final DGAT-catalyzed acylation.",
+        "smiles": "O=C(CCCCCCC/C=C\\CCCCCCCC)OCC(COC(=O)CCCCCCC/C=C\\CCCCCCCC)OC(=O)CCCCCCC/C=C\\CCCCCCCC",
+    },
+    {
+        "id": "protein_chpt1",
+        "name": "Choline phosphotransferase 1 (CHPT1)",
+        "role": "An ER-associated enzyme that catalyzes "
+                "transfer of phosphocholine from "
+                "CDP-choline to diacylglycerol, "
+                "forming phosphatidylcholine.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_dgat1",
+        "name": "Diacylglycerol O-acyltransferase 1 (DGAT1)",
+        "role": "An ER membrane enzyme that catalyzes "
+                "the final acylation of diacylglycerol "
+                "using fatty acyl-CoA to form "
+                "triacylglycerol.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_hmgcr",
+        "name": "HMG-CoA reductase (HMGCR)",
+        "role": "An integral ER membrane enzyme that "
+                "catalyzes the NADPH-dependent "
+                "reduction of HMG-CoA to mevalonate. "
+                "It is a major regulatory enzyme "
+                "of cholesterol biosynthesis.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "protein_serca2",
+        "name": "SERCA2 (ATP2A2)",
+        "role": "An ATP-dependent calcium pump located "
+                "in the ER membrane. SERCA2 is encoded "
+                "by ATP2A2; different splice isoforms "
+                "occur in different tissues. "
+                "It transports Ca2+ from the cytosol "
+                "into the ER or sarcoplasmic reticulum "
+                "using energy from ATP hydrolysis.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_itpr1",
+        "name": "IP3 receptor type 1 (ITPR1)",
+        "role": "A subunit of a tetrameric "
+                "inositol 1,4,5-trisphosphate-regulated "
+                "calcium-release channel in the ER "
+                "membrane. Its activity responds "
+                "to IP3 and calcium, allowing "
+                "intracellular calcium signaling.",
+        "type": "protein",
+    },
+    {
+        "id": "inositol_trisphosphate",
+        "name": "D-myo-inositol 1,4,5-trisphosphate (IP3)",
+        "role": "A soluble second messenger produced "
+                "when phospholipase C cleaves "
+                "phosphatidylinositol 4,5-bisphosphate "
+                "(PIP2). IP3 binds receptors on the "
+                "ER membrane and can trigger calcium "
+                "release into the cytosol. "
+                "This drawing represents the "
+                "free molecule, not receptor-bound IP3.",
+        "smiles": "O[C@@H]1[C@H](O)[C@@H](O[P](O)(O)=O)[C@H](O[P](O)(O)=O)[C@@H](O)[C@@H]1O[P](O)(O)=O",
+    },
+    
+    {
+        "id": "protein_cyp3a4",
+        "name": "Cytochrome P450 3A4 (CYP3A4)",
+        "role": "A human ER-associated heme monooxygenase "
+                "responsible for metabolism of many drugs. "
+                "Its substrate preferences differ from "
+                "those of other CYP enzymes.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_por",
+        "name": "NADPH-cytochrome P450 reductase (POR)",
+        "role": "An ER membrane-associated enzyme containing "
+                "FAD and FMN cofactors. It transfers "
+                "electrons from NADPH to many microsomal "
+                "cytochrome P450 enzymes.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_cyp2e1",
+        "name": "Cytochrome P450 2E1 (CYP2E1)",
+        "role": "An ER-associated monooxygenase that can "
+                "oxidize small compounds including "
+                "ethanol and benzene. Some of its "
+                "reactions generate harmful metabolites.",
+        "type": "protein",
+    },
+    {
+        "id": "nadph",
+        "name": "NADPH",
+        "role": "Reduced nicotinamide adenine dinucleotide "
+                "phosphate. It supplies reducing equivalents "
+                "to POR, supporting CYP-catalyzed oxidation.",
+        "smiles": "C1C=CN(C=C1C(=O)N)[C@H]2[C@@H]([C@@H]([C@H](O2)COP(=O)(O)OP(=O)(O)OC[C@@H]3[C@H]([C@H]([C@@H](O3)N4C=NC5=C(N=CN=C54)N)OP(=O)(O)O)O)O)O",
+    },
+    {
+        "id": "oxygen",
+        "name": "Molecular oxygen (O2)",
+        "role": "The oxygen molecule activated by CYP enzymes. "
+                "In a typical monooxygenation reaction, "
+                "one oxygen atom is incorporated into "
+                "the substrate and the other becomes water."
+                "The terminal electron acceptor in the mitochondrial respiratory chain.",
+        "smiles": "O=O",
+    },
+    {
+        "id": "heme_b",
+        "name": "Heme b (iron protoporphyrin IX)",
+        "role": "An iron-containing porphyrin prosthetic "
+                "group at the catalytic center of CYP "
+                "enzymes. The iron participates in "
+                "electron transfer and oxygen activation. "
+                "The chemical drawing omits protein "
+                "coordination and axial ligands.",
+        "smiles": "CC1=C(C2=CC3=NC(=CC4=C(C(=C([N-]4)C=C5C(=C(C(=N5)C=C1[N-]2)C)C=C)C)C=C)C(=C3CCC(=O)[O-])C)CCC(=O)[O-].[Fe+2]",
+    },
+    {
+        "id": "fad",
+        "name": "Flavin adenine dinucleotide (FAD)",
+        "role": "A flavin cofactor of cytochrome P450 "
+                "reductase. FAD accepts electrons "
+                "originating from NADPH and transfers "
+                "them within the reductase.",
+        "smiles": "CC1=CC2=C(C=C1C)N(C3=NC(=O)NC(=O)C3=N2)C[C@@H]([C@@H]([C@@H](COP(=O)(O)OP(=O)(O)OC[C@@H]4[C@H]([C@H]([C@@H](O4)N5C=NC6=C(N=CN=C65)N)O)O)O)O)O",
+    },
+    {
+        "id": "fmn",
+        "name": "Flavin mononucleotide (FMN)",
+        "role": "A flavin cofactor of cytochrome P450 "
+                "reductase. FMN transfers electrons "
+                "from the reductase to CYP enzymes.",
+        "smiles": "CC1=CC2=C(C=C1C)N(C3=NC(=O)NC(=O)C3=N2)C[C@@H]([C@@H]([C@@H](COP(=O)(O)O)O)O)O",
+    },
+    {
+        "id": "benzene",
+        "name": "Benzene",
+        "role": "An aromatic hydrocarbon used here as "
+                "an educational example of CYP metabolism. "
+                "Its oxidation can generate reactive "
+                "intermediates and toxic products.",
+        "smiles": "c1ccccc1",
+    },
+    {
+        "id": "phenol",
+        "name": "Phenol",
+        "role": "A hydroxylated aromatic compound that "
+                "can arise during CYP-mediated benzene "
+                "metabolism. Its formation illustrates "
+                "oxygen incorporation into a substrate, "
+                "not necessarily safe detoxification.",
+        "smiles": "Oc1ccccc1",
+    },
+
+
 
 
 

@@ -674,6 +674,38 @@
 
   function focusGraphic(visual, target, targetId) {
     
+    // Smooth ER lumen
+    if (targetId === "smooth_er_lumen") {
+      return smoothErLumenSvg();
+    }
+
+    
+    // Smooth ER CYP450 metabolism
+    if (targetId === "detoxification") {
+      return serDetoxificationSvg();
+    }
+
+
+    // Smooth ER calcium regulation
+    if (targetId === "calcium_store") {
+      return serCalciumRegulationSvg();
+    }
+
+    // Smooth ER lipid metabolism overview
+    if (targetId === "lipid_synthesis") {
+      return serLipidSynthesisSvg();
+    }
+
+      if (targetId === "smooth_er") {
+    return smoothErOverviewSvg();
+  }
+    
+    // Dedicated COPII ER exit site overview
+    if (targetId === "rough_er_exit_sites") {
+      return copiiExitSiteSvg();
+    }
+
+    
     // ER N-linked glycosylation overview
     if (targetId === "er_n_glycosylation") {
       return erGlycosylationSvg();
@@ -699,6 +731,7 @@
 
     switch (visual) {
       
+     
       case "membrane":
         return `
           ${membraneLipidsSvg(
@@ -713,7 +746,12 @@
           ${targetId === "rough_er_membrane"
             ? roughErMembraneFeaturesSvg()
             : ""}
+
+          ${targetId === "smooth_er_membrane"
+            ? smoothErMembraneFeaturesSvg()
+            : ""}
         `;
+
 
       case "cytosol":
         return cytosolSceneSvg(target, targetId);
@@ -793,6 +831,1457 @@
         return `<g class="protein-visual"><path d="M323 290c-54-35-19-111 42-93 23-75 108-73 127-16 68-18 109 47 68 88 35 60-17 111-74 87-38 57-114 38-124-15-45 12-79-8-39-51Z"/><circle cx="395" cy="268" r="16"/><circle cx="470" cy="231" r="13"/><circle cx="520" cy="294" r="18"/><circle cx="422" cy="326" r="11"/></g>`;
     }
   }
+  
+  function smoothErLumenSvg() {
+
+    // Free calcium ions dispersed within the ER lumen.
+    const calciumPositions = [
+      [155, 245], [255, 310], [350, 255],
+      [565, 260], [670, 320], [745, 240],
+      [185, 410], [285, 465], [390, 430],
+      [530, 445], [630, 410], [735, 465]
+    ];
+
+    const calciumIons = calciumPositions.map(([x, y]) => `
+      <circle cx="${x}" cy="${y}"
+              r="8"
+              fill="#76b9ec"
+              stroke="#377eaf"
+              stroke-width="1.5"/>
+    `).join("");
+
+    return `
+      <g class="smooth-er-lumen">
+
+        <text x="450" y="110"
+              text-anchor="middle"
+              font-size="19"
+              font-weight="bold"
+              fill="#64748b">
+          SMOOTH ER · INTERNAL LUMEN
+        </text>
+
+        <text x="450" y="137"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          AQUEOUS COMPARTMENT · CALCIUM RESERVOIR
+        </text>
+
+        <!-- Simplified membrane surrounding the lumen -->
+        <rect x="65" y="175"
+              width="770" height="350"
+              rx="90"
+              fill="#e0eff8"
+              stroke="#c28f66"
+              stroke-width="15"/>
+
+        <rect x="76" y="186"
+              width="748" height="328"
+              rx="80"
+              fill="none"
+              stroke="#ebbb8c"
+              stroke-width="5"/>
+
+        ${calciumIons}
+
+        <!-- Clickable calcium pool -->
+        <g class="diagram-action"
+           data-target="ser_lumen_calcium_pool"
+           role="button"
+           tabindex="0"
+           aria-label="Explore the luminal calcium pool"
+           style="cursor:pointer">
+
+          <ellipse cx="260" cy="345"
+                   rx="135" ry="70"
+                   fill="#a9d5f2"
+                   fill-opacity="0.5"
+                   stroke="#629ec7"
+                   stroke-width="2"/>
+
+          <g fill="#76b9ec"
+             stroke="#377eaf"
+             stroke-width="2">
+            <circle cx="215" cy="325" r="13"/>
+            <circle cx="270" cy="309" r="13"/>
+            <circle cx="309" cy="343" r="13"/>
+            <circle cx="246" cy="365" r="13"/>
+          </g>
+
+          <text x="260" y="408"
+                text-anchor="middle"
+                font-size="15"
+                font-weight="bold"
+                fill="#397ba4">
+            LUMINAL Ca²⁺ POOL
+          </text>
+
+          <rect x="128" y="270"
+                width="267" height="147"
+                fill="transparent"/>
+        </g>
+
+        <!-- Calreticulin protein -->
+        <g class="diagram-action"
+           data-target="ser_calcium_buffer"
+           role="button"
+           tabindex="0"
+           aria-label="Explore calcium-binding luminal proteins"
+           style="cursor:pointer">
+
+          <path d="M503 293
+                   C532 267 588 279 605 311
+                   C620 338 601 377 565 382
+                   C524 390 494 364 490 337
+                   C486 320 488 306 503 293Z"
+                fill="#e0b077"
+                stroke="#b48045"
+                stroke-width="3"/>
+
+          <text x="552" y="337"
+                text-anchor="middle"
+                font-size="17"
+                font-weight="bold"
+                fill="#75491d">
+            CALR
+          </text>
+
+          <g fill="#76b9ec"
+             stroke="#377eaf"
+             stroke-width="1.5">
+            <circle cx="489" cy="285" r="9"/>
+            <circle cx="624" cy="328" r="9"/>
+            <circle cx="596" cy="397" r="9"/>
+          </g>
+
+          <text x="555" y="423"
+                text-anchor="middle"
+                font-size="15"
+                font-weight="bold"
+                fill="#93632f">
+            CALCIUM BUFFERING
+          </text>
+
+          <rect x="475" y="258"
+                width="166" height="172"
+                fill="transparent"/>
+        </g>
+
+        <!-- Continuous ER lumen -->
+        <g class="diagram-action"
+           data-target="ser_lumen_continuity"
+           role="button"
+           tabindex="0"
+           aria-label="Explore ER lumen continuity"
+           style="cursor:pointer">
+
+          <path d="M710 282
+                   C760 264 804 284 808 322
+                   C812 361 777 382 732 370"
+                fill="none"
+                stroke="#6d9f8d"
+                stroke-width="10"
+                stroke-linecap="round"/>
+
+          <path d="M733 357l-12 12 17 8"
+                fill="none"
+                stroke="#6d9f8d"
+                stroke-width="4"/>
+
+          <text x="737" y="406"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#4b8270">
+            ER CONTINUITY
+          </text>
+
+          <rect x="680" y="260"
+                width="148" height="160"
+                fill="transparent"/>
+        </g>
+
+        <text x="450" y="561"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A LUMINAL STRUCTURE TO EXPLORE
+        </text>
+
+        <text x="450" y="582"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          THE SER AND RER SHARE A CONTINUOUS INTERNAL SPACE
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function serDetoxificationSvg() {
+    return `
+      <g class="ser-detoxification-visual">
+
+        <text x="450" y="112"
+              text-anchor="middle"
+              font-size="19"
+              font-weight="bold"
+              fill="#64748b">
+          SMOOTH ER · CYTOCHROME P450 METABOLISM
+        </text>
+
+        <text x="450" y="141"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          ELECTRON TRANSFER · OXYGEN ACTIVATION · SUBSTRATE OXIDATION
+        </text>
+
+        <!-- ER membrane cross-section -->
+        <rect x="60" y="290"
+              width="780" height="58"
+              rx="12"
+              fill="#f2d8b5"
+              fill-opacity="0.7"/>
+
+        <path d="M60 297 H840 M60 341 H840"
+              stroke="#b8946b"
+              stroke-width="8"
+              stroke-linecap="round"/>
+
+        <text x="76" y="381"
+              font-size="13"
+              font-weight="bold"
+              fill="#986c4b">
+          ER MEMBRANE
+        </text>
+
+        <text x="76" y="185"
+              font-size="13"
+              font-weight="bold"
+              fill="#64748b">
+          CYTOSOL
+        </text>
+
+        <!-- CYP450 protein -->
+        <g class="diagram-action"
+           data-target="ser_cyp450_enzyme"
+           role="button"
+           tabindex="0"
+           aria-label="Explore cytochrome P450"
+           style="cursor:pointer">
+
+          <rect x="315" y="205"
+                width="140" height="164"
+                rx="28"
+                fill="#8d75b2"
+                stroke="#67518d"
+                stroke-width="3"/>
+
+          <ellipse cx="385" cy="218"
+                   rx="87" ry="58"
+                   fill="#a994cb"
+                   stroke="#67518d"
+                   stroke-width="3"/>
+
+          <!-- Heme center -->
+          <circle cx="385" cy="213"
+                  r="25"
+                  fill="#d9a96a"
+                  stroke="#926331"
+                  stroke-width="3"/>
+
+          <text x="385" y="219"
+                text-anchor="middle"
+                font-size="16"
+                font-weight="bold"
+                fill="#633b19">
+            Fe
+          </text>
+
+          <text x="385" y="162"
+                text-anchor="middle"
+                font-size="17"
+                font-weight="bold"
+                fill="#67518d">
+            CYP450
+          </text>
+
+          <rect x="298" y="153"
+                width="177" height="221"
+                fill="transparent"/>
+        </g>
+
+        <!-- P450 reductase -->
+        <g class="diagram-action"
+           data-target="ser_p450_reductase"
+           role="button"
+           tabindex="0"
+           aria-label="Explore P450 reductase"
+           style="cursor:pointer">
+
+          <rect x="93" y="244"
+                width="112" height="125"
+                rx="22"
+                fill="#5d9aa2"
+                stroke="#34727d"
+                stroke-width="3"/>
+
+          <ellipse cx="149" cy="216"
+                   rx="68" ry="50"
+                   fill="#83bfc4"
+                   stroke="#34727d"
+                   stroke-width="3"/>
+
+          <text x="149" y="212"
+                text-anchor="middle"
+                font-size="17"
+                font-weight="bold"
+                fill="#245d64">
+            POR
+          </text>
+
+          <text x="149" y="230"
+                text-anchor="middle"
+                font-size="11"
+                fill="#245d64">
+            FAD / FMN
+          </text>
+
+          <text x="149" y="148"
+                text-anchor="middle"
+                font-size="16"
+                font-weight="bold"
+                fill="#34727d">
+            P450 REDUCTASE
+          </text>
+
+          <rect x="77" y="156"
+                width="148" height="219"
+                fill="transparent"/>
+        </g>
+
+        <!-- Electron flow from POR to CYP -->
+        <path d="M224 217 H291"
+              stroke="#db9851"
+              stroke-width="4"
+              stroke-dasharray="7 5"/>
+
+        <path d="M279 208 L293 217 L279 226"
+              fill="none"
+              stroke="#db9851"
+              stroke-width="4"/>
+
+        <text x="260" y="196"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#9b6a37">
+          e-
+        </text>
+
+        <!-- Substrate oxidation -->
+        <g class="diagram-action"
+           data-target="ser_cyp_reaction"
+           role="button"
+           tabindex="0"
+           aria-label="Explore CYP450 oxidation reaction"
+           style="cursor:pointer">
+
+          <rect x="530" y="172"
+                width="293" height="198"
+                rx="24"
+                fill="#d8ebd5"
+                fill-opacity="0.85"
+                stroke="#72a36e"
+                stroke-width="2"/>
+
+          <text x="676" y="205"
+                text-anchor="middle"
+                font-size="17"
+                font-weight="bold"
+                fill="#417644">
+            OXIDATION REACTION
+          </text>
+
+          <text x="676" y="251"
+                text-anchor="middle"
+                font-size="20"
+                font-weight="bold"
+                fill="#417644">
+            RH + O2
+          </text>
+
+          <path d="M623 269 H729"
+                stroke="#417644"
+                stroke-width="3"/>
+
+          <path d="M718 261 L730 269 L718 277"
+                fill="none"
+                stroke="#417644"
+                stroke-width="3"/>
+
+          <text x="676" y="307"
+                text-anchor="middle"
+                font-size="22"
+                font-weight="bold"
+                fill="#417644">
+            ROH
+          </text>
+
+          <text x="676" y="339"
+                text-anchor="middle"
+                font-size="12"
+                fill="#417644">
+            CYP-CATALYZED HYDROXYLATION
+          </text>
+        </g>
+
+        <!-- NADPH supplies electrons through POR -->
+        <text x="450" y="440"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#64748b">
+          NADPH → POR → CYP450
+        </text>
+
+        <text x="450" y="470"
+              text-anchor="middle"
+              font-size="14"
+              fill="#64748b">
+          ELECTRONS SUPPORT OXYGEN ACTIVATION
+        </text>
+
+        <!-- Illustrative example -->
+        <text x="450" y="513"
+              text-anchor="middle"
+              font-size="15"
+              font-weight="bold"
+              fill="#64748b">
+          EXAMPLE: BENZENE → PHENOL
+        </text>
+
+        <text x="450" y="540"
+              text-anchor="middle"
+              font-size="12"
+              fill="#996b56">
+          CYP METABOLISM CAN ALSO PRODUCE TOXIC INTERMEDIATES
+        </text>
+
+        <text x="450" y="586"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          CLICK AN ENZYME OR REACTION TO EXPLORE
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function serCalciumRegulationSvg() {
+
+    const calciumIon = (x, y, r = 11) => `
+      <g>
+        <circle cx="${x}" cy="${y}" r="${r}"
+                fill="#75b7eb"
+                stroke="#377dad"
+                stroke-width="2"/>
+        <text x="${x}" y="${y + 4}"
+              text-anchor="middle"
+              font-size="${r > 10 ? 10 : 8}"
+              font-weight="bold"
+              fill="#ffffff">Ca</text>
+      </g>
+    `;
+
+    const cytosolCalcium = [
+      [145, 183], [340, 197], [555, 181], [750, 201]
+    ].map(([x, y]) => calciumIon(x, y, 9)).join("");
+
+    const lumenCalcium = [
+      [116, 466], [181, 504], [261, 454],
+      [344, 485], [419, 520], [492, 467],
+      [585, 509], [652, 458], [738, 486],
+      [804, 518]
+    ].map(([x, y]) => calciumIon(x, y, 10)).join("");
+
+    return `
+      <g class="ser-calcium-regulation">
+
+        <text x="450" y="105"
+              text-anchor="middle"
+              font-size="19"
+              font-weight="bold"
+              fill="#64748b">
+          CALCIUM REGULATION IN THE SMOOTH ER
+        </text>
+
+        <!-- Cytosolic compartment -->
+        <text x="70" y="155"
+              font-size="15"
+              font-weight="bold"
+              fill="#64748b">
+          CYTOSOL
+        </text>
+
+        ${cytosolCalcium}
+
+        <!-- ER membrane bilayer -->
+        <rect x="56" y="285"
+              width="788" height="55"
+              rx="10"
+              fill="#f1d4ad"
+              fill-opacity="0.65"/>
+
+        <path d="M56 290h788"
+              stroke="#bd976c"
+              stroke-width="8"
+              stroke-linecap="round"/>
+
+        <path d="M56 335h788"
+              stroke="#bd976c"
+              stroke-width="8"
+              stroke-linecap="round"/>
+
+        <!-- ER lumen compartment -->
+        <rect x="55" y="350"
+              width="790" height="200"
+              rx="26"
+              fill="#dcedf8"
+              fill-opacity="0.85"
+              stroke="#b4cfdf"
+              stroke-width="2"/>
+
+        <text x="80" y="387"
+              font-size="15"
+              font-weight="bold"
+              fill="#47728a">
+          ER LUMEN
+        </text>
+
+        ${lumenCalcium}
+
+        <!-- SERCA pump -->
+        <g class="diagram-action"
+           data-target="ser_serca_pump"
+           role="button"
+           tabindex="0"
+           aria-label="Explore SERCA calcium pump"
+           style="cursor:pointer">
+
+          <rect x="158" y="258"
+                width="121" height="116"
+                rx="21"
+                fill="#8c73b4"
+                stroke="#674f91"
+                stroke-width="3"/>
+
+          <ellipse cx="218" cy="244"
+                   rx="57" ry="35"
+                   fill="#a995cb"
+                   stroke="#674f91"
+                   stroke-width="2"/>
+
+          <text x="218" y="249"
+                text-anchor="middle"
+                font-size="18"
+                font-weight="bold"
+                fill="white">
+            SERCA
+          </text>
+
+          <path d="M218 277v83"
+                stroke="#ffffff"
+                stroke-width="5"
+                stroke-linecap="round"/>
+
+          <path d="M204 344l14 17 14-17"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="4"/>
+
+          <text x="218" y="195"
+                text-anchor="middle"
+                font-size="14"
+                font-weight="bold"
+                fill="#674f91">
+            ATP → ADP + Pi
+          </text>
+
+          <rect x="155" y="202"
+                width="129" height="174"
+                fill="transparent"/>
+        </g>
+
+        <!-- IP3 receptor -->
+        <g class="diagram-action"
+           data-target="ser_ip3_receptor"
+           role="button"
+           tabindex="0"
+           aria-label="Explore IP3 calcium release channel"
+           style="cursor:pointer">
+
+          <rect x="389" y="260"
+                width="124" height="110"
+                rx="20"
+                fill="#63a59b"
+                stroke="#3a8177"
+                stroke-width="3"/>
+
+          <rect x="443" y="266"
+                width="16" height="96"
+                rx="8"
+                fill="#dcedf8"/>
+
+          <text x="451" y="245"
+                text-anchor="middle"
+                font-size="17"
+                font-weight="bold"
+                fill="#3a8177">
+            IP3R
+          </text>
+
+          <!-- Direction of calcium release -->
+          <path d="M451 265v-63"
+                stroke="#3a8177"
+                stroke-width="5"
+                stroke-linecap="round"/>
+
+          <path d="M438 217l13-17 13 17"
+                fill="none"
+                stroke="#3a8177"
+                stroke-width="4"/>
+
+          <text x="451" y="185"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#3a8177">
+            Ca RELEASE
+          </text>
+
+          <rect x="383" y="176"
+                width="137" height="198"
+                fill="transparent"/>
+        </g>
+
+        <!-- Calreticulin -->
+        <g class="diagram-action"
+           data-target="ser_calcium_buffer"
+           role="button"
+           tabindex="0"
+           aria-label="Explore ER calcium buffering"
+           style="cursor:pointer">
+
+          <path d="M615 411
+                   C644 385 686 398 692 429
+                   C702 470 653 482 632 462
+                   C605 447 597 427 615 411Z"
+                fill="#e1aa67"
+                stroke="#b88243"
+                stroke-width="3"/>
+
+          <text x="653" y="441"
+                text-anchor="middle"
+                font-size="14"
+                font-weight="bold"
+                fill="#634321">
+            CALR
+          </text>
+
+          <text x="653" y="396"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#90612f">
+            CALCIUM BUFFERING
+          </text>
+
+          <rect x="590" y="380"
+                width="129" height="101"
+                fill="transparent"/>
+        </g>
+
+        <text x="450" y="581"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A PROTEIN OR CALCIUM-HANDLING PROCESS TO EXPLORE
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function smoothErMembraneFeaturesSvg() {
+
+    // Protein illustrations use the same coordinates
+    // as the existing phospholipid bilayer.
+
+    const reticulon = `
+      <g class="diagram-action"
+         data-target="ser_reticulon"
+         role="button"
+         tabindex="0"
+         aria-label="Explore Reticulon-4"
+         style="cursor:pointer">
+
+        <rect x="145" y="236" width="175" height="158"
+              rx="16" fill="transparent"/>
+
+        <!-- Hairpin-shaped membrane insertion -->
+        <path d="M191 246
+                 C190 273 188 315 206 328
+                 C225 340 237 313 237 286
+                 L237 248"
+              fill="none"
+              stroke="#8874b4"
+              stroke-width="17"
+              stroke-linecap="round"/>
+
+        <path d="M251 246
+                 C250 277 248 318 268 329
+                 C283 336 292 307 291 277
+                 L291 248"
+              fill="none"
+              stroke="#a28bc6"
+              stroke-width="12"
+              stroke-linecap="round"/>
+
+        <text x="236" y="189"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#78629e">
+          RETICULON-4
+        </text>
+
+        <text x="236" y="207"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          MEMBRANE CURVATURE
+        </text>
+      </g>
+    `;
+
+    const atlastin = `
+      <g class="diagram-action"
+         data-target="ser_atlastin"
+         role="button"
+         tabindex="0"
+         aria-label="Explore Atlastin GTPase"
+         style="cursor:pointer">
+
+        <rect x="353" y="191"
+              width="192" height="208"
+              rx="18" fill="transparent"/>
+
+        <!-- Membrane anchors -->
+        <path d="M420 255v77m60-77v77"
+              stroke="#5489a3"
+              stroke-width="15"
+              stroke-linecap="round"/>
+
+        <!-- Cytosolic GTPase domains -->
+        <ellipse cx="420" cy="224" rx="30" ry="26"
+                 fill="#74a8c1"
+                 stroke="#416f87"
+                 stroke-width="2"/>
+
+        <ellipse cx="480" cy="224" rx="30" ry="26"
+                 fill="#74a8c1"
+                 stroke="#416f87"
+                 stroke-width="2"/>
+
+        <path d="M450 223h1"
+              stroke="#416f87"
+              stroke-width="5"/>
+
+        <text x="450" y="171"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#416f87">
+          ATLASTIN
+        </text>
+
+        <text x="450" y="189"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          GTP-DEPENDENT FUSION
+        </text>
+      </g>
+    `;
+
+    const vapb = `
+      <g class="diagram-action"
+         data-target="ser_vapb"
+         role="button"
+         tabindex="0"
+         aria-label="Explore VAPB"
+         style="cursor:pointer">
+
+        <rect x="591" y="176"
+              width="170" height="218"
+              rx="16" fill="transparent"/>
+
+        <!-- ER membrane anchor -->
+        <path d="M674 248v84"
+              stroke="#64a68a"
+              stroke-width="17"
+              stroke-linecap="round"/>
+
+        <!-- Cytosolic domain -->
+        <path d="M674 248v-20"
+              stroke="#487f6a"
+              stroke-width="7"/>
+
+        <ellipse cx="674" cy="211"
+                 rx="36" ry="25"
+                 fill="#8ac5a8"
+                 stroke="#487f6a"
+                 stroke-width="2"/>
+
+        <text x="674" y="155"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#487f6a">
+          VAPB
+        </text>
+
+        <text x="674" y="173"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          MEMBRANE CONTACTS
+        </text>
+      </g>
+    `;
+
+    return `
+      <g class="smooth-er-membrane-features">
+
+        ${reticulon}
+        ${atlastin}
+        ${vapb}
+
+      </g>
+    `;
+  }
+  
+  function serLipidSynthesisSvg() {
+
+    const pathways = [
+      {
+        id: "ser_phospholipid_synthesis",
+        title: "PHOSPHOLIPID SYNTHESIS",
+        x: 165,
+        color: "#668bb1",
+        type: "phospholipid"
+      },
+      {
+        id: "ser_tag_synthesis",
+        title: "TRIACYLGLYCEROL SYNTHESIS",
+        x: 450,
+        color: "#be9956",
+        type: "tag"
+      },
+      {
+        id: "ser_cholesterol_synthesis",
+        title: "CHOLESTEROL SYNTHESIS",
+        x: 735,
+        color: "#8c75af",
+        type: "cholesterol"
+      }
+    ];
+
+    const lipidDrawing = (type, x, color) => {
+
+      if (type === "phospholipid") {
+        return `
+          <g transform="translate(${x} 270)">
+            <circle cx="0" cy="-34" r="17"
+                    fill="${color}"/>
+            <path d="M-6 -15
+                     C-20 10 -4 22 -15 50
+                     M6 -15
+                     C20 10 4 22 15 50"
+                  stroke="${color}"
+                  stroke-width="7"
+                  fill="none"
+                  stroke-linecap="round"/>
+          </g>
+        `;
+      }
+
+      if (type === "tag") {
+        return `
+          <g transform="translate(${x} 260)"
+             stroke="${color}"
+             stroke-width="6"
+             stroke-linecap="round"
+             fill="none">
+
+            <path d="M-26 -36v76"/>
+
+            <path d="M-26 -30
+                     C10 -45 13 -5 42 -19"/>
+
+            <path d="M-26 0
+                     C10 -15 13 25 42 11"/>
+
+            <path d="M-26 30
+                     C10 15 13 55 42 41"/>
+          </g>
+        `;
+      }
+
+      return `
+        <g transform="translate(${x} 281)"
+           stroke="${color}"
+           stroke-width="5"
+           fill="none"
+           stroke-linejoin="round">
+
+          <polygon points="-54,-8 -24,-26 5,-9 5,25 -25,41 -54,23"/>
+          <polygon points="5,-9 34,-26 61,-8 61,24 33,41 5,25"
+                   transform="translate(-3 -1)"/>
+          <polygon points="-24,-26 5,-44 34,-26 5,-9"/>
+          <polygon points="33,41 61,24 79,45 58,66 33,55"
+                   transform="translate(-6 -23)"/>
+        </g>
+      `;
+    };
+
+    const cards = pathways.map((p) => `
+      <g class="diagram-action"
+         data-target="${p.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${p.title}"
+         style="cursor:pointer">
+
+        <rect x="${p.x - 126}"
+              y="195"
+              width="252"
+              height="230"
+              rx="20"
+              fill="${p.color}"
+              fill-opacity="0.09"
+              stroke="${p.color}"
+              stroke-width="2"/>
+
+        ${lipidDrawing(p.type, p.x, p.color)}
+
+        <text x="${p.x}"
+              y="366"
+              text-anchor="middle"
+              font-size="13"
+              font-weight="bold"
+              fill="#334155">
+          ${p.title}
+        </text>
+
+        <text x="${p.x}"
+              y="392"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          ${p.type === "phospholipid"
+            ? "PC · PE · MEMBRANE LIPIDS"
+            : p.type === "tag"
+              ? "DAG · DGAT · LIPID STORAGE"
+              : "HMGCR · MEVALONATE"}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="ser-lipid-synthesis">
+
+        <text x="450" y="122"
+              text-anchor="middle"
+              font-size="19"
+              font-weight="bold"
+              fill="#64748b">
+          SMOOTH ER · LIPID METABOLISM
+        </text>
+
+        <text x="450" y="152"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          MEMBRANE LIPIDS · NEUTRAL LIPIDS · STEROLS
+        </text>
+
+        ${cards}
+
+        <text x="450" y="460"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A LIPID PATHWAY TO EXPLORE
+        </text>
+
+        <text x="450" y="486"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          SCHEMATIC STRUCTURES · EXACT MOLECULES SHOWN BELOW
+        </text>
+
+      </g>
+    `;
+  }
+
+
+  function smoothErOverviewSvg() {
+  return `
+    <g class="smooth-er-overview">
+
+      <text x="450" y="108"
+            text-anchor="middle"
+            font-size="19"
+            font-weight="bold"
+            fill="#64748b">
+        SMOOTH ENDOPLASMIC RETICULUM
+      </text>
+
+      <text x="450" y="132"
+            text-anchor="middle"
+            font-size="13"
+            fill="#64748b">
+        LIPID SYNTHESIS · CALCIUM REGULATION · DETOXIFICATION
+      </text>
+
+      <text x="450" y="154"
+            text-anchor="middle"
+            font-size="11"
+            fill="#64748b">
+        Functions vary by cell type: hepatocytes emphasize detoxification,
+      </text>
+
+      <text x="450" y="171"
+            text-anchor="middle"
+            font-size="11"
+            fill="#64748b">
+        muscle uses the specialized sarcoplasmic reticulum for calcium handling.
+      </text>
+
+      <!-- Central tubular SER network -->
+      <g class="diagram-action"
+         data-target="smooth_er_membrane"
+         role="button"
+         tabindex="0"
+         aria-label="Explore the smooth ER membrane"
+         style="cursor:pointer">
+
+        <path d="M170 285
+                 C220 230 290 230 345 280
+                 S455 330 505 280
+                 S620 225 690 270
+                 S760 335 725 382
+                 S615 435 545 395
+                 S430 340 360 390
+                 S235 445 185 390
+                 S115 325 170 285Z"
+              fill="none"
+              stroke="#d1a072"
+              stroke-width="24"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+
+        <path d="M170 285
+                 C220 230 290 230 345 280
+                 S455 330 505 280
+                 S620 225 690 270
+                 S760 335 725 382
+                 S615 435 545 395
+                 S430 340 360 390
+                 S235 445 185 390
+                 S115 325 170 285Z"
+              fill="none"
+              stroke="#efc294"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+
+        <path d="M260 282
+                 C300 250 355 250 393 286"
+              fill="none"
+              stroke="#ffffff"
+              stroke-opacity="0.45"
+              stroke-width="4"
+              stroke-linecap="round"/>
+
+        <path d="M500 282
+                 C545 247 610 248 652 283"
+              fill="none"
+              stroke="#ffffff"
+              stroke-opacity="0.45"
+              stroke-width="4"
+              stroke-linecap="round"/>
+
+        <path d="M272 388
+                 C321 352 387 352 430 390"
+              fill="none"
+              stroke="#ffffff"
+              stroke-opacity="0.45"
+              stroke-width="4"
+              stroke-linecap="round"/>
+
+        <text x="173" y="443"
+              font-size="13"
+              font-weight="bold"
+              fill="#9a6d44">
+          SER MEMBRANE
+        </text>
+      </g>
+
+      <!-- Lumen -->
+      <g class="diagram-action"
+         data-target="smooth_er_lumen"
+         role="button"
+         tabindex="0"
+         aria-label="Explore the smooth ER lumen"
+         style="cursor:pointer">
+
+        <ellipse cx="450" cy="334"
+                 rx="150" ry="70"
+                 fill="#dcecf5"
+                 fill-opacity="0.85"
+                 stroke="#aac7d8"
+                 stroke-width="2"/>
+
+        <text x="450" y="330"
+              text-anchor="middle"
+              font-size="21"
+              font-weight="bold"
+              fill="#47728a">
+          SER LUMEN
+        </text>
+
+        <text x="450" y="351"
+              text-anchor="middle"
+              font-size="12"
+              fill="#47728a">
+          INTERNAL ER SPACE
+        </text>
+      </g>
+
+      <!-- Lipid synthesis -->
+      <g class="diagram-action"
+         data-target="lipid_synthesis"
+         role="button"
+         tabindex="0"
+         aria-label="Explore lipid synthesis"
+         style="cursor:pointer">
+
+        <circle cx="210" cy="220" r="42"
+                fill="#f1dd8a"
+                stroke="#be9f36"
+                stroke-width="3"/>
+
+        <text x="210" y="215"
+              text-anchor="middle"
+              font-size="14"
+              font-weight="bold"
+              fill="#6f5a12">
+          LIPID
+        </text>
+
+        <text x="210" y="233"
+              text-anchor="middle"
+              font-size="14"
+              font-weight="bold"
+              fill="#6f5a12">
+          SYNTHESIS
+        </text>
+      </g>
+
+      <!-- Calcium regulation -->
+      <g class="diagram-action"
+         data-target="calcium_store"
+         role="button"
+         tabindex="0"
+         aria-label="Explore calcium regulation"
+         style="cursor:pointer">
+
+        <circle cx="694" cy="215" r="42"
+                fill="#b9dbf5"
+                stroke="#5a94bd"
+                stroke-width="3"/>
+
+        <text x="694" y="221"
+              text-anchor="middle"
+              font-size="22"
+              font-weight="bold"
+              fill="#2f6990">
+          Ca²⁺
+        </text>
+      </g>
+
+      <!-- Detoxification -->
+      <g class="diagram-action"
+         data-target="detoxification"
+         role="button"
+         tabindex="0"
+         aria-label="Explore detoxification"
+         style="cursor:pointer">
+
+        <circle cx="698" cy="450" r="42"
+                fill="#bfe4cc"
+                stroke="#5f9b74"
+                stroke-width="3"/>
+
+        <text x="698" y="444"
+              text-anchor="middle"
+              font-size="13"
+              font-weight="bold"
+              fill="#2e6743">
+          DETOX
+        </text>
+
+        <text x="698" y="462"
+              text-anchor="middle"
+              font-size="13"
+              font-weight="bold"
+              fill="#2e6743">
+          CYP
+        </text>
+      </g>
+
+      <text x="450" y="565"
+            text-anchor="middle"
+            font-size="12"
+            fill="#64748b">
+        SELECT A STRUCTURE TO EXPLORE
+      </text>
+
+      <text x="450" y="585"
+            text-anchor="middle"
+            font-size="11"
+            fill="#64748b">
+        THE DEPICTED SMOOTH ER REGION LACKS BOUND RIBOSOMES
+      </text>
+
+    </g>
+  `;
+}
+
+  function copiiExitSiteSvg() {
+    const features = [
+      {
+        id: "copii_sar1",
+        name: "Sar1",
+        note: "GTPase initiation",
+        x: 140,
+        y: 220,
+        color: "#668ab5"
+      },
+      {
+        id: "copii_inner_coat",
+        name: "Sec23 / Sec24",
+        note: "Inner coat",
+        x: 340,
+        y: 220,
+        color: "#9571b0"
+      },
+      {
+        id: "copii_outer_coat",
+        name: "Sec13 / Sec31",
+        note: "Outer coat",
+        x: 540,
+        y: 220,
+        color: "#b88755"
+      },
+      {
+        id: "copii_cargo",
+        name: "Cargo sorting",
+        note: "Protein selection",
+        x: 740,
+        y: 220,
+        color: "#5b998b"
+      }
+    ];
+
+    const cards = features.map((f) => `
+      <g class="diagram-action"
+         data-target="${f.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${f.name}"
+         style="cursor:pointer">
+
+        <rect
+          x="${f.x - 89}"
+          y="${f.y - 57}"
+          width="178"
+          height="109"
+          rx="16"
+          fill="${f.color}"
+          fill-opacity="0.13"
+          stroke="${f.color}"
+          stroke-width="2"
+        />
+
+        <circle cx="${f.x}" cy="${f.y - 20}"
+                r="18" fill="${f.color}"/>
+
+        <text x="${f.x}" y="${f.y - 15}"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="white">+</text>
+
+        <text x="${f.x}" y="${f.y + 13}"
+              text-anchor="middle"
+              font-size="14"
+              font-weight="bold"
+              fill="#334155">
+          ${f.name}
+        </text>
+
+        <text x="${f.x}" y="${f.y + 34}"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          ${f.note}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="copii-exit-site">
+
+        <text x="450" y="112"
+              text-anchor="middle"
+              font-size="19"
+              font-weight="bold"
+              fill="#64748b">
+          ER EXIT SITE · COPII MACHINERY
+        </text>
+
+        ${cards}
+
+        <!-- ER membrane, budding toward cytosol -->
+        <path
+          d="M105 420
+             H286
+             C335 420 335 342 450 342
+             C565 342 565 420 614 420
+             H795"
+          fill="none"
+          stroke="#b88664"
+          stroke-width="18"
+          stroke-linecap="round"
+        />
+
+        <path
+          d="M105 420
+             H286
+             C335 420 335 342 450 342
+             C565 342 565 420 614 420
+             H795"
+          fill="none"
+          stroke="#e7b98d"
+          stroke-width="6"
+          stroke-linecap="round"
+        />
+
+        <!-- Cargo within the forming bud -->
+        <g fill="#5b998b">
+          <circle cx="419" cy="378" r="8"/>
+          <circle cx="451" cy="370" r="8"/>
+          <circle cx="481" cy="382" r="8"/>
+        </g>
+
+        <!-- Stylized cytosolic COPII coat -->
+        <path
+          d="M342 350
+             Q450 281 558 350"
+          fill="none"
+          stroke="#9571b0"
+          stroke-width="9"
+          stroke-linecap="round"
+        />
+
+        <path
+          d="M329 331
+             Q450 250 571 331"
+          fill="none"
+          stroke="#b88755"
+          stroke-width="8"
+          stroke-dasharray="15 7"
+          stroke-linecap="round"
+        />
+
+        <text x="450" y="317"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#64748b">
+          COAT ASSEMBLY
+        </text>
+
+        <!-- Clickable final transport carrier -->
+        <g class="diagram-action"
+           data-target="copii_carrier"
+           role="button"
+           tabindex="0"
+           aria-label="Explore the COPII transport carrier"
+           style="cursor:pointer">
+
+          <circle cx="450" cy="505"
+                  r="40"
+                  fill="#d9edf5"
+                  stroke="#b88755"
+                  stroke-width="7"
+                  stroke-dasharray="8 4"/>
+
+          <circle cx="440" cy="500"
+                  r="6" fill="#5b998b"/>
+          <circle cx="459" cy="512"
+                  r="7" fill="#5b998b"/>
+
+          <text x="540" y="506"
+                font-size="14"
+                font-weight="bold"
+                fill="#64748b">
+            TRANSPORT CARRIER
+          </text>
+
+          <text x="540" y="526"
+                font-size="11"
+                fill="#64748b">
+            Toward ERGIC
+          </text>
+
+          <rect x="405" y="462"
+                width="330" height="90"
+                fill="transparent"/>
+        </g>
+
+        <text x="450" y="592"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A COPII COMPONENT TO EXPLORE
+        </text>
+      </g>
+    `;
+  }
+
 
 function erGlycosylationSvg() {
 
@@ -1299,13 +2788,11 @@ function erGlycosylationSvg() {
     if (target.visual === "molecule" && moleculeCards.has(targetId)) return moleculeScene(targetId);
     if (target.visual === "molecule" && moleculeIds.length) return moleculeScene(moleculeIds[0]);
 
-    const childRowY = target.visual === "membrane" ? 505 : 457;
+   
     const embeddedPlasmaFeatures = targetId === "plasma_membrane";
     const embeddedCytosolFeatures = target.visual === "cytosol";
     const embeddedRibosomeFeatures = target.visual === "cytosolic_ribosome";
-    const childMarkup = embeddedPlasmaFeatures || embeddedCytosolFeatures || embeddedRibosomeFeatures
-      ? ""
-      : childIds.map((id, index) => childActionSvg(id, index, childIds.length, childRowY)).join("");
+    
     const moleculeRowY = childIds.length ? 560 : 457;
     const moleculeMarkup = target.visual !== "membrane" && target.visual !== "nachr_pentamer" && !embeddedCytosolFeatures && !embeddedRibosomeFeatures
       ? moleculeIds.map((id, index) => moleculeActionSvg(id, index, moleculeIds.length, moleculeRowY)).join("")
@@ -1326,8 +2813,7 @@ function erGlycosylationSvg() {
      
       ${embeddedRibosomeFeatures ? `<g class="secondary-label"><text x="450" y="565">SELECT A SUBUNIT TO EXPLORE ITS INTERNAL RNA AND PROTEINS</text></g>` : ""}
 
-      ${showChildren && !pathwayView && !embeddedPlasmaFeatures && !embeddedCytosolFeatures && !embeddedRibosomeFeatures ? `<g class="component-actions"><text class="component-caption" x="450" y="${target.visual === "membrane" ? 477 : 420}">${showMolecules && target.visual !== "membrane" ? "SELECT A COMPONENT · MOLECULES BELOW" : "SELECT A COMPONENT TO ZOOM IN"}</text>${childMarkup}</g>` : ""}
-      ${secondaryMarkup}
+      
       ${!showChildren && !showMolecules && !customProteinView ? `<text class="diagram-note" x="450" y="505">DEEPEST CURRENT VIEW · USE THE TRAIL ABOVE TO ZOOM OUT</text>` : ""}
     </svg>`;
   }
