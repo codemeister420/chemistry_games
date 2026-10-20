@@ -674,6 +674,51 @@
 
   function focusGraphic(visual, target, targetId) {
     
+    // Golgi transport carriers
+    if (targetId === "golgi_transport_carriers") {
+      return golgiTransportCarriersSvg();
+    }
+
+    
+    // Trans-Golgi network cargo sorting
+    if (targetId === "trans_golgi_network") {
+      return transGolgiNetworkSvg();
+    }
+
+    
+    // Trans-Golgi terminal glycosylation
+    if (targetId === "trans_golgi") {
+      return transGolgiSvg();
+    }
+
+    
+    // Medial-Golgi glycan processing
+    if (targetId === "medial_golgi") {
+      return medialGolgiSvg();
+    }
+
+    
+    // Cis-Golgi: cargo arrival, tethering and glycan processing
+    if (targetId === "cis_golgi") {
+      return cisGolgiSvg();
+    }
+
+    
+    // Golgi membrane: existing lipid bilayer
+    // with Golgi-associated proteins.
+    if (targetId === "golgi_membrane") {
+      return `
+        ${membraneLipidsSvg(target.molecules || [], false)}
+        ${golgiMembraneFeaturesSvg()}
+      `;
+    }
+
+
+     // Golgi apparatus overview
+    if (targetId === "golgi") {
+      return golgiOverviewSvg();
+    }
+    
     // Smooth ER lumen
     if (targetId === "smooth_er_lumen") {
       return smoothErLumenSvg();
@@ -831,6 +876,1738 @@
         return `<g class="protein-visual"><path d="M323 290c-54-35-19-111 42-93 23-75 108-73 127-16 68-18 109 47 68 88 35 60-17 111-74 87-38 57-114 38-124-15-45 12-79-8-39-51Z"/><circle cx="395" cy="268" r="16"/><circle cx="470" cy="231" r="13"/><circle cx="520" cy="294" r="18"/><circle cx="422" cy="326" r="11"/></g>`;
     }
   }
+  
+  function golgiTransportCarriersSvg() {
+
+    const carriers = [
+      {
+        id: "golgi_copii_transport",
+        x: 244,
+        y: 228,
+        title: "COPII TRANSPORT",
+        subtitle: "ER → ERGIC → CIS-GOLGI",
+        color: "#649cc4",
+        type: "copii"
+      },
+      {
+        id: "golgi_copi_recycling",
+        x: 656,
+        y: 228,
+        title: "COPI RECYCLING",
+        subtitle: "GOLGI → ER / EARLIER GOLGI",
+        color: "#ab85bd",
+        type: "copi"
+      },
+      {
+        id: "golgi_post_export",
+        x: 244,
+        y: 433,
+        title: "POST-GOLGI EXPORT",
+        subtitle: "TGN → DOWNSTREAM TARGETS",
+        color: "#c18e64",
+        type: "export"
+      },
+      {
+        id: "golgi_carrier_fusion",
+        x: 656,
+        y: 433,
+        title: "TETHERING & FUSION",
+        subtitle: "RAB · TETHERS · SNAREs",
+        color: "#65a28b",
+        type: "fusion"
+      }
+    ];
+
+    // A basic membrane-enclosed carrier.
+    function vesicle(x, y, radius, fill, stroke) {
+      return `
+        <circle cx="${x}" cy="${y}"
+                r="${radius}"
+                fill="${fill}"
+                stroke="${stroke}"
+                stroke-width="3"/>
+
+        <circle cx="${x}" cy="${y}"
+                r="${radius - 9}"
+                fill="none"
+                stroke="${stroke}"
+                stroke-width="2"
+                opacity="0.6"/>
+      `;
+    }
+
+    // COPII protein coat:
+    // Sar1, Sec23/24 and Sec13/31.
+    function copiiIcon(x, y) {
+
+      const coat = Array.from({ length: 12 }, (_, i) => {
+
+        const angle = (i * Math.PI * 2) / 12;
+        const px = x + Math.cos(angle) * 43;
+        const py = y + Math.sin(angle) * 43;
+
+        return `
+          <circle cx="${px}" cy="${py}"
+                  r="5"
+                  fill="#5d94bc"
+                  stroke="#ffffff"
+                  stroke-width="1"/>
+        `;
+      }).join("");
+
+      return `
+        ${vesicle(x, y, 36, "#d7e9f5", "#629cc5")}
+        ${coat}
+
+        <text x="${x}" y="${y + 5}"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#456f91">
+          COPII
+        </text>
+      `;
+    }
+
+    // COPI carrier with a stylized coatomer.
+    function copiIcon(x, y) {
+
+      const coat = Array.from({ length: 10 }, (_, i) => {
+
+        const angle = (i * Math.PI * 2) / 10;
+        const px = x + Math.cos(angle) * 43;
+        const py = y + Math.sin(angle) * 43;
+
+        return `
+          <rect x="${px - 5}" y="${py - 5}"
+                width="10" height="10"
+                rx="2"
+                fill="#9c78b3"
+                stroke="#ffffff"
+                stroke-width="1"/>
+        `;
+      }).join("");
+
+      return `
+        ${vesicle(x, y, 36, "#e8dbf1", "#9c78b3")}
+        ${coat}
+
+        <text x="${x}" y="${y + 5}"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#74558e">
+          COPI
+        </text>
+      `;
+    }
+
+    // Post-Golgi carriers have diverse shapes and coats.
+    function exportIcon(x, y) {
+      return `
+        ${vesicle(x - 18, y, 31, "#f2dfcc", "#b9865e")}
+
+        <circle cx="${x + 41}" cy="${y - 16}"
+                r="20"
+                fill="#e8bd98"
+                stroke="#b9865e"
+                stroke-width="3"/>
+
+        <path d="M${x + 4} ${y}
+                 H${x + 17}"
+              stroke="#b9865e"
+              stroke-width="3"
+              fill="none"/>
+
+        <path d="M${x + 11} ${y - 7}
+                 L${x + 19} ${y}
+                 L${x + 11} ${y + 7}"
+              stroke="#b9865e"
+              stroke-width="3"
+              fill="none"/>
+
+        <text x="${x - 18}" y="${y + 5}"
+              text-anchor="middle"
+              font-size="10"
+              font-weight="bold"
+              fill="#966443">
+          CARGO
+        </text>
+      `;
+    }
+
+    // Tethering followed by membrane fusion.
+    function fusionIcon(x, y) {
+      return `
+        <path d="M${x - 78} ${y + 42}
+                 Q${x} ${y + 15}
+                 ${x + 78} ${y + 42}"
+              fill="none"
+              stroke="#70a78e"
+              stroke-width="12"
+              stroke-linecap="round"/>
+
+        <circle cx="${x}" cy="${y - 20}"
+                r="26"
+                fill="#c9e6d5"
+                stroke="#599579"
+                stroke-width="3"/>
+
+        <path d="M${x - 9} ${y + 7}
+                 L${x - 9} ${y + 29}
+                 M${x + 9} ${y + 7}
+                 L${x + 9} ${y + 29}"
+              fill="none"
+              stroke="#447e64"
+              stroke-width="5"
+              stroke-linecap="round"/>
+
+        <path d="M${x - 20} ${y + 7}
+                 L${x - 5} ${y + 25}
+                 M${x + 20} ${y + 7}
+                 L${x + 5} ${y + 25}"
+              fill="none"
+              stroke="#8c75b2"
+              stroke-width="4"
+              stroke-linecap="round"/>
+      `;
+    }
+
+    function drawIcon(type, x, y) {
+
+      switch (type) {
+        case "copii":
+          return copiiIcon(x, y);
+        case "copi":
+          return copiIcon(x, y);
+        case "export":
+          return exportIcon(x, y);
+        case "fusion":
+          return fusionIcon(x, y);
+        default:
+          return "";
+      }
+    }
+
+    const cards = carriers.map((item) => `
+      <g class="diagram-action"
+         data-target="${item.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${item.title}"
+         style="cursor:pointer">
+
+        <rect x="${item.x - 185}"
+              y="${item.y - 90}"
+              width="370"
+              height="178"
+              rx="21"
+              fill="${item.color}"
+              fill-opacity="0.09"
+              stroke="${item.color}"
+              stroke-width="2"/>
+
+        <text x="${item.x}"
+              y="${item.y - 62}"
+              text-anchor="middle"
+              font-size="16"
+              font-weight="bold"
+              fill="${item.color}">
+          ${item.title}
+        </text>
+
+        ${drawIcon(item.type, item.x, item.y)}
+
+        <text x="${item.x}"
+              y="${item.y + 72}"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#475569">
+          ${item.subtitle}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="golgi-transport-carriers-visual">
+
+        <text x="450" y="88"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          GOLGI TRANSPORT CARRIERS
+        </text>
+
+        <text x="450" y="117"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          CARGO TRANSPORT · RECYCLING · MEMBRANE FUSION
+        </text>
+
+        ${cards}
+
+        <text x="450" y="549"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A TRANSPORT SYSTEM TO EXPLORE ITS MOLECULES
+        </text>
+
+        <text x="450" y="571"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          SCHEMATIC CARRIERS · COAT STRUCTURES ARE SIMPLIFIED
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function transGolgiNetworkSvg() {
+
+    // Four selectable pathways associated with TGN sorting.
+    // Each card represents a different trafficking process.
+
+    const pathways = [
+      {
+        id: "tgn_constitutive_secretion",
+        x: 245,
+        y: 235,
+        color: "#629abb",
+        title: "CONSTITUTIVE SECRETION",
+        subtitle: "PLASMA MEMBRANE DELIVERY",
+        type: "constitutive"
+      },
+      {
+        id: "tgn_regulated_secretion",
+        x: 655,
+        y: 235,
+        color: "#ad83bc",
+        title: "REGULATED SECRETION",
+        subtitle: "STORED SECRETORY GRANULES",
+        type: "regulated"
+      },
+      {
+        id: "tgn_lysosomal_sorting",
+        x: 245,
+        y: 425,
+        color: "#c18c61",
+        title: "ENDOSOMAL SORTING",
+        subtitle: "M6P RECEPTOR · LYSOSOMES",
+        type: "lysosomal"
+      },
+      {
+        id: "tgn_coat_adaptors",
+        x: 655,
+        y: 425,
+        color: "#6d9d88",
+        title: "COAT & ADAPTORS",
+        subtitle: "ARF1 · AP-1 · CLATHRIN",
+        type: "coat"
+      }
+    ];
+
+    function pathwayIcon(type, x, y) {
+
+      if (type === "constitutive") {
+        return `
+          <g>
+            <!-- Secretory transport carrier -->
+            <circle cx="${x - 43}" cy="${y - 12}"
+                    r="26"
+                    fill="#a8cce2"
+                    stroke="#5689ab"
+                    stroke-width="3"/>
+
+            <circle cx="${x - 43}" cy="${y - 12}"
+                    r="8"
+                    fill="#5689ab"/>
+
+            <!-- Direction of movement -->
+            <path d="M${x - 10} ${y - 12}
+                     H${x + 52}"
+                  fill="none"
+                  stroke="#5689ab"
+                  stroke-width="3"
+                  stroke-dasharray="6 4"/>
+
+            <path d="M${x + 42} ${y - 20}
+                     L${x + 54} ${y - 12}
+                     L${x + 42} ${y - 4}"
+                  fill="none"
+                  stroke="#5689ab"
+                  stroke-width="3"/>
+
+            <!-- Plasma membrane -->
+            <path d="M${x + 68} ${y - 50}
+                     V${y + 27}"
+                  stroke="#6d9d88"
+                  stroke-width="12"
+                  stroke-linecap="round"/>
+
+            <path d="M${x + 83} ${y - 50}
+                     V${y + 27}"
+                  stroke="#a1c5b5"
+                  stroke-width="8"
+                  stroke-linecap="round"/>
+          </g>
+        `;
+      }
+
+      if (type === "regulated") {
+        return `
+          <g>
+            <!-- Dense-core secretory granule -->
+            <circle cx="${x}" cy="${y - 14}"
+                    r="37"
+                    fill="#dfcbe7"
+                    stroke="#9872ac"
+                    stroke-width="4"/>
+
+            <circle cx="${x}" cy="${y - 14}"
+                    r="20"
+                    fill="#a47ab7"/>
+
+            <g fill="#714e8e">
+              <circle cx="${x - 7}" cy="${y - 20}" r="4"/>
+              <circle cx="${x + 8}" cy="${y - 14}" r="4"/>
+              <circle cx="${x - 2}" cy="${y - 4}" r="4"/>
+            </g>
+
+            <!-- Calcium-dependent release cue -->
+            <circle cx="${x + 65}" cy="${y - 23}"
+                    r="12"
+                    fill="#7bbce5"
+                    stroke="#4c8eb7"
+                    stroke-width="2"/>
+
+            <text x="${x + 65}" y="${y - 19}"
+                  text-anchor="middle"
+                  font-size="10"
+                  font-weight="bold"
+                  fill="#ffffff">
+              Ca
+            </text>
+          </g>
+        `;
+      }
+
+      if (type === "lysosomal") {
+        return `
+          <g>
+            <!-- Transport carrier -->
+            <circle cx="${x - 45}" cy="${y - 12}"
+                    r="28"
+                    fill="#ecd1b6"
+                    stroke="#ad7c52"
+                    stroke-width="3"/>
+
+            <!-- M6P-tagged cargo symbol -->
+            <circle cx="${x - 50}" cy="${y - 15}"
+                    r="10"
+                    fill="#78ad83"/>
+
+            <text x="${x - 45}" y="${y + 5}"
+                  text-anchor="middle"
+                  font-size="10"
+                  fill="#805a38">
+              M6P
+            </text>
+
+            <path d="M${x - 12} ${y - 12}
+                     H${x + 49}"
+                  fill="none"
+                  stroke="#ad7c52"
+                  stroke-width="3"
+                  stroke-dasharray="6 4"/>
+
+            <path d="M${x + 39} ${y - 20}
+                     L${x + 52} ${y - 12}
+                     L${x + 39} ${y - 4}"
+                  fill="none"
+                  stroke="#ad7c52"
+                  stroke-width="3"/>
+
+            <!-- Endosome -->
+            <ellipse cx="${x + 75}" cy="${y - 12}"
+                     rx="24" ry="29"
+                     fill="#f0d5a9"
+                     stroke="#b58a4f"
+                     stroke-width="3"/>
+          </g>
+        `;
+      }
+
+      if (type === "coat") {
+        return `
+          <g>
+            <!-- Simplified coated carrier -->
+            <circle cx="${x}" cy="${y - 12}"
+                    r="34"
+                    fill="#b5d8c5"
+                    stroke="#568b72"
+                    stroke-width="3"/>
+
+            <circle cx="${x}" cy="${y - 12}"
+                    r="24"
+                    fill="#dcece3"
+                    stroke="#568b72"
+                    stroke-width="2"/>
+
+            <!-- Coat lattice -->
+            <g stroke="#568b72"
+               stroke-width="3"
+               fill="none">
+              <path d="M${x - 29} ${y - 29}
+                       L${x - 10} ${y - 44}
+                       L${x + 12} ${y - 43}
+                       L${x + 30} ${y - 26}"/>
+
+              <path d="M${x - 30} ${y + 3}
+                       L${x - 13} ${y + 17}
+                       L${x + 12} ${y + 17}
+                       L${x + 30} ${y + 2}"/>
+
+              <path d="M${x - 34} ${y - 12}
+                       L${x - 24} ${y - 27}
+                       M${x + 34} ${y - 12}
+                       L${x + 24} ${y - 27}"/>
+            </g>
+          </g>
+        `;
+      }
+
+      return "";
+    }
+
+    const cards = pathways.map((item) => `
+      <g class="diagram-action"
+         data-target="${item.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${item.title}"
+         style="cursor:pointer">
+
+        <rect x="${item.x - 186}"
+              y="${item.y - 86}"
+              width="372"
+              height="169"
+              rx="20"
+              fill="${item.color}"
+              fill-opacity="0.09"
+              stroke="${item.color}"
+              stroke-width="2"/>
+
+        <text x="${item.x}"
+              y="${item.y - 59}"
+              text-anchor="middle"
+              font-size="15"
+              font-weight="bold"
+              fill="${item.color}">
+          ${item.title}
+        </text>
+
+        ${pathwayIcon(item.type, item.x, item.y)}
+
+        <text x="${item.x}"
+              y="${item.y + 59}"
+              text-anchor="middle"
+              font-size="12"
+              fill="#475569">
+          ${item.subtitle}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="trans-golgi-network-visual">
+
+        <text x="450" y="90"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          TRANS-GOLGI NETWORK
+        </text>
+
+        <text x="450" y="119"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          CARGO SORTING · SECRETORY PATHWAYS · ENDOSOMAL TRANSPORT
+        </text>
+
+        ${cards}
+
+        <text x="450" y="546"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A SORTING OR TRANSPORT PATHWAY
+        </text>
+
+        <text x="450" y="570"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          PATHWAYS AND CARRIER TYPES VARY AMONG CELL TYPES
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function transGolgiSvg() {
+
+    // Simplified glycan notation:
+    // Blue square = GlcNAc
+    // Yellow circle = Galactose
+    // Purple diamond = Neu5Ac
+
+    function glycanSymbol(stage) {
+
+      const terminal = stage >= 1;
+      const sialylated = stage >= 2;
+
+      return `
+        <g transform="translate(0 0)">
+
+          <!-- Core of representative glycan arm -->
+          <path d="M0 90 V60"
+                stroke="#64748b"
+                stroke-width="3"/>
+
+          <rect x="-11" y="79"
+                width="22" height="22"
+                rx="3"
+                fill="#6298c8"
+                stroke="#3b719c"
+                stroke-width="2"/>
+
+          <circle cx="0" cy="52"
+                  r="12"
+                  fill="#75aa81"
+                  stroke="#508060"
+                  stroke-width="2"/>
+
+          <path d="M0 40 V14"
+                stroke="#64748b"
+                stroke-width="3"/>
+
+          <rect x="-11" y="2"
+                width="22" height="22"
+                rx="3"
+                fill="#6298c8"
+                stroke="#3b719c"
+                stroke-width="2"/>
+
+          ${terminal ? `
+            <path d="M0 2 V-25"
+                  stroke="#64748b"
+                  stroke-width="3"/>
+
+            <circle cx="0" cy="-36"
+                    r="13"
+                    fill="#efc454"
+                    stroke="#bb9333"
+                    stroke-width="2"/>
+          ` : ""}
+
+          ${sialylated ? `
+            <path d="M0 -49 V-74"
+                  stroke="#64748b"
+                  stroke-width="3"/>
+
+            <polygon
+              points="0,-100 15,-85 0,-70 -15,-85"
+              fill="#b38bcd"
+              stroke="#8665a4"
+              stroke-width="2"/>
+          ` : ""}
+
+        </g>
+      `;
+    }
+
+    const processes = [
+      {
+        id: "trans_galactosylation",
+        x: 162,
+        title: "B4GALT1",
+        subtitle: "GALACTOSE ADDITION",
+        color: "#c49b40",
+        stage: 1
+      },
+      {
+        id: "trans_sialylation",
+        x: 450,
+        title: "ST6GAL1",
+        subtitle: "SIALIC ACID ADDITION",
+        color: "#9373b6",
+        stage: 2
+      },
+      {
+        id: "trans_mature_glycan",
+        x: 738,
+        title: "MATURE GLYCAN",
+        subtitle: "TERMINAL SUGAR PATTERN",
+        color: "#649c8d",
+        stage: 2
+      }
+    ];
+
+    const cards = processes.map((item) => `
+      <g class="diagram-action"
+         data-target="${item.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${item.title}"
+         style="cursor:pointer">
+
+        <rect x="${item.x - 126}"
+              y="165"
+              width="252"
+              height="274"
+              rx="20"
+              fill="${item.color}"
+              fill-opacity="0.09"
+              stroke="${item.color}"
+              stroke-width="2"/>
+
+        <text x="${item.x}" y="201"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="${item.color}">
+          ${item.title}
+        </text>
+
+        <g transform="translate(${item.x} 320)">
+          ${glycanSymbol(item.stage)}
+        </g>
+
+        <text x="${item.x}" y="416"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#475569">
+          ${item.subtitle}
+        </text>
+
+      </g>
+    `).join("");
+
+    return `
+      <g class="trans-golgi-visual">
+
+        <text x="450" y="98"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          TRANS-GOLGI · TERMINAL GLYCOSYLATION
+        </text>
+
+        <text x="450" y="129"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          GALACTOSE ADDITION · SIALYLATION · GLYCAN MATURATION
+        </text>
+
+        ${cards}
+
+        <!-- Progression arrows -->
+        <path d="M293 298H315
+                 M306 290L317 298L306 306"
+              fill="none"
+              stroke="#64748b"
+              stroke-width="3"/>
+
+        <path d="M581 298H603
+                 M594 290L605 298L594 306"
+              fill="none"
+              stroke="#64748b"
+              stroke-width="3"/>
+
+        <!-- Glycan symbol legend -->
+        <g transform="translate(157 486)">
+
+          <rect x="-9" y="-9"
+                width="18" height="18"
+                fill="#6298c8"
+                stroke="#3b719c"/>
+
+          <text x="20" y="5"
+                font-size="13"
+                fill="#64748b">
+            GlcNAc
+          </text>
+
+          <circle cx="184" cy="0"
+                  r="10"
+                  fill="#efc454"
+                  stroke="#bb9333"/>
+
+          <text x="205" y="5"
+                font-size="13"
+                fill="#64748b">
+            Galactose
+          </text>
+
+          <polygon points="399,-12 411,0 399,12 387,0"
+                   fill="#b38bcd"
+                   stroke="#8665a4"/>
+
+          <text x="425" y="5"
+                font-size="13"
+                fill="#64748b">
+            Sialic acid
+          </text>
+
+        </g>
+
+        <text x="450" y="545"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT AN ENZYME OR A MATURE GLYCAN TO EXPLORE
+        </text>
+
+        <text x="450" y="569"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          SCHEMATIC TERMINAL GLYCAN ARM · NOT A COMPLETE GLYCAN STRUCTURE
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function medialGolgiSvg() {
+
+    // Schematic glycan symbols:
+    // Blue squares = N-acetylglucosamine (GlcNAc)
+    // Green circles = mannose (Man)
+    //
+    // This shows reaction types and residue changes,
+    // not the complete molecular connectivity of a glycan.
+
+    const steps = [
+      {
+        id: "medial_mgat1",
+        title: "MGAT1",
+        subtitle: "ADD FIRST GlcNAc",
+        x: 162,
+        color: "#6597c2"
+      },
+      {
+        id: "medial_mannosidase_ii",
+        title: "MAN2A1",
+        subtitle: "REMOVE TWO MANNOSE",
+        x: 450,
+        color: "#70a58d"
+      },
+      {
+        id: "medial_mgat2",
+        title: "MGAT2",
+        subtitle: "ADD SECOND GlcNAc",
+        x: 738,
+        color: "#ae8bb9"
+      }
+    ];
+
+    // Each card contains a glycan-processing symbol.
+    // The visual stages highlight a reaction, not a
+    // chemically complete oligosaccharide formula.
+
+    function glycanIcon(index, cx) {
+
+      const blueSquare = (x, y) => `
+        <rect x="${x - 10}" y="${y - 10}"
+              width="20" height="20"
+              rx="3"
+              fill="#5e91c4"
+              stroke="#426c9b"
+              stroke-width="1.5"/>
+      `;
+
+      const greenCircle = (x, y, opacity = 1) => `
+        <circle cx="${x}" cy="${y}" r="10"
+                fill="#68ae80"
+                fill-opacity="${opacity}"
+                stroke="#3d8255"
+                stroke-width="1.5"/>
+      `;
+
+      const line = (x1,y1,x2,y2) => `
+        <path d="M${x1} ${y1}L${x2} ${y2}"
+              fill="none"
+              stroke="#64748b"
+              stroke-width="3"/>
+      `;
+
+      let symbol = `
+        ${line(cx, 331, cx, 302)}
+        ${blueSquare(cx, 331)}
+        ${blueSquare(cx, 306)}
+        ${line(cx, 293, cx, 272)}
+        ${greenCircle(cx, 265)}
+        ${line(cx, 255, cx - 31, 236)}
+        ${line(cx, 255, cx + 31, 236)}
+        ${greenCircle(cx - 39, 230)}
+        ${greenCircle(cx + 39, 230)}
+      `;
+
+      if (index === 0) {
+        // GlcNAc addition (MGAT1).
+        symbol += `
+          ${line(cx + 47, 230, cx + 68, 217)}
+          ${blueSquare(cx + 79, 209)}
+
+          <text x="${cx}" y="363"
+                text-anchor="middle"
+                font-size="12"
+                fill="#426c9b">
+            + GlcNAc
+          </text>
+        `;
+      }
+
+      if (index === 1) {
+        // Two mannose residues removed.
+        symbol += `
+          <circle cx="${cx - 61}" cy="204" r="11"
+                  fill="#68ae80"
+                  fill-opacity="0.30"
+                  stroke="#c76e6e"
+                  stroke-width="2"
+                  stroke-dasharray="4 3"/>
+
+          <circle cx="${cx + 61}" cy="204" r="11"
+                  fill="#68ae80"
+                  fill-opacity="0.30"
+                  stroke="#c76e6e"
+                  stroke-width="2"
+                  stroke-dasharray="4 3"/>
+
+          <text x="${cx}" y="363"
+                text-anchor="middle"
+                font-size="12"
+                fill="#3d8255">
+            − 2 Man
+          </text>
+        `;
+      }
+
+      if (index === 2) {
+        // Additional GlcNAc produces a second antenna.
+        symbol += `
+          ${line(cx - 47, 230, cx - 68, 217)}
+          ${blueSquare(cx - 79, 209)}
+          ${line(cx + 47, 230, cx + 68, 217)}
+          ${blueSquare(cx + 79, 209)}
+
+          <text x="${cx}" y="363"
+                text-anchor="middle"
+                font-size="12"
+                fill="#805b95">
+            + GlcNAc
+          </text>
+        `;
+      }
+
+      return symbol;
+    }
+
+    const cards = steps.map((step, index) => `
+      <g class="diagram-action"
+         data-target="${step.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${step.title}"
+         style="cursor:pointer">
+
+        <rect x="${step.x - 126}"
+              y="160"
+              width="252"
+              height="270"
+              rx="20"
+              fill="${step.color}"
+              fill-opacity="0.09"
+              stroke="${step.color}"
+              stroke-width="2"/>
+
+        <text x="${step.x}" y="193"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="${step.color}">
+          ${step.title}
+        </text>
+
+        ${glycanIcon(index, step.x)}
+
+        <text x="${step.x}" y="398"
+              text-anchor="middle"
+              font-size="12"
+              font-weight="bold"
+              fill="#475569">
+          ${step.subtitle}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="medial-golgi-visual">
+
+        <text x="450" y="103"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          MEDIAL-GOLGI · GLYCAN MATURATION
+        </text>
+
+        <text x="450" y="132"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          SELECT AN ENZYME TO EXPLORE ITS REACTION
+        </text>
+
+        ${cards}
+
+        <!-- Direction of glycan processing -->
+        <path d="M292 300H317"
+              stroke="#64748b"
+              stroke-width="3"
+              fill="none"/>
+
+        <path d="M309 293L319 300L309 307"
+              stroke="#64748b"
+              stroke-width="3"
+              fill="none"/>
+
+        <path d="M580 300H605"
+              stroke="#64748b"
+              stroke-width="3"
+              fill="none"/>
+
+        <path d="M597 293L607 300L597 307"
+              stroke="#64748b"
+              stroke-width="3"
+              fill="none"/>
+
+        <g font-size="12" fill="#64748b">
+          <text x="450" y="475" text-anchor="middle">
+            BLUE SQUARE = N-ACETYLGLUCOSAMINE (GlcNAc)
+          </text>
+
+          <text x="450" y="498" text-anchor="middle">
+            GREEN CIRCLE = MANNOSE (Man)
+          </text>
+        </g>
+
+        <text x="450" y="549"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          PROCESSING SEQUENCE FOR A REPRESENTATIVE COMPLEX N-GLYCAN PATHWAY
+        </text>
+
+        <text x="450" y="571"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          SIMPLIFIED GLYCAN SCHEMATICS · NOT COMPLETE LINKAGE STRUCTURES
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function cisGolgiSvg() {
+
+    // Three molecular processes of the receiving Golgi region.
+    const targets = [
+      {
+        id: "cis_cargo_arrival",
+        x: 165,
+        title: "CARGO ARRIVAL",
+        subtitle: "ER → ERGIC → cis-Golgi",
+        color: "#689bc1"
+      },
+      {
+        id: "cis_tether_fusion",
+        x: 450,
+        title: "TETHERING & FUSION",
+        subtitle: "GM130 · SNARE proteins",
+        color: "#8c75b2"
+      },
+      {
+        id: "cis_glycan_processing",
+        x: 735,
+        title: "GLYCAN PROCESSING",
+        subtitle: "MAN1A1 · Mannose removal",
+        color: "#61a18b"
+      }
+    ];
+
+    const carriers = `
+      <g>
+        <circle cx="115" cy="259" r="24"
+                fill="#a6cce5"
+                stroke="#5d90b6"
+                stroke-width="3"/>
+        <circle cx="143" cy="295" r="15"
+                fill="#a6cce5"
+                stroke="#5d90b6"
+                stroke-width="2"/>
+
+        <path d="M157 250 L221 250"
+              stroke="#5d90b6"
+              stroke-width="4"
+              stroke-dasharray="7 5"/>
+
+        <path d="M210 242 L222 250 L210 258"
+              fill="none"
+              stroke="#5d90b6"
+              stroke-width="3"/>
+      </g>
+    `;
+
+    const tethering = `
+      <g>
+        <!-- Incoming membrane carrier -->
+        <circle cx="419" cy="258" r="29"
+                fill="#b7a7d5"
+                stroke="#7b629f"
+                stroke-width="3"/>
+
+        <!-- Golgi-associated tether -->
+        <path d="M442 268
+                 C459 286 454 305 469 319"
+              fill="none"
+              stroke="#7b629f"
+              stroke-width="7"
+              stroke-linecap="round"/>
+
+        <!-- Stylized SNARE pairing -->
+        <path d="M452 327 L463 357
+                 M474 327 L463 357"
+              fill="none"
+              stroke="#7b629f"
+              stroke-width="6"
+              stroke-linecap="round"/>
+      </g>
+    `;
+
+    const glycan = `
+      <g stroke="#ffffff" stroke-width="2">
+        <rect x="699" y="241" width="19" height="19"
+              rx="4" fill="#739ac5"/>
+        <rect x="699" y="265" width="19" height="19"
+              rx="4" fill="#739ac5"/>
+
+        <circle cx="740" cy="251" r="12"
+                fill="#66aa83"/>
+        <circle cx="766" cy="236" r="12"
+                fill="#66aa83"/>
+        <circle cx="766" cy="267" r="12"
+                fill="#66aa83"/>
+
+        <path d="M718 251H729
+                 M718 274L730 256
+                 M751 245L755 239
+                 M751 256L755 263"
+              fill="none" stroke="#587f9a"
+              stroke-width="3"/>
+      </g>
+    `;
+
+    const cards = targets.map((item, index) => `
+      <g class="diagram-action"
+         data-target="${item.id}"
+         role="button"
+         tabindex="0"
+         aria-label="Explore ${item.title}"
+         style="cursor:pointer">
+
+        <rect x="${item.x - 125}"
+              y="186"
+              width="250"
+              height="245"
+              rx="21"
+              fill="${item.color}"
+              fill-opacity="0.10"
+              stroke="${item.color}"
+              stroke-width="2"/>
+
+        ${index === 0
+          ? carriers
+          : index === 1
+            ? tethering
+            : glycan}
+
+        <text x="${item.x}"
+              y="383"
+              text-anchor="middle"
+              font-size="14"
+              font-weight="bold"
+              fill="#334155">
+          ${item.title}
+        </text>
+
+        <text x="${item.x}"
+              y="406"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          ${item.subtitle}
+        </text>
+      </g>
+    `).join("");
+
+    return `
+      <g class="cis-golgi-visual">
+
+        <text x="450" y="106"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          CIS-GOLGI · RECEIVING FACE
+        </text>
+
+        <text x="450" y="136"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          ER CARGO ARRIVAL · MEMBRANE FUSION · EARLY GLYCAN PROCESSING
+        </text>
+
+        ${cards}
+
+        <text x="450" y="464"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A PROCESS TO EXPLORE ITS MOLECULAR MACHINERY
+        </text>
+
+        <text x="450" y="487"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          SCHEMATIC: DIFFERENT PROCESSES MAY OVERLAP IN LOCATION AND TIME
+        </text>
+
+      </g>
+    `;
+  }
+
+  
+  function golgiMembraneFeaturesSvg() {
+
+    const gm130 = `
+      <g class="diagram-action"
+         data-target="golgi_gm130"
+         role="button"
+         tabindex="0"
+         aria-label="Explore GM130"
+         style="cursor:pointer">
+
+        <rect x="138" y="153"
+              width="185" height="242"
+              rx="15"
+              fill="transparent"/>
+
+        <!-- Peripheral coiled-coil protein -->
+        <path d="M204 248
+                 C191 230 218 216 205 198
+                 S224 171 211 153"
+              stroke="#8e77b3"
+              stroke-width="10"
+              stroke-linecap="round"
+              fill="none"/>
+
+        <path d="M225 248
+                 C238 229 209 211 229 193
+                 S211 166 227 153"
+              stroke="#b19bd3"
+              stroke-width="9"
+              stroke-linecap="round"
+              fill="none"/>
+
+        <ellipse cx="214" cy="255"
+                 rx="30" ry="12"
+                 fill="#c5b6de"
+                 stroke="#8e77b3"
+                 stroke-width="2"/>
+
+        <text x="215" y="135"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#79649e">
+          GM130
+        </text>
+
+        <text x="215" y="151"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          CIS-GOLGI TETHER
+        </text>
+      </g>
+    `;
+
+    const tmem165 = `
+      <g class="diagram-action"
+         data-target="golgi_tmem165"
+         role="button"
+         tabindex="0"
+         aria-label="Explore TMEM165"
+         style="cursor:pointer">
+
+        <rect x="347" y="166"
+              width="205" height="243"
+              rx="15"
+              fill="transparent"/>
+
+        <!-- Stylized multipass protein -->
+        <path d="M395 244
+                 L395 378
+                 Q417 408 438 378
+                 L438 244
+                 Q458 214 479 244
+                 L479 378
+                 Q494 400 510 378
+                 L510 244"
+              fill="none"
+              stroke="#568eab"
+              stroke-width="15"
+              stroke-linejoin="round"
+              stroke-linecap="round"/>
+
+        <text x="452" y="139"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#426f91">
+          TMEM165
+        </text>
+
+        <text x="452" y="156"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          GOLGI ION HOMEOSTASIS
+        </text>
+
+        <text x="452" y="421"
+              text-anchor="middle"
+              font-size="13"
+              fill="#426f91">
+          Mn²⁺ · Ca²⁺
+        </text>
+      </g>
+    `;
+
+    const tgn46 = `
+      <g class="diagram-action"
+         data-target="golgi_tgn46"
+         role="button"
+         tabindex="0"
+         aria-label="Explore TGN46"
+         style="cursor:pointer">
+
+        <rect x="593" y="162"
+              width="190" height="258"
+              rx="16"
+              fill="transparent"/>
+
+        <!-- Single transmembrane anchor -->
+        <path d="M684 246 L684 379"
+              fill="none"
+              stroke="#63a48b"
+              stroke-width="17"
+              stroke-linecap="round"/>
+
+        <!-- Large luminal domain, schematized -->
+        <path d="M652 390
+                 C621 413 631 438 658 445
+                 C689 461 728 440 722 409
+                 C717 386 695 383 684 379"
+              fill="#a7d3bc"
+              stroke="#598e77"
+              stroke-width="3"/>
+
+        <text x="683" y="139"
+              text-anchor="middle"
+              font-size="17"
+              font-weight="bold"
+              fill="#477f67">
+          TGN46
+        </text>
+
+        <text x="683" y="156"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          TRANS-GOLGI NETWORK
+        </text>
+      </g>
+    `;
+
+    return `
+      <g class="golgi-membrane-features">
+
+        <text x="450" y="102"
+              text-anchor="middle"
+              font-size="18"
+              font-weight="bold"
+              fill="#64748b">
+          GOLGI MEMBRANE · PROTEIN SPECIALIZATION
+        </text>
+
+        ${gm130}
+        ${tmem165}
+        ${tgn46}
+
+      </g>
+    `;
+  }
+
+  
+  function golgiOverviewSvg() {
+
+    // Individual Golgi cisternae.
+    // Each region has its own clickable target.
+    const cisternae = [
+      {
+        id: "cis_golgi",
+        label: "CIS-GOLGI",
+        color: "#6ea4ca",
+        y: 182,
+        width: 160
+      },
+      {
+        id: "medial_golgi",
+        label: "MEDIAL-GOLGI",
+        color: "#7db9a9",
+        y: 259,
+        width: 195
+      },
+      {
+        id: "trans_golgi",
+        label: "TRANS-GOLGI",
+        color: "#d4a276",
+        y: 336,
+        width: 170
+      }
+    ];
+
+    const stackMarkup = cisternae.map((part) => {
+      const left = 450 - part.width;
+      const right = 450 + part.width;
+
+      return `
+        <g class="diagram-action"
+           data-target="${part.id}"
+           role="button"
+           tabindex="0"
+           aria-label="Explore ${part.label}"
+           style="cursor:pointer">
+
+          <rect x="${left - 22}"
+                y="${part.y - 24}"
+                width="${part.width * 2 + 44}"
+                height="69"
+                rx="14"
+                fill="transparent"/>
+
+          <path
+            d="M${left} ${part.y}
+               Q450 ${part.y - 42}
+               ${right} ${part.y}"
+            fill="none"
+            stroke="${part.color}"
+            stroke-width="15"
+            stroke-linecap="round"/>
+
+          <path
+            d="M${left + 12} ${part.y + 25}
+               Q450 ${part.y - 17}
+               ${right - 12} ${part.y + 25}"
+            fill="none"
+            stroke="${part.color}"
+            stroke-width="15"
+            stroke-linecap="round"
+            opacity="0.8"/>
+
+          <text
+            x="450"
+            y="${part.y + 52}"
+            text-anchor="middle"
+            font-size="13"
+            font-weight="bold"
+            fill="#475569">
+            ${part.label}
+          </text>
+        </g>
+      `;
+    }).join("");
+
+    return `
+      <g class="golgi-overview">
+
+        <text x="450" y="105"
+              text-anchor="middle"
+              font-size="20"
+              font-weight="bold"
+              fill="#64748b">
+          GOLGI APPARATUS
+        </text>
+
+        <text x="450" y="130"
+              text-anchor="middle"
+              font-size="13"
+              fill="#64748b">
+          CARGO MODIFICATION · SORTING · TRANSPORT
+        </text>
+
+        <!-- Incoming ER-derived carriers -->
+        <g class="diagram-action"
+           data-target="golgi_transport_carriers"
+           role="button"
+           tabindex="0"
+           aria-label="Explore incoming Golgi carriers"
+           style="cursor:pointer">
+
+          <circle cx="143" cy="194" r="19"
+                  fill="#92bbdc"
+                  stroke="#568ab5"
+                  stroke-width="3"/>
+
+          <circle cx="104" cy="225" r="12"
+                  fill="#92bbdc"
+                  stroke="#568ab5"
+                  stroke-width="2"/>
+
+          <circle cx="159" cy="239" r="10"
+                  fill="#92bbdc"
+                  stroke="#568ab5"
+                  stroke-width="2"/>
+
+          <path d="M174 211 L258 195"
+                fill="none"
+                stroke="#568ab5"
+                stroke-width="3"
+                stroke-dasharray="7 5"/>
+
+          <path d="M247 187 L261 195 L250 204"
+                fill="none"
+                stroke="#568ab5"
+                stroke-width="3"/>
+
+          <text x="143" y="156"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#568ab5">
+            ER CARGO
+          </text>
+
+          <rect x="75" y="144"
+                width="190" height="122"
+                fill="transparent"/>
+        </g>
+
+        <!-- Cis, medial and trans cisternae -->
+        ${stackMarkup}
+
+        <!-- Trans-Golgi network -->
+        <g class="diagram-action"
+           data-target="trans_golgi_network"
+           role="button"
+           tabindex="0"
+           aria-label="Explore trans-Golgi network"
+           style="cursor:pointer">
+
+          <rect x="270" y="408"
+                width="360" height="112"
+                rx="18"
+                fill="transparent"/>
+
+          <path d="M333 438
+                   C377 425 420 444 466 440
+                   C511 435 554 446 575 457"
+                fill="none"
+                stroke="#c78376"
+                stroke-width="11"
+                stroke-linecap="round"/>
+
+          <path d="M440 440
+                   C418 461 396 467 369 482"
+                fill="none"
+                stroke="#c78376"
+                stroke-width="8"
+                stroke-linecap="round"/>
+
+          <path d="M495 440
+                   C519 468 551 472 589 481"
+                fill="none"
+                stroke="#c78376"
+                stroke-width="8"
+                stroke-linecap="round"/>
+
+          <circle cx="361" cy="488" r="9"
+                  fill="#dfa28a"/>
+
+          <circle cx="599" cy="483" r="9"
+                  fill="#dfa28a"/>
+
+          <text x="450" y="515"
+                text-anchor="middle"
+                font-size="15"
+                font-weight="bold"
+                fill="#986257">
+            TRANS-GOLGI NETWORK
+          </text>
+        </g>
+
+        <!-- Outgoing Golgi carriers -->
+        <g class="diagram-action"
+           data-target="golgi_transport_carriers"
+           role="button"
+           tabindex="0"
+           aria-label="Explore outgoing Golgi carriers"
+           style="cursor:pointer">
+
+          <circle cx="747" cy="440" r="19"
+                  fill="#dfab90"
+                  stroke="#ad765c"
+                  stroke-width="3"/>
+
+          <circle cx="782" cy="477" r="12"
+                  fill="#dfab90"
+                  stroke="#ad765c"
+                  stroke-width="2"/>
+
+          <circle cx="717" cy="489" r="10"
+                  fill="#dfab90"
+                  stroke="#ad765c"
+                  stroke-width="2"/>
+
+          <path d="M624 456 L716 443"
+                fill="none"
+                stroke="#ad765c"
+                stroke-width="3"
+                stroke-dasharray="7 5"/>
+
+          <path d="M704 435 L718 443 L707 453"
+                fill="none"
+                stroke="#ad765c"
+                stroke-width="3"/>
+
+          <text x="749" y="408"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#ad765c">
+            EXPORT
+          </text>
+
+          <rect x="638" y="396"
+                width="174" height="113"
+                fill="transparent"/>
+        </g>
+        
+        <!-- Clickable Golgi membrane sample -->
+        <g class="diagram-action"
+           data-target="golgi_membrane"
+           role="button"
+           tabindex="0"
+           aria-label="Explore the Golgi membrane"
+           style="cursor:pointer">
+
+          <rect x="76" y="351"
+                width="177" height="153"
+                rx="16"
+                fill="#eef2f7"
+                stroke="#9aabba"
+                stroke-width="2"/>
+
+          <!-- Phospholipid bilayer sample -->
+          <g fill="#8aa3bb">
+            <circle cx="98" cy="400" r="6"/>
+            <circle cx="121" cy="400" r="6"/>
+            <circle cx="144" cy="400" r="6"/>
+            <circle cx="167" cy="400" r="6"/>
+            <circle cx="190" cy="400" r="6"/>
+            <circle cx="213" cy="400" r="6"/>
+
+            <circle cx="98" cy="438" r="6"/>
+            <circle cx="121" cy="438" r="6"/>
+            <circle cx="144" cy="438" r="6"/>
+            <circle cx="167" cy="438" r="6"/>
+            <circle cx="190" cy="438" r="6"/>
+            <circle cx="213" cy="438" r="6"/>
+          </g>
+
+          <g stroke="#9aabba"
+             stroke-width="2">
+            <path d="M98 407v24 M121 407v24 M144 407v24
+                     M167 407v24 M190 407v24 M213 407v24"/>
+          </g>
+
+          <text x="164" y="374"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="bold"
+                fill="#64748b">
+            GOLGI MEMBRANE
+          </text>
+
+          <text x="164" y="481"
+                text-anchor="middle"
+                font-size="11"
+                fill="#64748b">
+            EXPLORE LIPIDS
+          </text>
+
+        </g>
+
+
+        <text x="450" y="563"
+              text-anchor="middle"
+              font-size="12"
+              fill="#64748b">
+          SELECT A GOLGI REGION OR TRANSPORT CARRIER
+        </text>
+
+        <text x="450" y="584"
+              text-anchor="middle"
+              font-size="11"
+              fill="#64748b">
+          CARGO MATURATION INVOLVES CHANGING CISTERNAL IDENTITY
+        </text>
+
+      </g>
+    `;
+  }
+
   
   function smoothErLumenSvg() {
 

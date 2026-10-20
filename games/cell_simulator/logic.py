@@ -291,10 +291,20 @@ ORGANCELLE_CONTENT = {
         "visual": "network",
         "children": ["smooth_er_membrane", "lipid_synthesis", "calcium_store", "detoxification","smooth_er_lumen"],
     },
+    
     "golgi": {
         "visual": "stack",
-        "children": ["cis_cisternae", "medial_cisternae", "trans_cisternae", "golgi_vesicles"],
+        "children": [
+            "cis_golgi",
+            "medial_golgi",
+            "trans_golgi",
+            "trans_golgi_network",
+            "golgi_transport_carriers",
+            "golgi_membrane",
+        ],
     },
+
+
     "lysosome": {
         "visual": "vesicle",
         "children": ["lysosome_membrane", "lysosome_lumen", "acid_hydrolases", "lysosome_cargo"],
@@ -1479,13 +1489,737 @@ COMPONENT_DATA = {
             "nadph",
         ]
     ),
+    
+   
+    "cis_golgi": _component(
+        "Cis-Golgi",
+        "GOLGI ENTRY FACE · CARGO ARRIVAL AND EARLY PROCESSING",
+        "The cis-Golgi is the receiving region of the Golgi "
+        "apparatus. Proteins and lipids exported from the ER "
+        "travel through the ER-Golgi intermediate compartment "
+        "(ERGIC) and are delivered to early Golgi membranes. "
+        "Membrane-tethering factors and SNARE complexes help "
+        "organize carrier capture and membrane fusion. "
+        "Early Golgi glycosidases also process selected "
+        "N-linked glycans, continuing modifications "
+        "initiated in the endoplasmic reticulum. "
+        "Cargo progression is associated with cisternal "
+        "maturation and recycling of resident machinery.",
+        "stack",
+        [
+            "cis_cargo_arrival",
+            "cis_tether_fusion",
+            "cis_glycan_processing",
+        ],
+        ["phosphatidylcholine"]
+    ),
+    
+    "cis_cargo_arrival": _component(
+        "ER cargo arrival at the cis-Golgi",
+        "ERGIC · SECRETORY CARGO DELIVERY",
+        "Proteins and lipids destined for the Golgi first "
+        "leave the endoplasmic reticulum at specialized "
+        "exit sites, often in COPII-dependent carriers. "
+        "These carriers contribute to transport through "
+        "the ER-Golgi intermediate compartment (ERGIC). "
+        "Cargo is then delivered to the receiving side "
+        "of the Golgi. The COPII coat is remodeled or "
+        "released during trafficking, and additional "
+        "tethering and membrane fusion machinery helps "
+        "complete delivery. ERGIC-53, also known as "
+        "LMAN1, is an example of a cycling cargo receptor "
+        "in the early secretory pathway.",
+        "vesicle",
+        (),
+        [
+            "protein_sar1",
+            "protein_lman1",
+            "phosphatidylcholine",
+        ]
+    ),
+
+    "cis_tether_fusion": _component(
+        "Cis-Golgi tethering and membrane fusion",
+        "GM130 · SNARE-DEPENDENT MEMBRANE FUSION",
+        "Incoming transport carriers must be captured "
+        "and brought into close contact with appropriate "
+        "target membranes before fusion. GM130 is a "
+        "peripheral cis-Golgi protein that contributes "
+        "to Golgi organization and tethering interactions. "
+        "SNARE proteins form complexes that promote "
+        "membrane fusion. Syntaxin-5 is an important "
+        "Golgi-associated Qa-SNARE, while GOSR1 "
+        "(GS28) is a Golgi Qb-SNARE involved in "
+        "intracellular membrane fusion. Specific "
+        "fusion events employ different combinations "
+        "of SNAREs and regulatory factors.",
+        "protein_complex",
+        (),
+        [
+            "protein_gm130",
+            "protein_stx5",
+            "protein_gosr1",
+        ]
+    ),
+
+    "cis_glycan_processing": _component(
+        "Early Golgi glycan processing",
+        "ALPHA-MANNOSIDASE · N-GLYCAN REMODELING",
+        "N-linked glycoproteins arrive from the ER "
+        "with glycans that have already undergone "
+        "initial glucose trimming and sometimes "
+        "mannose processing. Golgi alpha-mannosidase I "
+        "enzymes, including MAN1A1, remove selected "
+        "alpha-linked mannose residues from "
+        "high-mannose N-glycans. This contributes "
+        "to formation of substrates for subsequent "
+        "glycosyltransferase reactions in later "
+        "Golgi compartments. Glycan-processing "
+        "enzymes are distributed across early and "
+        "medial Golgi regions rather than being "
+        "confined to a single sharply defined cisterna.",
+        "protein_complex",
+        (),
+        [
+            "protein_man1a1",
+            "mannose",
+            "n_acetylglucosamine",
+        ]
+    ),
+
+
+
+   
+    "medial_golgi": _component(
+        "Medial-Golgi",
+        "GLYCAN MATURATION · CENTRAL GOLGI CISTERNAE",
+        "The medial-Golgi contains enzymes that remodel "
+        "N-linked glycans attached to proteins in the rough "
+        "endoplasmic reticulum. A key pathway for complex "
+        "N-glycan formation involves three successive "
+        "reactions. First, MGAT1 adds a GlcNAc residue "
+        "to a suitable mannose-containing glycan. Next, "
+        "Golgi alpha-mannosidase II removes two specific "
+        "mannose residues. Finally, MGAT2 adds another "
+        "GlcNAc residue, producing a precursor for further "
+        "glycan branching and maturation. These reactions "
+        "occur in the Golgi lumen and depend on enzymes "
+        "associated with Golgi membranes. The exact "
+        "distribution of enzymes between early and medial "
+        "cisternae varies between cells.",
+        "stack",
+        [
+            "medial_mgat1",
+            "medial_mannosidase_ii",
+            "medial_mgat2",
+        ],
+        [
+            "mannose",
+            "n_acetylglucosamine",
+        ]
+    ),
+    
+    "medial_mgat1": _component(
+        "MGAT1 · First GlcNAc transfer",
+        "N-ACETYLGLUCOSAMINYLTRANSFERASE I",
+        "MGAT1, also called GlcNAc-transferase I, "
+        "catalyzes an early branching reaction "
+        "in the formation of complex N-glycans. "
+        "It transfers N-acetylglucosamine from "
+        "UDP-GlcNAc onto a specific alpha-linked "
+        "mannose residue of a suitable trimmed "
+        "N-linked glycan. The resulting glycan "
+        "can then become a substrate for Golgi "
+        "alpha-mannosidase II. This reaction "
+        "occurs on the luminal side of Golgi "
+        "membranes and normally requires "
+        "a divalent metal cofactor.",
+        "protein_complex",
+        (),
+        [
+            "protein_mgat1",
+            "n_acetylglucosamine",
+            "mannose",
+        ]
+    ),
+
+    "medial_mannosidase_ii": _component(
+        "Golgi alpha-mannosidase II",
+        "MAN2A1 · MANNOSIDASE · GLYCAN TRIMMING",
+        "Golgi alpha-mannosidase II, encoded by "
+        "MAN2A1, removes specific alpha-1,3- "
+        "and alpha-1,6-linked mannose residues "
+        "from an N-linked glycan after its "
+        "modification by MGAT1. The enzyme "
+        "helps convert a hybrid glycan "
+        "intermediate into a structure "
+        "suitable for later complex-type "
+        "N-glycan synthesis. This processing "
+        "is distinct from the earlier "
+        "mannose trimming performed by "
+        "Golgi alpha-mannosidase I enzymes.",
+        "protein_complex",
+        (),
+        [
+            "protein_man2a1",
+            "mannose",
+            "n_acetylglucosamine",
+        ]
+    ),
+
+    "medial_mgat2": _component(
+        "MGAT2 · Second GlcNAc transfer",
+        "N-ACETYLGLUCOSAMINYLTRANSFERASE II",
+        "MGAT2 is a Golgi glycosyltransferase "
+        "that adds another N-acetylglucosamine "
+        "residue to a properly processed "
+        "N-linked glycan using UDP-GlcNAc "
+        "as the activated sugar donor. "
+        "This reaction contributes to the "
+        "formation of a biantennary complex "
+        "N-glycan framework. The resulting "
+        "structure can undergo further "
+        "branching and terminal modifications "
+        "in later Golgi compartments, "
+        "including addition of galactose "
+        "and sialic acid.",
+        "protein_complex",
+        (),
+        [
+            "protein_mgat2",
+            "n_acetylglucosamine",
+            "mannose",
+        ]
+    ),
+
+
+
+    
+    "trans_golgi": _component(
+        "Trans-Golgi",
+        "TERMINAL GLYCOSYLATION · LATE GOLGI PROCESSING",
+        "The trans-Golgi is a late processing region of "
+        "the Golgi stack. Glycoproteins arriving from "
+        "earlier cisternae can undergo additional "
+        "carbohydrate modifications. An important "
+        "pathway involves addition of galactose to "
+        "terminal N-acetylglucosamine residues, "
+        "followed by addition of sialic acid to "
+        "suitable galactose residues. B4GALT1 is "
+        "a beta-1,4-galactosyltransferase, while "
+        "ST6GAL1 is an alpha-2,6-sialyltransferase. "
+        "Terminal glycosylation affects protein "
+        "recognition, surface charge, stability "
+        "and interactions with other molecules. "
+        "Glycan processing is not identical for "
+        "all proteins and its enzymes are distributed "
+        "across partially overlapping Golgi regions.",
+        "stack",
+        [
+            "trans_galactosylation",
+            "trans_sialylation",
+            "trans_mature_glycan",
+        ],
+        [
+            "n_acetylglucosamine",
+            "galactose",
+            "n_acetylneuraminic_acid",
+        ]
+    ),
+    
+    "trans_galactosylation": _component(
+        "Galactose addition · B4GALT1",
+        "BETA-1,4-GALACTOSYLTRANSFERASE",
+        "B4GALT1 is a Golgi glycosyltransferase "
+        "that transfers galactose from the "
+        "activated donor UDP-galactose to "
+        "suitable acceptor molecules. In a "
+        "common N-glycan maturation pathway, "
+        "it forms a beta-1,4 linkage between "
+        "galactose and a terminal "
+        "N-acetylglucosamine residue. "
+        "The resulting terminal galactose "
+        "can serve as an acceptor for further "
+        "modifications, including sialylation. "
+        "B4GALT1 has additional biological "
+        "roles depending on cell type and "
+        "its molecular context.",
+        "protein_complex",
+        (),
+        [
+            "protein_b4galt1",
+            "galactose",
+            "n_acetylglucosamine",
+        ]
+    ),
+
+    "trans_sialylation": _component(
+        "Sialic acid addition · ST6GAL1",
+        "ALPHA-2,6-SIALYLTRANSFERASE",
+        "ST6GAL1 is a Golgi sialyltransferase "
+        "that transfers N-acetylneuraminic acid "
+        "(Neu5Ac), a common sialic acid, "
+        "from the activated donor CMP-Neu5Ac "
+        "onto suitable terminal galactose "
+        "residues. It forms an alpha-2,6 "
+        "glycosidic linkage. Sialic acids "
+        "often occupy terminal positions "
+        "on glycans and can contribute "
+        "negative charge, molecular recognition "
+        "and regulation of glycoprotein "
+        "interactions. Not all glycans are "
+        "sialylated and other sialyltransferases "
+        "can produce different linkages.",
+        "protein_complex",
+        (),
+        [
+            "protein_st6gal1",
+            "n_acetylneuraminic_acid",
+            "galactose",
+        ]
+    ),
+
+    "trans_mature_glycan": _component(
+        "Mature N-linked glycan",
+        "TERMINAL SUGARS · GLYCOPROTEIN PROPERTIES",
+        "Many mature complex N-linked glycans "
+        "contain a conserved mannose and "
+        "N-acetylglucosamine core with "
+        "branched carbohydrate antennae. "
+        "Depending on the cell and protein, "
+        "these antennae may contain additional "
+        "N-acetylglucosamine, galactose, "
+        "fucose and sialic acid residues. "
+        "Terminal sugar composition can "
+        "influence how glycoproteins interact "
+        "with lectins and other proteins. "
+        "Glycosylation also affects biological "
+        "processes including cell recognition, "
+        "protein trafficking and clearance. "
+        "There is no single universal "
+        "mature glycan structure.",
+        "compartment",
+        (),
+        [
+            "mannose",
+            "n_acetylglucosamine",
+            "galactose",
+            "n_acetylneuraminic_acid",
+        ]
+    ),
+
+
+
+   
+    "trans_golgi_network": _component(
+        "Trans-Golgi network (TGN)",
+        "SORTING HUB · PROTEIN AND LIPID TRAFFICKING",
+        "The trans-Golgi network is a dynamic region "
+        "associated with the exit side of the Golgi stack. "
+        "It contains interconnected membranes, tubules and "
+        "developing transport carriers. Proteins and lipids "
+        "are sorted into pathways leading toward the "
+        "plasma membrane, constitutive secretion, "
+        "regulated secretory granules in specialized cells, "
+        "and the endosomal-lysosomal system. "
+        "Sorting can depend on cargo receptors, "
+        "membrane-associated adaptors, small GTPases "
+        "and specific coat proteins. "
+        "Lysosomal hydrolases can be recognized through "
+        "mannose-6-phosphate receptors and delivered "
+        "toward endosomes. Regulated secretion is "
+        "particularly important in specialized cells "
+        "such as endocrine and neuroendocrine cells. "
+        "Not every cell possesses all these pathways "
+        "to the same extent.",
+        "network",
+        [
+            "tgn_constitutive_secretion",
+            "tgn_regulated_secretion",
+            "tgn_lysosomal_sorting",
+            "tgn_coat_adaptors",
+        ],
+        [
+            "phosphatidylcholine",
+            "cholesterol",
+            "sphingomyelin",
+        ]
+    ),
+    
+    "tgn_constitutive_secretion": _component(
+        "Constitutive secretion",
+        "CONTINUOUS EXPORT · PLASMA MEMBRANE",
+        "Constitutive secretion is a pathway through which "
+        "cargo is continuously delivered from the Golgi "
+        "toward the cell surface without requiring a "
+        "specialized storage-and-release signal. "
+        "Transport carriers deliver membrane proteins "
+        "and lipids to the plasma membrane, while "
+        "soluble cargo can be released outside the cell "
+        "when these carriers fuse with the membrane. "
+        "Different cells use multiple carrier types "
+        "and sorting mechanisms. "
+        "TGN46 is associated with Golgi trafficking "
+        "and secretory carrier formation, but it "
+        "is not a universal marker of all "
+        "constitutive secretory carriers.",
+        "vesicle",
+        (),
+        [
+            "protein_tgn46",
+            "phosphatidylcholine",
+            "cholesterol",
+        ]
+    ),
+
+    "tgn_regulated_secretion": _component(
+        "Regulated secretion",
+        "SECRETORY GRANULES · STIMULUS-DEPENDENT RELEASE",
+        "In specialized secretory cells, selected cargo "
+        "can be concentrated into immature secretory "
+        "granules that form at or near the trans-Golgi "
+        "network. These granules undergo maturation, "
+        "which may involve cargo processing, acidification "
+        "and membrane remodeling. Mature granules can "
+        "remain stored until a suitable stimulus "
+        "triggers exocytosis. "
+        "Examples include peptide-hormone release "
+        "from endocrine cells and secretory-granule "
+        "exocytosis in neuroendocrine cells. "
+        "Calcium-dependent exocytosis often involves "
+        "SNARE proteins and calcium sensors such as "
+        "synaptotagmins. The precise machinery "
+        "varies across different secretory cell types.",
+        "vesicle",
+        (),
+        [
+            "protein_vamp2",
+            "protein_syt1",
+            "calcium",
+            "atp",
+        ]
+    ),
+
+    "tgn_lysosomal_sorting": _component(
+        "Endosomal-lysosomal sorting",
+        "MANNOSE-6-PHOSPHATE · CARGO RECEPTORS",
+        "Many soluble lysosomal hydrolases acquire "
+        "mannose-6-phosphate recognition signals "
+        "during Golgi processing. "
+        "Mannose-6-phosphate receptors, including "
+        "the cation-independent receptor IGF2R, "
+        "bind suitable phosphorylated glycans "
+        "in the trans-Golgi network. "
+        "Cargo-receptor complexes can be packaged "
+        "into carriers directed toward endosomes. "
+        "The acidic endosomal environment promotes "
+        "cargo release, and receptors can recycle "
+        "back toward the Golgi. Lysosomal enzymes "
+        "subsequently reach lysosomal compartments. "
+        "Not all lysosomal proteins use this route, "
+        "and several lysosomal targeting pathways exist.",
+        "vesicle",
+        (),
+        [
+            "protein_igf2r",
+            "protein_clathrin",
+            "mannose",
+            "phosphate",
+        ]
+    ),
+
+    "tgn_coat_adaptors": _component(
+        "TGN coat and adaptor machinery",
+        "ARF1 · AP-1 · CLATHRIN",
+        "Transport carrier formation at the trans-Golgi "
+        "network involves interactions among small GTPases, "
+        "cargo-recognition adaptors and coat proteins. "
+        "ARF1 is a membrane-associated small GTPase "
+        "that helps recruit trafficking machinery "
+        "when bound to GTP. AP-1 is an adaptor complex "
+        "involved in sorting selected cargo within "
+        "TGN-endosomal trafficking routes. "
+        "Clathrin assembles a scaffold around certain "
+        "developing carriers and contributes to "
+        "membrane shaping and budding. "
+        "These proteins do not form every type "
+        "of carrier leaving the Golgi. "
+        "Other adaptors, including GGA proteins, "
+        "also participate in TGN-to-endosome sorting.",
+        "protein_complex",
+        (),
+        [
+            "protein_arf1",
+            "protein_ap1m1",
+            "protein_clathrin",
+            "gtp",
+            "gdp",
+        ]
+    ),
+
+
+
+   
+    "golgi_transport_carriers": _component(
+        "Golgi transport carriers",
+        "VESICLE TRAFFICKING · CARGO RECYCLING · MEMBRANE FUSION",
+        "The Golgi apparatus exchanges proteins and lipids "
+        "with the endoplasmic reticulum, other Golgi regions "
+        "and downstream compartments. Different transport "
+        "mechanisms serve different directions of trafficking. "
+        "COPII machinery drives carrier formation at ER exit "
+        "sites, allowing cargo to travel toward the ERGIC "
+        "and cis-Golgi. COPI coatomer complexes are involved "
+        "in retrograde recycling within the Golgi and "
+        "toward the ER. Additional carriers emerge from "
+        "the trans-Golgi network to deliver cargo toward "
+        "the plasma membrane or endosomal compartments. "
+        "Specific tethering factors, Rab GTPases and "
+        "SNARE proteins help carriers recognize and "
+        "fuse with appropriate target membranes. "
+        "Cargo progression through the Golgi also "
+        "involves cisternal maturation and recycling "
+        "of resident Golgi enzymes.",
+        "vesicle",
+        [
+            "golgi_copii_transport",
+            "golgi_copi_recycling",
+            "golgi_post_export",
+            "golgi_carrier_fusion",
+        ],
+        [
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "cholesterol",
+        ]
+    ),
+    
+    "golgi_copii_transport": _component(
+        "COPII · ER-to-Golgi transport",
+        "ER EXPORT · SAR1 · SEC23/24 · SEC13/31",
+        "COPII transport begins at specialized ER exit "
+        "sites. The small GTPase Sar1 becomes activated "
+        "through nucleotide exchange mediated by Sec12. "
+        "Sar1-GTP recruits Sec23/Sec24, which helps "
+        "select export cargo, followed by Sec13/Sec31 "
+        "outer-coat assembly. COPII machinery promotes "
+        "formation of carriers that transport selected "
+        "cargo toward the ER-Golgi intermediate "
+        "compartment (ERGIC). Coat disassembly or "
+        "remodeling occurs during trafficking. "
+        "Cargo subsequently reaches the cis-Golgi "
+        "through additional transport and fusion "
+        "steps. COPII is primarily an ER export "
+        "system, not a general coat for transport "
+        "between all Golgi cisternae.",
+        "vesicle",
+        (),
+        [
+            "protein_sar1",
+            "protein_sec23",
+            "protein_sec24",
+            "protein_sec13",
+            "protein_sec31",
+            "gtp",
+            "gdp",
+        ]
+    ),
+
+    "golgi_copi_recycling": _component(
+        "COPI · Retrograde recycling",
+        "ARF1 · COATOMER · GOLGI RECYCLING",
+        "COPI-associated transport is important "
+        "for recycling membrane components "
+        "between Golgi compartments and returning "
+        "selected proteins toward the ER. "
+        "ARF1 activation supports recruitment "
+        "of the heptameric coatomer complex "
+        "to appropriate membranes. The coat "
+        "participates in membrane deformation "
+        "and cargo selection. Some ER resident "
+        "proteins that have escaped to the Golgi "
+        "are retrieved using receptors that "
+        "recognize ER retrieval signals, "
+        "such as the KDEL receptor for many "
+        "soluble luminal proteins. "
+        "COPI-associated recycling helps "
+        "maintain the distinct enzyme "
+        "composition of Golgi cisternae "
+        "during cisternal maturation.",
+        "vesicle",
+        (),
+        [
+            "protein_arf1",
+            "protein_copa",
+            "protein_copb2",
+            "protein_kdelr1",
+            "gtp",
+            "gdp",
+        ]
+    ),
+
+    "golgi_post_export": _component(
+        "Post-Golgi transport carriers",
+        "TGN EXPORT · SECRETORY AND ENDOSOMAL ROUTES",
+        "Transport carriers emerging from the "
+        "trans-Golgi network deliver cargo "
+        "toward different destinations. "
+        "Some support constitutive secretion "
+        "and plasma membrane delivery, "
+        "while specialized secretory cells "
+        "form regulated secretory granules. "
+        "Clathrin-associated adaptor systems "
+        "help sort selected cargo toward "
+        "endosomal compartments. "
+        "ARF1 and other trafficking regulators "
+        "participate in recruitment of "
+        "certain coat and adaptor proteins. "
+        "Different post-Golgi carriers "
+        "possess different protein and lipid "
+        "compositions, and not all carriers "
+        "are coated by clathrin.",
+        "vesicle",
+        (),
+        [
+            "protein_arf1",
+            "protein_clathrin",
+            "protein_ap1m1",
+            "protein_tgn46",
+            "phosphatidylcholine",
+            "cholesterol",
+        ]
+    ),
+
+    "golgi_carrier_fusion": _component(
+        "Carrier tethering and membrane fusion",
+        "RAB GTPASES · TETHERS · SNARE COMPLEXES",
+        "Transport carriers must recognize "
+        "appropriate target membranes before "
+        "delivering their cargo. "
+        "Rab-family GTPases and tethering "
+        "factors help coordinate carrier "
+        "capture and docking. Rab6 is "
+        "associated with Golgi trafficking "
+        "and several retrograde transport "
+        "pathways. GM130 participates in "
+        "organization and tethering events "
+        "at the cis-Golgi. "
+        "Compatible SNARE proteins then "
+        "assemble into complexes that bring "
+        "lipid bilayers together and promote "
+        "membrane fusion. Syntaxin-5 and "
+        "GS28 are examples of SNAREs "
+        "involved in early secretory "
+        "pathway trafficking. Different "
+        "transport routes use different "
+        "Rab and SNARE combinations.",
+        "protein_complex",
+        (),
+        [
+            "protein_rab6a",
+            "protein_gm130",
+            "protein_stx5",
+            "protein_gosr1",
+            "gtp",
+            "gdp",
+        ]
+    ),
+
+
+    
+    "golgi_membrane": _component(
+        "Golgi membrane",
+        "PHOSPHOLIPID BILAYER · COMPARTMENT IDENTITY",
+        "Each Golgi cisterna is enclosed by a phospholipid "
+        "bilayer containing distinct populations of lipids "
+        "and proteins. The cis-Golgi generally has a more "
+        "ER-like membrane composition, while later Golgi "
+        "regions tend to become enriched in cholesterol "
+        "and sphingolipids. These differences contribute "
+        "to membrane thickness, protein distribution, "
+        "cargo sorting and trafficking. Golgi membranes "
+        "contain transmembrane proteins as well as "
+        "peripherally associated proteins. GM130 is a "
+        "cis-Golgi peripheral tethering protein, TMEM165 "
+        "participates in Golgi ion homeostasis, and TGN46 "
+        "is a membrane protein enriched in the trans-Golgi "
+        "network. The illustration combines proteins from "
+        "different Golgi regions to explain their functions; "
+        "they are not necessarily located together.",
+        "membrane",
+        [
+            "golgi_gm130",
+            "golgi_tmem165",
+            "golgi_tgn46",
+        ],
+        [
+            "phosphatidylcholine",
+            "phosphatidylethanolamine",
+            "phosphatidylinositol",
+            "phosphatidylserine",
+            "sphingomyelin",
+            "cholesterol",
+        ]
+    ),
+
+    "golgi_gm130": _component(
+        "GM130 · cis-Golgi tether",
+        "PERIPHERAL GOLGI PROTEIN · MEMBRANE TETHERING",
+        "GM130, encoded by GOLGA2, is a long coiled-coil "
+        "protein associated with the cytosolic surface "
+        "of the cis-Golgi. It interacts with Golgi "
+        "structural and trafficking proteins, including "
+        "GRASP65 and the tethering factor p115. "
+        "GM130 contributes to Golgi organization and "
+        "the docking of incoming transport carriers. "
+        "It is peripherally associated with the membrane "
+        "rather than spanning the phospholipid bilayer.",
+        "protein_complex",
+        (),
+        ["protein_gm130"]
+    ),
+
+    "golgi_tmem165": _component(
+        "TMEM165 · Golgi ion homeostasis",
+        "TRANSMEMBRANE PROTEIN · GLYCOSYLATION SUPPORT",
+        "TMEM165 is a multipass Golgi membrane protein "
+        "associated with regulation of luminal manganese "
+        "and calcium homeostasis. Proper Golgi ion balance "
+        "is important because several glycosyltransferases "
+        "depend on manganese for catalytic activity. "
+        "TMEM165 dysfunction can disrupt glycosylation "
+        "and cause a congenital disorder of glycosylation. "
+        "Its precise transport mechanism and ion-coupling "
+        "properties are still under investigation.",
+        "protein_complex",
+        (),
+        ["protein_tmem165", "calcium", "manganese"]
+    ),
+
+    "golgi_tgn46": _component(
+        "TGN46 · trans-Golgi network",
+        "TRANSMEMBRANE PROTEIN · MEMBRANE TRAFFICKING",
+        "TGN46, encoded by TGOLN2 in humans, is a "
+        "type I transmembrane protein enriched in "
+        "the trans-Golgi network. It cycles between "
+        "Golgi and other membrane compartments "
+        "and participates in aspects of secretory "
+        "carrier formation and trafficking. "
+        "Its luminal domain and cytosolic sorting "
+        "information help connect membrane organization "
+        "with cargo transport.",
+        "protein_complex",
+        (),
+        ["protein_tgn46"]
+    ),
+
+
 
 
     "cis_cisternae": _component("Cis Golgi cisternae", "MEMBRANE COMPARTMENT", "The receiving side of the Golgi accepts cargo from the ER.", "stack", ["golgi_membrane"], ["phosphatidylcholine"]),
     "medial_cisternae": _component("Medial Golgi cisternae", "MEMBRANE COMPARTMENT", "Middle Golgi compartments perform additional processing, including steps in glycan modification.", "stack", ["golgi_membrane"]),
     "trans_cisternae": _component("Trans Golgi cisternae", "MEMBRANE COMPARTMENT", "The shipping side of the Golgi sorts processed cargo into transport vesicles.", "stack", ["golgi_vesicles"], ["phosphatidylcholine"]),
     "golgi_vesicles": _component("Golgi transport vesicles", "TRANSPORT VESICLES", "Vesicles carry processed cargo from the Golgi to destinations such as the plasma membrane or lysosome.", "vesicle", ["vesicle_membrane", "vesicle_cargo"], ["phosphatidylcholine"]),
-    "golgi_membrane": _component("Golgi membrane", "LIPID BILAYER", "Golgi cisternae are enclosed by membranes that support cargo processing and transport.", "membrane", (), ["phosphatidylcholine", "phosphatidylethanolamine", "cholesterol"]),
     "lysosome_membrane": _component("Lysosome membrane", "LIPID BILAYER + PUMPS", "A membrane separates digestive enzymes from the cytosol and pumps protons into the lumen to maintain acidity.", "membrane", ["lysosome_lumen"], ["phosphatidylcholine", "cholesterol"]),
     "lysosome_lumen": _component("Lysosome lumen", "ACIDIC COMPARTMENT", "The low-pH interior is optimized for lysosomal digestive enzymes.", "compartment", ["acid_hydrolases"], ["water"]),
     "acid_hydrolases": _component("Acid hydrolases", "DIGESTIVE ENZYMES", "These enzymes break down proteins, nucleic acids, lipids, and carbohydrates in the acidic lysosome.", "protein_complex", (), ["glycine", "alanine"]),
@@ -2432,6 +3166,262 @@ MOLECULES = [
                 "oxygen incorporation into a substrate, "
                 "not necessarily safe detoxification.",
         "smiles": "Oc1ccccc1",
+    },
+    
+    {
+        "id": "protein_gm130",
+        "name": "GM130 (GOLGA2)",
+        "role": "A peripheral cis-Golgi coiled-coil protein "
+                "involved in Golgi organization and "
+                "tethering incoming transport carriers. "
+                "It associates with GRASP65 and p115 "
+                "and does not span the lipid bilayer.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_tmem165",
+        "name": "TMEM165",
+        "role": "A multipass Golgi membrane protein "
+                "associated with manganese and calcium "
+                "homeostasis. Its activity supports "
+                "normal Golgi glycosylation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_tgn46",
+        "name": "TGN46 (TGOLN2)",
+        "role": "A membrane protein enriched in the "
+                "trans-Golgi network. It cycles through "
+                "the secretory pathway and participates "
+                "in Golgi trafficking and carrier formation.",
+        "type": "protein",
+    },
+    {
+        "id": "manganese",
+        "name": "Manganese ion (Mn²⁺)",
+        "role": "A divalent metal ion required as a cofactor "
+                "by various Golgi glycosyltransferases. "
+                "Golgi manganese homeostasis contributes "
+                "to proper glycan synthesis and processing.",
+        "smiles": "[Mn+2]",
+    },
+    
+    {
+        "id": "protein_stx5",
+        "name": "Syntaxin-5 (STX5)",
+        "role": "A Qa-SNARE protein involved in membrane "
+                "fusion events in the early secretory "
+                "pathway, including ER-Golgi and "
+                "Golgi-associated trafficking. "
+                "It contributes to SNARE complexes "
+                "that bring membranes together.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_gosr1",
+        "name": "GS28 (GOSR1)",
+        "role": "A Golgi-associated Qb-SNARE protein "
+                "involved in membrane fusion. "
+                "It functions with compatible "
+                "SNARE partners, including "
+                "syntaxin-family proteins.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_man1a1",
+        "name": "Golgi alpha-mannosidase IA (MAN1A1)",
+        "role": "A Golgi glycosidase that removes "
+                "specific alpha-linked mannose "
+                "residues from high-mannose "
+                "N-linked glycans during "
+                "glycoprotein maturation.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "protein_mgat1",
+        "name": "MGAT1 (GlcNAc-transferase I)",
+        "role": "A Golgi membrane-associated enzyme "
+                "that transfers N-acetylglucosamine "
+                "from UDP-GlcNAc onto an N-linked "
+                "glycan. It initiates an important "
+                "step in complex N-glycan formation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_man2a1",
+        "name": "Golgi alpha-mannosidase II (MAN2A1)",
+        "role": "A Golgi glycosidase that removes "
+                "specific alpha-1,3- and alpha-1,6-"
+                "linked mannose residues after MGAT1 "
+                "processing. It prepares the glycan "
+                "for further complex-type maturation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_mgat2",
+        "name": "MGAT2 (GlcNAc-transferase II)",
+        "role": "A Golgi glycosyltransferase "
+                "that transfers another "
+                "N-acetylglucosamine residue from "
+                "UDP-GlcNAc to a processed glycan, "
+                "helping produce biantennary "
+                "complex N-glycan structures.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "protein_b4galt1",
+        "name": "Beta-1,4-galactosyltransferase 1 (B4GALT1)",
+        "role": "A Golgi glycosyltransferase that uses "
+                "UDP-galactose as the donor to add "
+                "galactose to suitable acceptor "
+                "carbohydrates, including terminal "
+                "GlcNAc residues on N-glycans.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_st6gal1",
+        "name": "ST6GAL1 · Alpha-2,6-sialyltransferase",
+        "role": "A Golgi glycosyltransferase that uses "
+                "CMP-sialic acid as its donor to "
+                "attach sialic acid to suitable "
+                "terminal galactose residues.",
+        "type": "protein",
+    },
+    {
+        "id": "galactose",
+        "name": "D-Galactose",
+        "role": "A hexose sugar incorporated into "
+                "glycans by galactosyltransferases. "
+                "B4GALT1 can transfer galactose from "
+                "UDP-galactose to terminal GlcNAc "
+                "on selected glycoproteins.",
+        "smiles": "C([C@@H]1[C@@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+    },
+    {
+        "id": "n_acetylneuraminic_acid",
+        "name": "N-Acetylneuraminic acid (Neu5Ac)",
+        "role": "A common nine-carbon sialic acid "
+                "found at terminal positions of "
+                "many glycans. Its carboxyl group "
+                "contributes negative charge, while "
+                "its placement can affect molecular "
+                "recognition and glycoprotein behavior.",
+        "smiles": "CC(=O)N[C@@H]1[C@H](CC(O[C@H]1[C@@H]([C@@H](CO)O)O)(C(=O)O)O)O",
+    },
+    
+    {
+        "id": "protein_vamp2",
+        "name": "VAMP2 (Synaptobrevin-2)",
+        "role": "A vesicle-associated R-SNARE involved "
+                "in membrane fusion, particularly "
+                "regulated exocytosis in neuronal "
+                "and neuroendocrine cells. "
+                "It works with suitable target-membrane "
+                "SNARE proteins to drive fusion.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_syt1",
+        "name": "Synaptotagmin-1 (SYT1)",
+        "role": "A calcium-sensing membrane protein "
+                "involved in rapid regulated exocytosis "
+                "in neurons and certain neuroendocrine "
+                "cells. Calcium binding helps trigger "
+                "fusion of primed secretory vesicles. "
+                "Other synaptotagmin isoforms operate "
+                "in different cell types.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_igf2r",
+        "name": "Cation-independent M6P receptor (IGF2R)",
+        "role": "A transmembrane receptor that recognizes "
+                "mannose-6-phosphate-bearing cargo, "
+                "including many soluble lysosomal enzymes. "
+                "It participates in trafficking between "
+                "the TGN and endosomes and is recycled "
+                "through the endosomal system.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_clathrin",
+        "name": "Clathrin heavy chain (CLTC)",
+        "role": "A structural component of clathrin coats. "
+                "Clathrin assembles with light chains "
+                "into triskelion-shaped units that can "
+                "form scaffolds around transport carriers. "
+                "Adaptor proteins connect clathrin "
+                "assembly to selected membranes and cargo.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_arf1",
+        "name": "ADP-ribosylation factor 1 (ARF1)",
+        "role": "A small GTPase associated with membrane "
+                "trafficking. Its active GTP-bound form "
+                "promotes recruitment of several Golgi "
+                "coat and adaptor systems, while GTP "
+                "hydrolysis contributes to coat regulation.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_ap1m1",
+        "name": "AP-1 mu1 subunit (AP1M1)",
+        "role": "A cargo-recognition subunit of the "
+                "heterotetrameric AP-1 adaptor complex. "
+                "AP-1 participates in cargo sorting "
+                "and clathrin-associated trafficking "
+                "between the TGN and endosomal system.",
+        "type": "protein",
+    },
+    
+    {
+        "id": "protein_copa",
+        "name": "COPA · COPI alpha subunit",
+        "role": "Alpha-COP is a subunit of the "
+                "heptameric COPI coatomer complex. "
+                "Coatomer participates in membrane "
+                "carrier formation and retrograde "
+                "cargo recycling within the Golgi "
+                "system and toward the ER.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_copb2",
+        "name": "COPB2 · COPI beta-prime subunit",
+        "role": "Beta-prime-COP is a component "
+                "of the COPI coatomer complex. "
+                "It contributes to the structural "
+                "and cargo-recognition machinery "
+                "associated with COPI-mediated "
+                "transport and recycling.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_kdelr1",
+        "name": "KDEL receptor 1 (KDELR1)",
+        "role": "A cycling membrane receptor "
+                "that recognizes the C-terminal "
+                "KDEL retrieval signal on many "
+                "soluble ER resident proteins. "
+                "It supports retrieval of "
+                "these proteins from Golgi "
+                "compartments back toward the ER.",
+        "type": "protein",
+    },
+    {
+        "id": "protein_rab6a",
+        "name": "Rab6A",
+        "role": "A small Rab-family GTPase "
+                "associated with the Golgi "
+                "apparatus. Rab6A participates "
+                "in the regulation of Golgi "
+                "trafficking, membrane-carrier "
+                "movement and selected "
+                "retrograde transport routes.",
+        "type": "protein",
     },
 
 
